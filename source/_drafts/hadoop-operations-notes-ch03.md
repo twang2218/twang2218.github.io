@@ -1,14 +1,14 @@
 ---
 layout: post
 category: readings
-title: 《Hadoop Operations》读书笔记 - 2
+title: 《Hadoop Operations》读书笔记 - 2 - 第三章 MapReduce
 tags : [hadoop]
+date: 2014/03/16
 ---
-{% blockquote Eric Sammer http://shop.oreilly.com/product/0636920025085.do "Hadoop Operations" - O'Reilly (2012) ... (p25 ~ p39) %}{% endblockquote %}
+{% blockquote Eric Sammer http://shop.oreilly.com/product/0636920025085.do "Hadoop Operations" - O'Reilly (2012) ... (p25 ~ p39) %}
+Chapter 3: MapReduce
+{% endblockquote %}
 
-
-第三章 MapReduce
-=================
 
 MapReduce，在这里实际上有两个含义，一个是一种分布式计算模型；另一个是某种特定实现，比如Apache Hadoop MapReduce。其设计目的是为了简化大规模、分布式、高容错性的数据处理应用的开发，目前MapReduce是首选方案。
 
@@ -19,21 +19,24 @@ MapReduce，在这里实际上有两个含义，一个是一种分布式计算�
 MapReduce 起源于 Google 工程师在 2004 年发的论文《MapReduce: Simplified Data Processing on Large Clusters》，论文中详细描述了这种计算模型，以及在Google实现的细节。Hadoop MapReduce 是对该计算模型的开源实现。
 
 MapReduce 的四个阶段
-----------------------
+=====================
 
-### 客户端提交 Job
+客户端提交 Job
+---------------
 
 客户端程序使用 MapReduce API 向集群提交任务，JobTracker 将负责接受这些任务。客户端提交任务的时候，可以是一个独立的计算机，也可以是节点中的任何一个。
 
 框架将决定如何对数据进行拆分，拆成一个个 **input splits** ，以方便进行并行处理。在 Hadoop 中，负责这件事情的是 **InputFormat** ，并且默认提供了一部分常用的 `InputFormat`。
 
-### 执行 Map 任务
+执行 Map 任务
+--------------
 
 每一个 input split 对应一个 **Map 任务** ，每一个 Map 任务会诸条对 input split 中的记录执行 **map函数** 。Map任务的数量可以多于当前节点可以并行处理的能力，多余的任务会在队列中等候调度。Map函数的输入是 **一个键值对** ，输出是 **0个或多个键值对** 。负责将 input split 拆分为一个个键值对的依旧是 InputFormat。
 
 输出的键值对中，对每一个 **Key** 会分配一个 **Partition（分区）** ，进行分区的是 **Partitioner** 。Hadoop MapReduce 中默认的分区是 **Hash Partitioner** ，先对 Key 计算 Hash，然后对结果取 reducer 个数的余数。此时，这种分区只是逻辑上的，每个分区的键值对并没有汇聚到一起，依旧分散在各个运行 map 的节点上。
 
-### Shuffle 和 Sort
+Shuffle 和 Sort
+-----------------
 
 在将键值对送给 reducer 之前，会先进行 shuffle 和 sort，这是为了保证 reducer 的输入满足下面几个特性：
 
@@ -48,7 +51,8 @@ shuffle 和 sort 实际上是由 reducer 来执行的。
 - 当 reducer 收到所有数据后，所面对的是一堆无序的、分为不同分区的键值对，每个分区会按照 key 排序。随后， reducer 会对各个分区进行 **merge sort**。这样进行可以很节约内存。
 - 当 Reducer 面对按 key 排序好的键值对时，就很容易顺序操作，将每一个键所对应所有值全部送入 reduce 函数。
 
-### 执行 Reduce 任务
+执行 Reduce 任务
+-----------------
 
 每一个 reducer 的输出都送到 **单独** 的文件中去，从而很大程度上避免了不同 reducer 之间协调操作同一个文件的复杂性。
 
@@ -56,7 +60,7 @@ shuffle 和 sort 实际上是由 reducer 来执行的。
 
 
 MapReduce 的局限性
---------------------
+===================
 
 - MapReduce 是 **批处理系统** ：换句话说，它假定于任务会 **以分钟甚至小时为单位** 执行。它适合于完整的扫描，而不适合传统OLTP那种需要低延时、随机访问模式的系统。
 - MapReduce 是非常简单的：简单是好事，同时也是坏事。很多时候开发人员会感到这种模型的局限性。同样，由于模型的简单，导致 MapReduce 并不是最高效的计算模型；
@@ -64,7 +68,7 @@ MapReduce 的局限性
 - 很多算法无法并行化处理。也许其中部分算法可以被某种方式在 MapReduce 中运行，不过显然不是高效的实现。
 
 Hadoop MapReduce 的简介
-------------------------
+========================
 
 Hadoop MapReduce 是对 MapReduce 计算模型的开源实现。如 Google 中的 GFS 与 MapReduce 结合一样，Hadoop 的HDFS和MapReduce的结合是非常强大的。在 MapReduce 调度 Job 时，由于可以从 NameNode 中得到数据的位置，因此可以选择最合适的 TaskTracker 来执行对应的任务，从而使得 map 最大可能的从本地读取数据，因此大大的减少了网络流量，这在处理海量数据时尤为重要。
 
@@ -72,9 +76,10 @@ Hadoop MapReduce 像其它分布式计算系统一样，它是一个框架，用
 
 
 两个主要的服务进程
---------------------
+===================
 
-### JobTracker
+JobTracker
+-----------
 
 JobTracker 是主服务，负责从客户端承接 Job、在集群中调度任务、检查节点健康状态、任务执行状态等。一个 Hadoop MapReduce 集群中只有一个 JobTracker，如果这个 JobTracker 挂了，所有正在运行的 Job 就都挂了。客户端、TaskTracker 和 JobTracker 之间的通讯使用的是 RPC。
 
@@ -88,7 +93,8 @@ JT 提供了一个 Web 界面，虽然比较丑，但是信息很丰富。包含
 
 分配合适的 TT 去运行适当的 Task，这事情叫做task scheduling (任务调度)。第7章将着重讲解资源调度问题。
 
-### TaskTracker
+TaskTracker
+------------
 
 TaskTracker 负责从 JT 那里接任务，在本地执行用户代码，然后报告进度回 JT。集群中，每一个节点最多执行一个 TT。由于 TT 和 DN 往往在一个节点，因此该节点同时是 **计算节点** 和 **存储节点** 。
 
@@ -102,11 +108,12 @@ TT 也有 Web 界面，不过一般很少会需要直接去 TT 上看，大部�
 
 
 当事情出错了
--------------
+============
 
 MapReduce 在容错性上设计的非常好。在大型的 Hadoop 集群中，如果有 2% ~ 5% 的节点由于某种故障，特别是硬盘故障，这并不罕见。此外除了硬件故障外，还可能是用户提交的 job 导致了故障、网络故障、甚至仅仅是数据故障。
 
-### task 失败
+task 失败
+-----------
 
 导致 task 失败的三种情况：
 
@@ -122,15 +129,18 @@ MapReduce 在容错性上设计的非常好。在大型的 Hadoop 集群中，�
 - 如果一个 Job 的多个 task 都在某一个 TT 上失败了，这显然不正常。因此这个 TT 会被 JT 加入 **该 Job 的黑名单** ，以后该 Job 的任务都不会发给该 TT；
 - 如果不同 Job 的任务都在某个 TT 上失败了，那么这个 TT 的问题就比较大了，会被 JT 加入到 **全局的黑名单** 上持续 **24小时** ，这样任何 Job 都不会分配给该 TT。
 
-### TT 或者 节点故障
+TT 或者 节点故障
+-----------------
 
 JT 如果一段时间内没有收到 TT 的心跳报告，那么就会假定这个 TT 挂了。所有分配到该 TT 的任务，会重新进入调度，调整到别的 TT 上去运行。客户端对此将 **毫无感觉** ，最多只会感觉到在某个位置，任务进度突然变慢了。
 
-### JT 故障
+JT 故障
+--------
 
 JT 故障最简单了，别想了，一旦 JT 故障了，所有正在运行的 Job 就全都挂了。目前 **JT 是单点故障** ，是 Hadoop MapReduce 的局限之一。
 
-### HDFS 故障
+HDFS 故障
+----------
 
 HDFS 故障，就相当于传统关系性数据库面对文件系统故障一样，不是很好的事情。最开始如果只是一个节点故障，TT 会像前一章错误处理的流程操作。除非全部的节点针对该Block 都出错了，否则这是一个可恢复的情况，程序运行不会受到影响。
 
@@ -138,7 +148,7 @@ HDFS 故障，就相当于传统关系性数据库面对文件系统故障一样
 
 
 YARN
--------
+=====
 
 在 Yahoo! 部署 Hammer 集群的时候，这大约是一个 4000 节点的集群，他们发现一个单独的 JT 很难处理这么大规模的集群，并且单点故障也是很悲催的。于是他们提出了一个新的构架叫做 YARN (Yet Another Resource Negotiator)。
 

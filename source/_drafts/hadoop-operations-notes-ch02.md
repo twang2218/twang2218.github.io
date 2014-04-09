@@ -1,19 +1,19 @@
 ---
 layout: post
 category: readings
-title: 《Hadoop Operations》读书笔记 - 1
+title: 《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS
 tags : [hadoop]
+date: 2014/03/09
 ---
 
-{% blockquote Eric Sammer http://shop.oreilly.com/product/0636920025085.do "Hadoop Operations" - O'Reilly (2012) ... (p7 ~ p24)  %}{% endblockquote %}
-
-第二章 HDFS
-=================
+{% blockquote Eric Sammer http://shop.oreilly.com/product/0636920025085.do "Hadoop Operations" - O'Reilly (2012) ... (p7 ~ p24)  %}
+Chapter 2: HDFS
+{% endblockquote %}
 
 传统存储是 SAN 或者 NAS，提供了集中化、低延时的块存储或者文件系统，以支持TB级数据。在面对关系型数据库之类的服务时，这是很好的选择。但是面对上万台计算机同时提取几百TB的数据时，这种集中型存储就难以胜任了。
 
 HDFS的设计目标
----------------
+==============
 
 - 存储上百万的大文件，每个文件都大于几十TB的数量级；
 - 使用普通服务器，横向扩展，不必使用RAID；
@@ -21,7 +21,7 @@ HDFS的设计目标
 - 对机器、硬盘错误可以从容应对。
 
 HDFS 和传统文件系统异同
--------------------------
+========================
 
 相似处：
 
@@ -39,26 +39,29 @@ HDFS会以Block为单位保存多份副本（默认是3份）。更多的副本�
 HDFS API 类似于 POSIX API，提供了文件IO操作，因此用户不需要关心底层的分布式、以及副本问题。
 
 三个服务
------------
+=========
 
-### DataNode
+DataNode
+---------
+
 
 HDFS的DN不需要RAID，只需要JBOD(Just a Bunch of Disks 就一堆磁盘)。对于 Hadoop 的应用特征而言，一大堆独立的硬盘要比RAID性能好。
 
 DN启动后，每个小时会向NN发送Block Report（包括DN刚启动的时候），其中包含了该节点所存储的所有Block列表。这样做的好处是，当DN的IP或者主机名发生改变后，不影响其所存储的数据。另外一种常见的问题是当一个DN的主板类硬件损坏后，管理员只需要把硬盘拔下来，插在一个新的计算机上，启动DN，数据并不会丢失。
 
-### NameNode
+NameNode
+----------
 
 NameNode 所记录的所有HDFS文件系统元数据全部存储于内存，以方便快速遍历。因此在1.x中NN的内存大小决定了集群的规模。粗略估计的话，1百万Block(或1百万空文件)需要1GB内存。
 
-### SecondaryNameNode
-
+SecondaryNameNode
+------------------
 
 SecondaryNameNode 只是负责打理日志合并等事物，并不是热备，不过在必须时，NN可以从SNN中回复最近的元数据。
 
 
 HDFS 读文件
-------------
+============
 
 假设一个客户端，比如Java Jar程序，需要一份 `/user/esammer/foo.txt`。
 
@@ -72,7 +75,7 @@ HDFS 读文件
 
 
 HDFS 写文件
-------------
+=============
 
 HDFS 写文件操作比读文件略为复杂。
 
@@ -92,14 +95,14 @@ HDFS 写文件操作比读文件略为复杂。
 
 
 元数据
--------
+=======
 
 元数据保存于 NN 的本地文件系统中。主要由两部分组成：`fsimage` 和 `edits`（或称为 editlogs）。和数据库一样，fsimage 是元数据完整快照；而 edits 则是增量修改日志。一般是 WAL （Write Ahead Log）的形式。二者都会处于内存，并且本地有一份固化版本。当 NN 启动的时候，会从文件系统加载 fsimage，然后再加载 edits 日志，并回放 edits，从而得到最新的元数据信息。
 
 也因此，随着时间增加，edits会越来越大，NN 启动会需要很长一段时间，甚至由于超过 NN 的资源而导致启动失败。这时 SNN 的作用就体现了，由于SNN的作用是合并元数据，因此当SNN存在的时候，可以使用更新的快照，而使得启动速度会加快。
 
 SNN 与 NN 交流合并元数据的过程
-------------------------------
+==============================
 
 - SNN 通知 NN 开始合并日志，NN 从即刻起将使用 edits.new 保存新的日志
 - SNN 从 NN 复制 fsimage 和 edits 到本地的 checkpoint 目录
@@ -111,7 +114,7 @@ SNN 与 NN 交流合并元数据的过程
 
 
 NameNode High Availability
-----------------------------
+============================
 
 很长一段时间以来 HDFS 是管理员的噩梦，因为NN存在单点故障(SPOF)。所以在 Hadoop 2.x 开始，NameNode 开始支持 High Availablity。允许存在一对儿NN以active/standby方式同时运行。NN之间必须有方式可以共享 fsimage 和 edits。目前有两种方式，一种是传统的通过 NFS 共享；另一种是通过新的 Quorum Journal Manager 来实现。
 
@@ -125,14 +128,15 @@ standby的NN会承担起 SNN 中合并日志的职责，因此配置了NN HA后�
 
 
 Namenode Federation
----------------------
+====================
 
 1.x的Hadoop还有一个问题，集群的规模受NN的内存所限制。为了解决这个问题 2.x 提出了 Namenode Federation。这个东西实际上非常像 Linux 文件系统中将各个驱动器挂载(`mount`)到各个不同的目录位置的方式。使用 NN Federation 后，会使用一个新的FS叫做 `ViewFS`，然后不同的NN将负责ViewFS下面不同的目录，也称为 Namespace。
 
 访问和使用 HDFS
------------------
+================
 
-### 使用HDFS API
+使用HDFS API
+-------------
 
 最常见的使用 HDFS 的方式是直接使用其 Java API。如果要使用HDFS API必须满足两个条件，一个是需要配置文件，通过配置文件可以得知 NN 的位置；另一个可以访问到Hadoop API的库，一般是 JAR 文件。
 
@@ -143,12 +147,14 @@ Namenode Federation
 hadoop fs 中可以指定副本数，如：`hadoop fs -setrep 5 -R /user/esammer/tmp`
 
 
-### FUSE
+FUSE
+-----
 
 虽然一般不会这么做，但是 HDFS 支持使用 FUSE (Filesystem In Userspace) 挂载在文件系统中。不过需要注意的是HDFS的特性，比如不支持随机写入、延时较长、随机读性能较差。
 
 
-### REST API
+REST API
+---------
 
 从 Apache Hadoop 1.0、CDH 4之后，NN的Web接口中提供了 REST API 访问的能力，这称之为 WebHDFS。比如，对应于 `hadoop fs -ls /hbase` 这么一条命令的 REST 访问是： `http://namenode:50070/webhdfs/v1/hbase/?op=liststatus`。需要注意的是，客户端使用WebHDFS访问HDFS和通过HDFS API的流程几乎相同，换句话说，客户端需要自己去连接所需数据块的DataNode，从而以取得数据。
 
