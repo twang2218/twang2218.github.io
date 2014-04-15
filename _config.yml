@@ -3,18 +3,19 @@
 ## Source: https://github.com/tommy351/hexo/
 
 # Site
-title: Hexo
-subtitle:
+title: Tao Wang's Blog
+subtitle: 无善无恶心之体，有善有恶意之动，知善知恶是良知，为善去恶是格物。
 description:
-author: John Doe
-email:
-language:
+author: Tao Wang
+email: twang2218@gmail.com
+language: zh-CN
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://twang2218.github.io
 root: /
-permalink: :year/:month/:day/:title/
+#permalink: :year/:month/:day/:title/
+permalink: :category/:title.html
 tag_dir: tags
 archive_dir: archives
 category_dir: categories
@@ -75,12 +76,17 @@ per_page: 10
 pagination_dir: page
 
 # Disqus
-disqus_shortname:
+disqus_shortname: twang2218-github
 
 # Extensions
 ## Plugins: https://github.com/tommy351/hexo/wiki/Plugins
 ## Themes: https://github.com/tommy351/hexo/wiki/Themes
-theme: modernist
+# memoir
+# pacman
+# biture
+# awe
+# freemind
+theme: pacman
 exclude_generator:
 
 # Markdown
@@ -96,7 +102,7 @@ markdown:
 
 # Stylus
 stylus:
-  compress: false
+  compress: true
 
 # Deployment
 ## Docs: http://zespia.tw/hexo/docs/deployment.html
