@@ -2,5 +2,7 @@
   "name": "hexo-site",
   "version": "2.5.2",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "hexo-tag-bootstrap": "0.0.6"
+  }
 }

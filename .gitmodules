@@ -1,0 +1,4 @@
+[submodule "themes/pacman"]
+	path = themes/pacman
+	url = git@github.com:twang2218/pacman.git
+	branch = mysite
