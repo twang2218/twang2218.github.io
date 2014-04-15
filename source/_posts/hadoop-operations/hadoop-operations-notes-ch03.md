@@ -2,12 +2,11 @@
 layout: post
 category: readings
 title: 《Hadoop Operations》读书笔记 - 2 - 第三章 MapReduce
-tags : [hadoop]
-date: 2014/03/16
+tags : [hadoop, Hadoop Operations]
+date: 2014/03/24
 ---
-{% blockquote Eric Sammer http://shop.oreilly.com/product/0636920025085.do "Hadoop Operations" - O'Reilly (2012) ... (p25 ~ p39) %}
-Chapter 3: MapReduce
-{% endblockquote %}
+> **Chapter 3: MapReduce**
+> Eric Sammer ["Hadoop Operations" - O'Reilly (2012)](http://shop.oreilly.com/product/0636920025085.do) ... (p25 ~ p39)
 
 
 MapReduce，在这里实际上有两个含义，一个是一种分布式计算模型；另一个是某种特定实现，比如Apache Hadoop MapReduce。其设计目的是为了简化大规模、分布式、高容错性的数据处理应用的开发，目前MapReduce是首选方案。
@@ -159,9 +158,5 @@ YARN 与传统集中式 JobTracker 非常不同，将不同的 Job 之间 **完�
 集群节点中，替代 TaskTracker 服务称为 NodeManager。TT 是明确主要负责处理 MapReduce 任务的，而 NM 则支持更广泛一些， **不局限于 MapReduce** 。NM 会在称为 **ApplicationContainer** 中运行任何类型的进程。比如，MapReduce的应用，在NM中可能会同时运行 ApplicationMaster 和具体的一个个 map 与 reduce 任务。
 
 由于 YARN 可以运行任何应用程序，从而导致 YARN 更加计算模型无关化，不再局限于 MapReduce。Hadoop 社区中已经开始考虑其它可以运用 Hadoop 构架的计算模型，比如图形学计算、或者大规模并行计算的模型。
-
-
-
-
 
 

@@ -2,13 +2,12 @@
 layout: post
 category: readings
 title: 《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS
-tags : [hadoop]
-date: 2014/03/09
+tags : [hadoop, Hadoop Operations]
+date: 2014/03/17
 ---
+> **Chapter 2: HDFS**
+> Eric Sammer ["Hadoop Operations" - O'Reilly (2012)](http://shop.oreilly.com/product/0636920025085.do) ... (p7 ~ p24)
 
-{% blockquote Eric Sammer http://shop.oreilly.com/product/0636920025085.do "Hadoop Operations" - O'Reilly (2012) ... (p7 ~ p24)  %}
-Chapter 2: HDFS
-{% endblockquote %}
 
 传统存储是 SAN 或者 NAS，提供了集中化、低延时的块存储或者文件系统，以支持TB级数据。在面对关系型数据库之类的服务时，这是很好的选择。但是面对上万台计算机同时提取几百TB的数据时，这种集中型存储就难以胜任了。
 
@@ -159,25 +158,5 @@ REST API
 从 Apache Hadoop 1.0、CDH 4之后，NN的Web接口中提供了 REST API 访问的能力，这称之为 WebHDFS。比如，对应于 `hadoop fs -ls /hbase` 这么一条命令的 REST 访问是： `http://namenode:50070/webhdfs/v1/hbase/?op=liststatus`。需要注意的是，客户端使用WebHDFS访问HDFS和通过HDFS API的流程几乎相同，换句话说，客户端需要自己去连接所需数据块的DataNode，从而以取得数据。
 
 于此同时，还引入了一个成为 HttpFS 的东西，这个解决了上面 WebHDFS 的问题，它相当于一个代理，客户端只需连接HttpFS所在服务器，该服务器会负责与集群内的其他DN联系。当然，这样也会导致数据集中于此服务器，如果很多客户端的话，可能会在这里产生瓶颈。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
