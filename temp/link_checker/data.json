@@ -1,0 +1,558 @@
+{
+  "links": [
+    {
+      "id": "hu0lrrii03ok3af1be6qcaef",
+      "url": "http://www.gutenberg.org/",
+      "lastChecked": "2014-04-15T03:01:02.610Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "古腾堡计划"
+      },
+      "source": {
+        "title": "Hadoop 1.2.1 单节点伪分布配置",
+        "url": null,
+        "file": "_posts/hadoop-install/hadoop1-single-node-install-guide.md"
+      }
+    },
+    {
+      "id": "hu0lrri303ok3af1be6hbdba",
+      "url": "http://hadoop.apache.org",
+      "lastChecked": "2014-04-15T03:01:02.607Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "http://hadoop.apache.org"
+      },
+      "source": {
+        "title": "编译 Hadoop 2.2.0",
+        "url": null,
+        "file": "_posts/hadoop-install/compile-hadoop2.md"
+      }
+    },
+    {
+      "id": "hu0lrrii03ok3af1be6qbtdy",
+      "url": "https://help.ubuntu.com/community/EnvironmentVariables#A.2BAH4ALw.profile",
+      "lastChecked": "2014-04-15T03:01:02.609Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Ubuntu 官网关于环境变量的配置"
+      },
+      "source": {
+        "title": "Hadoop 1.2.1 单节点伪分布配置",
+        "url": null,
+        "file": "_posts/hadoop-install/hadoop1-single-node-install-guide.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be77ufie",
+      "url": "https://www.virtualbox.org/",
+      "lastChecked": "2014-04-15T03:01:03.856Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "VirtualBox"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be77uzu8",
+      "url": "https://www.virtualbox.org/wiki/Downloads",
+      "lastChecked": "2014-04-15T03:01:04.262Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "VirtualBox 官方网站"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be780ndn",
+      "url": "https://www.virtualbox.org/wiki/Linux_Downloads",
+      "lastChecked": "2014-04-15T03:01:06.302Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Linux"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be781int",
+      "url": "http://www.ubuntu.com/server/",
+      "lastChecked": "2014-04-15T03:01:08.638Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Ubuntu 服务器版"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be781xmi",
+      "url": "http://w3techs.com/technologies/history_details/os-linux/all/y",
+      "lastChecked": "2014-04-15T03:01:10.790Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "仅次于"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be782cpm",
+      "url": "https://www.debian.org/",
+      "lastChecked": "2014-04-15T03:01:12.588Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Debian"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be782rpk",
+      "url": "http://thecloudmarket.com/stats#/by_platform_definition",
+      "lastChecked": "2014-04-15T03:01:14.449Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "首选"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be7836n0",
+      "url": "http://www.ubuntu.org.cn/download/server",
+      "lastChecked": "2014-04-15T03:01:15.249Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "http://www.ubuntu.org.cn/download/server"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be783lq7",
+      "url": "http://www.australiazoo.com.au/our-animals/animal-encounters/wombat-encounter.html",
+      "lastChecked": "2014-04-15T03:01:17.075Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Wombat"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be7842hg",
+      "url": "http://zh.wikipedia.org/wiki/%E4%B8%AD%E5%9C%8B%E6%99%82%E5%8D%80",
+      "lastChecked": "2014-04-15T03:01:19.072Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "昆仑时区、回藏时区、陇蜀时区、中原时区，以及长白时区"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be784ipq",
+      "url": "http://baike.baidu.com/view/1949604.htm",
+      "lastChecked": "2014-04-15T03:01:20.515Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "徐家汇观象台所"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjs03ok3af1be7hc3a9",
+      "url": "https://blogs.oracle.com/henrik/entry/moving_to_openjdk_as_the",
+      "lastChecked": "2014-04-15T03:01:28.263Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "在进入到 Java 7后"
+      },
+      "source": {
+        "title": "准备 Hadoop 运行环境",
+        "url": null,
+        "file": "_posts/hadoop-install/prepare-hadoop-runtime-environment.md"
+      }
+    },
+    {
+      "id": "hu0lrrjs03ok3af1be7hcn7l",
+      "url": "https://jdk7.java.net/java-se-7-ri/",
+      "lastChecked": "2014-04-15T03:01:30.271Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "已经一致了"
+      },
+      "source": {
+        "title": "准备 Hadoop 运行环境",
+        "url": null,
+        "file": "_posts/hadoop-install/prepare-hadoop-runtime-environment.md"
+      }
+    },
+    {
+      "id": "hu0lrrjs03ok3af1be7hd32b",
+      "url": "http://wiki.apache.org/hadoop/HadoopJavaVersions",
+      "lastChecked": "2014-04-15T03:01:32.770Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "明确给出确认"
+      },
+      "source": {
+        "title": "准备 Hadoop 运行环境",
+        "url": null,
+        "file": "_posts/hadoop-install/prepare-hadoop-runtime-environment.md"
+      }
+    },
+    {
+      "id": "hu0lrrjs03ok3af1be7hdij5",
+      "url": "http://www.putty.org/",
+      "lastChecked": "2014-04-15T03:01:33.953Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Putty"
+      },
+      "source": {
+        "title": "准备 Hadoop 运行环境",
+        "url": null,
+        "file": "_posts/hadoop-install/prepare-hadoop-runtime-environment.md"
+      }
+    },
+    {
+      "id": "hu0lrrjs03ok3af1be7hdxu1",
+      "url": "http://www.bitvise.com/ssh-client-download",
+      "lastChecked": "2014-04-15T03:01:35.057Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Bitvise SSH Client"
+      },
+      "source": {
+        "title": "准备 Hadoop 运行环境",
+        "url": null,
+        "file": "_posts/hadoop-install/prepare-hadoop-runtime-environment.md"
+      }
+    },
+    {
+      "id": "hu0lrrjs03ok3af1be7hedc3",
+      "url": "http://winscp.net/eng/docs/free_ssh_client_for_windows",
+      "lastChecked": "2014-04-15T03:01:37.440Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "WinSCP"
+      },
+      "source": {
+        "title": "准备 Hadoop 运行环境",
+        "url": null,
+        "file": "_posts/hadoop-install/prepare-hadoop-runtime-environment.md"
+      }
+    },
+    {
+      "id": "hu0lrrjs03ok3af1be7hhcg2",
+      "url": "http://www.netsarang.com/products/xsh_overview.html",
+      "lastChecked": "2014-04-15T03:01:38.927Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Xshell"
+      },
+      "source": {
+        "title": "准备 Hadoop 运行环境",
+        "url": null,
+        "file": "_posts/hadoop-install/prepare-hadoop-runtime-environment.md"
+      }
+    },
+    {
+      "id": "hu0lrrk803ok3af1be7rcfqk",
+      "url": "http://shop.oreilly.com/product/0636920025085.do",
+      "lastChecked": "2014-04-15T03:01:40.321Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "“Hadoop Operations” - O’Reilly (2012)"
+      },
+      "source": {
+        "title": "《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS",
+        "url": null,
+        "file": "_posts/hadoop-operations/hadoop-operations-notes-ch02.md"
+      }
+    },
+    {
+      "id": "hu0lrrkr03ok3af1be824xex",
+      "url": "http://bradhedlund.com/",
+      "lastChecked": "2014-04-15T03:01:42.329Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "http://bradhedlund.com/"
+      },
+      "source": {
+        "title": "《Hadoop Operations》读书笔记 - 3 - 第四章 规划集群",
+        "url": null,
+        "file": "_posts/hadoop-operations/hadoop-operations-notes-ch04.md"
+      }
+    },
+    {
+      "id": "hu0lrrl303ok3af1be89t9lp",
+      "url": "http://www.vagrantup.com/",
+      "lastChecked": "2014-04-15T03:01:48.206Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "Vagrant"
+      },
+      "source": {
+        "title": "Vagrant 简介",
+        "url": null,
+        "file": "_posts/openstack/vagrant.md"
+      }
+    },
+    {
+      "id": "hu0lrrl303ok3af1be89tpoe",
+      "url": "http://www.packtpub.com/openstack-cloud-computing-cookbook-second-edition/book",
+      "lastChecked": "2014-04-15T03:01:48.845Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "《OpenStack Cloud Computing Cookbook》"
+      },
+      "source": {
+        "title": "Vagrant 简介",
+        "url": null,
+        "file": "_posts/openstack/vagrant.md"
+      }
+    },
+    {
+      "id": "hu0lrrl303ok3af1be89u4tv",
+      "url": "https://github.com/mitchellh/vagrant",
+      "lastChecked": "2014-04-15T03:01:53.839Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "开源软件"
+      },
+      "source": {
+        "title": "Vagrant 简介",
+        "url": null,
+        "file": "_posts/openstack/vagrant.md"
+      }
+    },
+    {
+      "id": "hu0lrrl303ok3af1be89v0ft",
+      "url": "http://www.vagrantup.com/downloads",
+      "lastChecked": "2014-04-15T03:01:56.119Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "http://www.vagrantup.com/downloads"
+      },
+      "source": {
+        "title": "Vagrant 简介",
+        "url": null,
+        "file": "_posts/openstack/vagrant.md"
+      }
+    },
+    {
+      "id": "hu0lrrl403ok3af1be89vfve",
+      "url": "http://www.vagrantbox.es/",
+      "lastChecked": "2014-04-15T03:01:56.598Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "http://www.vagrantbox.es/"
+      },
+      "source": {
+        "title": "Vagrant 简介",
+        "url": null,
+        "file": "_posts/openstack/vagrant.md"
+      }
+    },
+    {
+      "id": "hu0lrrl403ok3af1be89yaig",
+      "url": "http://docs.vagrantup.com/v2/virtualbox/boxes.html",
+      "lastChecked": "2014-04-15T03:01:57.974Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "定制一个 box"
+      },
+      "source": {
+        "title": "Vagrant 简介",
+        "url": null,
+        "file": "_posts/openstack/vagrant.md"
+      }
+    },
+    {
+      "id": "hu0lrrl403ok3af1be89yrwi",
+      "url": "http://docs.vagrantup.com/v2/provisioning/index.html",
+      "lastChecked": "2014-04-15T03:01:58.852Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "http://docs.vagrantup.com/v2/provisioning/index.html"
+      },
+      "source": {
+        "title": "Vagrant 简介",
+        "url": null,
+        "file": "_posts/openstack/vagrant.md"
+      }
+    },
+    {
+      "id": "hu0lrrlg03ok3af1be8h327f",
+      "url": "http://pan.baidu.com/s/12ASwe",
+      "lastChecked": "2014-04-15T03:01:59.331Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "Text",
+        "label": "http://pan.baidu.com/s/12ASwe"
+      },
+      "source": {
+        "title": "生与熟：大数据的神话 - Kate Crawford在伯克利的讲座的笔记与思考",
+        "url": null,
+        "file": "_posts/random/raw-and-the-cooked-kate-crawford.md"
+      }
+    },
+    {
+      "id": "hu0lrrli03ok3af1be8idlx5",
+      "url": "http://www.youtube.com/embed/h_WScJu40mU",
+      "lastChecked": "2014-04-15T03:02:03.016Z",
+      "success": true,
+      "redirects": [],
+      "link": {
+        "type": "YouTube",
+        "label": "YouTube Video"
+      },
+      "source": {
+        "title": "生与熟：大数据的神话 - Kate Crawford在伯克利的讲座的笔记与思考",
+        "url": null,
+        "file": "_posts/random/raw-and-the-cooked-kate-crawford.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be7813ff",
+      "url": "http://download.virtualbox.org/virtualbox/4.3.8/VirtualBox-4.3.8-92456-Win.exe",
+      "lastChecked": "2014-04-15T03:01:06.470Z",
+      "success": true,
+      "redirects": [
+        {
+          "statusCode": 302,
+          "redirectUri": "http://dlc.sun.com.edgesuite.net/virtualbox/4.3.8/VirtualBox-4.3.8-92456-Win.exe"
+        }
+      ],
+      "link": {
+        "type": "Text",
+        "label": "Windows"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    },
+    {
+      "id": "hu0lrrjc03ok3af1be78056j",
+      "url": "http://download.virtualbox.org/virtualbox/4.3.8/VirtualBox-4.3.8-92456-OSX.dmg",
+      "lastChecked": "2014-04-15T03:01:06.073Z",
+      "success": true,
+      "redirects": [
+        {
+          "statusCode": 302,
+          "redirectUri": "http://dlc.sun.com.edgesuite.net/virtualbox/4.3.8/VirtualBox-4.3.8-92456-OSX.dmg"
+        }
+      ],
+      "link": {
+        "type": "Text",
+        "label": "Mac OS X"
+      },
+      "source": {
+        "title": "安装 Ubuntu Server 12.04 64位虚拟机",
+        "url": null,
+        "file": "_posts/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.md"
+      }
+    }
+  ]
+}

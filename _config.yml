@@ -113,3 +113,12 @@ deploy:
 feed:
   type: atom
   path: atom.xml
+
+sitemap:
+    path: sitemap.xml
+
+# hexo-broken-link-checker plugin
+link_checker:
+  enabled: true
+  storage_dir: temp/link_checker
+  silent_logs: false

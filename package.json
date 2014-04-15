@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "hexo-tag-bootstrap": "0.0.6",
-    "hexo-generator-feed": "~0.1.0"
+    "hexo-generator-feed": "~0.1.0",
+    "hexo-generator-sitemap": "~0.1.1",
+    "hexo-broken-link-checker": "~1.0.1"
   }
 }
