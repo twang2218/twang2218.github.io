@@ -377,8 +377,15 @@ Hadoop 是IO hungry 的，既是磁盘IO hungry，也是网络IO hungry。虽然
 
 虽然 Hadoop 不要求非要部署 10 Gb 网络，但是更高的带宽肯定会带来更好的性能。一旦你感觉需要2个以上1Gb网卡绑定以增加带宽的时候，就是考虑部署10Gb的时候了。
 
-网络拓扑结构对 Hadoop 在某种程度上是有影响的。由于 shuffle/sort 的阶段会有大量的网络访问，因此网络的特点是任意节点间的带宽需求都很高。这与传统的Web服务形式的纵向带宽需要很高截然不同。如果网络拓扑设计时纵向深度很大（层级很多）就会降低网络性能。**对于 Hadoop 而言，对横向带宽需求很高。**
+网络拓扑结构对 Hadoop 在某种程度上是有影响的。由于 shuffle/sort 的阶段会有大量的**东西向/横向**网络访问，因此网络的特点是任意节点间的带宽需求都很高。这与传统的Web服务形式的**南北向/纵向**带宽需要很高截然不同。如果网络拓扑设计时纵向深度很大（层级很多）就会降低网络性能。
 
-由于这种原因，传统的树形拓扑网络就不是很适用与 Hadoop 的特性，更合适的是 **spine fabric** 拓扑结构。进一步的信息可以参考 Brad Hedlund 的博客： http://bradhedlund.com/
+![tree topology](/pic/hadoop-operations/tree-topology.svg)
+
+
+**对于 Hadoop 而言，对横向带宽需求很高。** 由于这种原因，传统的树形拓扑网络就不是很适用与 Hadoop 的特性，更合适的是 **spine fabric** 拓扑结构。
+
+![spine/leaf topology](/pic/hadoop-operations/spine-leaf-topology.svg)
+
+进一步的信息可以参考 Brad Hedlund 的博客： http://bradhedlund.com/2012/01/25/construct-a-leaf-spine-design-with-40g-or-10g-an-observation-in-scaling-the-fabric/
 
 
