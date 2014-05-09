@@ -786,8 +786,6 @@ sudo restart squid-deb-proxy
 ```
 
 
-
-
 配置：概述
 ===========
 
@@ -849,14 +847,350 @@ Hadoop 主要的配置文件是三个 XML 文件 `core-site.xml`、`hdfs-site.xm
 环境变量和 Shell 脚本
 ======================
 
+Hadoop Shell 脚本分两类：
+
+- 一类是定义 Hadoop 运行所必需的参数。如 JDK 的位置、选项、Hadoop 的位置参数等；
+- 另一类是为服务运行时提供配置环境变量的。
+
+`haoop-env.sh` 中需要配置 `JAVA_HOME`，虽然 `hadoop` 会自己寻找 `JAVA_HOME`，如果没有配置好的 `JAVA_HOME` 依旧会导致访问时使用了错误的 JDK 版本，或者干脆找不到。
+
+`HADOOP_daemon_OPTS` 的选项将会传给 对应的 daemon(服务)。
+
+新的 Hadoop 版本开始使用 [Apache Bigtop](http://bigtop.apache.org/) 项目，该项目将会帮助 Hadoop 生态圈的软件寻找到合适的JDK以及其它所需软件，从而不必每个组件都实现一套这个需求。CDH 的发布版本中就使用了 Bigtop。
+
+有时，用户会要求管理员将他们所用的 jar 文件加入到 `$HADOOP_CLASSPATH` 中去。**要尽一切可能不去把用户所需要的 jar 加入 `$HADOOP_CLASSPATH` 中去，要推荐用户使用 Hadoop Distributed Cache。** 要知道，`$HADOOP_CLASSPATH` 的设计目的是为了给 Hadoop 服务程序提供所需的库的，而不是为用户的 MapReduce 程序提供库的。虽然把 MapReduce 程序所依赖的库放到 `$HADOOP_CLASSPATH` 中去可以让该 MapReduce 程序运行，但是却破坏了 Hadoop 服务的稳定性。此外，**每次修改 `$HADOOP_CLASSPATH`，需要重启所有的 TaskTracker 以使之生效。**相信没有人希望每次用户所依赖的库升级后都要重新启动一次集群。
+
+`$HADOOP_HOME` 已经不推荐使用了，可以使用 `$HADOOP_PREFIX`代替。
+
 日志配置
 ==========
+
+几乎所有的 Hadoop 的服务都是用 log4j 来控制日志输出，因此，必须合理的配置 `log4j.properties` 才可以看到日志输出。Hadoop 默认的 `log4j.properties` 文件位于 `conf` 目录下，和其它的配置文件放在一起。
+
+自己撰写 MapReduce 程序的时候，特别是本机调试的时候，需要让 `log4j.properties` 文件位于 CLASSPATH 内，不然调试的时候会无法输出日志信息。
+
 
 HDFS
 =====
 
+接下来说一下 `hdfs-site.xml` 配置。
+
+标识和定位
+------------
+
+### fs.default.name (core-site.xml)
+
+该参数配置客户端默认的文件系统的位置。默认使用的是 `file:///`，既本地文件系统。一般开发环境会使用这个配置，而生产环境则会配置为真正的集群地址，其形式为： `hdfs://hostname:port`。其中 `hostname` 和 `port` 都是指 NameNode 的地址。
+
+这个地址有两方面用处，一方面供客户端读取以定位 NameNode 位置，另一方面供 NameNode 自己读取自己应该监听的端口。默认情况下，NameNode 监听端口为 `8020`
+
+- 使用该配置的有：NN、DN、SNN、JT、TT、客户端
+
+### dfs.name.dir
+
+**配置 HDFS 中 NameNode 数据存储位置，这是非常重要的一个配置。** 该值为逗号分割的无空格字符串，可以包含一个到多个路径。如： `/data/1/dfs/nn,/data/2/dfs/nn,/data/3/dfs/nn`，如果是多个路径，每个路径将存放相同的内容，目的为冗余备份。一般情况下，在这里配置至少两个本地路径，分别指向不同的物理硬盘。此外，还会再有一个 NFS 的路径，目的为避免物理机火灾类的严重故障时的 HDFS 的核心信息不至于丢失。由于这种冗余能力，所以不需要再额外的使用RAID作为存储，不过一些管理员还是会选择 RAID，为了再加一层保险。这个目录中的数据量不是海量的，是 GB 级别，而不会到 TB 级。
+
+> **需要注意**： 由于很多部署采用同质化部署，既所有机器使用相同的配置。而由于 NameNode 不需要很多硬盘空间，导致 NameNode 上的硬盘空间很大部分被闲置。于是一些管理员总觉得应该充分利用磁盘，从而**在 NameNode 上还跑一些其它的服务，这是非常错误的。**
+
+该配置的默认值是 `${hadoop.tmp.dir}/dfs/name`，而默认情况下，`hadoop.tmp.dir`是 `/tmp/hadoop-${user.name}`。`/tmp` 重新启动后，内容会被清空。于是，如果没有修改 `dfs.name.dir` 或者 `hadoop.tmp.dir` 的话，NameNode 的所有信息实际上是存储于空中，重启后，所有信息都会丢失。因此一定要检查 `dfs.name.dir` 配置。
+
+- 使用该配置的有：NN
+
+### dfs.data.dir
+
+`dfs.data.dir` 指定了 DataNode 存储 HDFS block 的位置。其内容也是逗号分割的字符串，来表示多个目录位置。一般来说是对应于多个物理硬盘，换句话说，硬盘只需要 JBOD 形式，而不需要用RAID，这样的性能较高。**Hadoop 会将 block 轮训存入各个位置**，这样将来读取时才可能会并发读入。HDFS 会将 block 副本存于多个 DataNode，因此不必担心磁盘故障会导致数据丢失的问题。
+
+- 使用该配置的有：DN
+
+### fs.checkpoint.dir
+
+`fs.checkpoint.dir` 指定了 SecondaryNameNode 所需要进行 checkpoint 合并的目录。也是逗号分割的字符串，与 `dfs.name.dir` 一样，不同的位置一般代表着不同的物理硬盘，并且所有的位置会入完全一样的信息，以达到冗余的目的。这个目录一般是作为恢复 NameNode 元数据的最后的解决办法。**如果没有任何其它办法可以恢复元数据**，这里可以起码有一个可以用的、虽然较老的元数据。
+
+- 使用该配置的有：SNN
+
+### dfs.permissions.supergroup
+
+HDFS 中存在一个超级用户的概念，凡是在 `dfs.permissions.supergroup` 中指定的用户组，将享有超级用户的身份。**拥有该身份的用户可以执行 HDFS 上的任何操作。**放入该组的用户需要被格外关注。
+
+- 使用该配置的有：NN、客户端
+
+优化调整
+----------
+
+### io.file.buffer.size (core-site.xml)
+
+Hadoop 的代码中很多会使用文件IO操作，`io.file.buffer.size` 指定了通用的缓存大小。越大的缓存意味着更好地数据传输率，但也意味着更大的延迟和更大的内存占用。**其值为内存页大小(默认为4KB)的倍数**。比如可以调整为 64KB。
+
+- 使用该配置的有：客户端、所有服务
+
+### dfs.balance.bandwidthPerSec
+
+HDFS balancer 是负责 HDFS DataNode 的存储负载均衡的，它会调整数据在 DN 之间复制。如果没有对其流量进行限制，则可能会造成 balancer 占用了全部的网络带宽。该配置就是对其限定的。需要注意的是，其单位为字节每秒，而非网络中常用的位每秒。
+
+**该配置不能够动态调整**，只有在 DN 启动时，方会读取一次该值。
+
+- 使用该配置的有：DN
+
+### dfs.block.size
+
+`dfs.block.size` 顾名思义，是 HDFS block 大小。但是需要注意的是，这里有一个常见的**误解**，该值的含义严格来说是**默认**的HDFS block 大小。因为设定该值并不会改变已有文件的存储方式，也就是说**不会变动已有文件的块大小**；此外，该值也可以在创建文件的时候被覆盖掉，**客户端可以为该文件指定另外的块大小**。
+
+默认值因Hadopp发行版本不同而不同，常见的是64MB或128MB。**MapReduce 的 Job 会为每个块分配一个 map，因此 Block 的大小会明显的影响 Job 的性能。** (实际情况会稍有差异，请查阅 《Hadoop 权威指南》中关于 `FileInputFormat` 的章节。)
+
+- 使用该配置的有：客户端
+
+### dfs.datanode.du.reserved
+
+DataNode 会将其本地可供 HDFS 使用的磁盘空间(`dfs.data.dir`)大小通报 NameNode。而通常情况下，`mapred.local.dir` 使用同样的硬盘，因此它们的空间是共享的。一般为了确保 MapReduce 的任务执行，需要为其保留一定的空间供其使用。`dfs.datanode.du.reserved` 就是保留一部分空间，使 HDFS 不能够使用全部的硬盘空间。**默认情况下该值为0，也就是说允许 HDFS 使用全部的硬盘空间。**可以考虑给每个物理硬盘预留 10GB 空间供 MapReduce 使用，不过要观察实际情况，如果 MapReduce 会产生大量的中间结果，则应该适度增加该值。
+
+- 使用该配置的有：DN
+
+### dfs.namenode.handler.count
+
+NameNode 维护一个线程池，用以响应来自包括客户端和服务端的并发服务请求。`dfs.namenode.handler.count` 配置了线程池的规模，其默认值是10。越大的集群则需要越高的并发池。**一般会设置为 `20 * log(n)`。** 比如一个200节点的集群，该值应该设置为 `20 * log(200) = 106`。
+
+该数值过低会导致 DN 经常因为超时而被 NN 所拒绝链接，NN 的 RPC 的队列很长，以及 RPC 的高延迟。
+
+- 使用该配置的有：NN
+
+### dfs.datanode.failed.volumes.tolerated
+
+默认情况下，DN上的一个硬盘坏掉了就会标记为该 DN 坏掉了。这就会触发 NN 开始进行不满足副本数的 block 复制。对于中型和大型规模的集群来说，硬盘坏掉是很经常的事情，没必要只要有一块硬盘坏了就宣布这个DN挂了。`dfs.datanode.failed.volumes.tolerated` 就是设置，有几个硬盘坏掉后，则认为 DN 挂了。其默认值为 0，既无容忍，一块坏了就挂。
+
+- 使用该配置的有：DN
+
+### dfs.hosts
+
+当 DN 第一次联系 NN 的时候，在获得其 Namespace ID 后，立即就可以接收数据块了。**默认情况下，任意服务器都可以这样联系 NameNode 而加入集群。**在更高安全性的需求下，可以将允许加入集群的主机明确写入以行分割形式写入一个文件，并通过 `dfs.hosts` 指定其文件路径。这样，凡是不在该列表中的主机，都会被拒绝加入集群。
+
+- 使用该配置的有：NN
+
+### dfs.host.exclude
+
+和 `dfs.hosts` 正好相反，该配置是指定**哪些节点需要排除在集群范围之外。** 该文件常被用于在停止某 DN 前通知 NN 之用，这样 DN 可以平滑的退出集群。
+
+- 使用该配置的有：NN
+
+### fs.trash.interval (core-site.xml)
+
+为了防止误删除，HDFS 可以启用回收站功能。同桌面系统一样，所删除的东西会先移入回收站一段时间，然后再被删除。`fs.trash.interval`所指定的就是这“一段时间”长短（以分钟为单位）。用户可以显式的通过命令 `hadoop fs -expunge` 清空回收站；用户也可以通过为 `hadoop fs -rm` 命令添加 `-skipTrash` 来直接删除。** 回收站功能只支持命令行文件操作。**
+
+- 使用该配置的有：NN，客户端
+
+格式化 NameNode
+-----------------
+
+- **在第一次启动 HDFS 前，必须格式化 NameNode。**
+- **格式化必须使用拥有 Hadoop 超级用户身份的用户格式化。**
+
+格式化 NameNode 会在 `dfs.name.dir` 目录中创建一个 `fsimage` 文件、edit log，以及生成一个随机的 Storage ID。DN 第一次连接到 NN 的时候会获得该 ID，并在以后拒绝连入其它 Storage ID 的NN。
+
+** 如果要格式化 NameNode，也一定要删除 DN 中的所有数据。**
+
+** 如果格式化 NameNode，所有的元数据将丢失，即使 DN 中依旧保留着那些文件对应的 block 内容，也将无法再使用这些 block了。**
+
+```bash
+sudo -u hdfs hadoop namenode -format
+```
+
+创建 /tmp 目录
+-----------------
+
+很多应用要求 HDFS 中存在 `/tmp` 目录，用以存放临时文件。该目录应该是所有人都可写的。
+
+```bash
+hadoop fs -ls /
+sudo -u hdfs hadoop fs -mkdir /tmp
+sudo -u hdfs hadoop fs -chmod 1777 /tmp
+hadoop fs -ls /
+```
+
 NameNode High Availability
 ============================
+
+Hadoop 1.x 以来，最引起关注的就是 NameNode 的可用性问题。如其构架所述，NameNode 一旦挂掉，HDFS 就等于挂掉。在基础构架上经常采用一些高可用性的措施，如 RAID、双电源热备、双网卡热备等，来保证 NameNode 不会轻易挂掉。不过这只是一种折衷的办法。最好从机制上 NameNode 就具有高可用性。
+
+从 Hadoop 0.23 以来，NameNode High Availability 就成为一个很受关注的特性。CDH 4 第一次引入了 Hadoop 2.0，以尝试支持该特性，并且在 CDH 5 中，开始将 Hadoop 2.3 作为默认的版本。
+
+> 由于 NN HA 是 2.0 的特性，因此本节将使用 2.x 的新配置名称。
+
+使用 NFS 建立 NameNode High Availability
+-----------------------------------------
+
+和之前一样，需要配置一个高可用的 NFS 服务器，并且挂载到两个 NN 上。假定其挂载点为 `/mnt/filer/namenode-shared`，称其为**共享编辑目录**。通常情况，挂载时需要加入参数 `tcp,hard,intr`，以及至少版本为 `nfsvers=3`。此外需要配置合适的 `timeo` 和 `retrans` 值。可以通过 `man 5 nfs` 来查看文档。
+
+如果共享编辑目录不可写入或者不可用，则 NN 会退出。这与 `dfs.name.dir` 不同，对于 `dfs.name.dir`来说，如果提供的某目录不可用，那么只会忽略，而不会导致 NN 退出。由于需要确保两个 NN 都可以读写共享编辑目录，很重要的一件事是，**需要保证同样用户在不同服务器中的 `uid` 要一致**。
+
+接下来的配置将集中于 `core-site.xml` 与 `hdfs-site.xml` 中。
+
+由于存在多个 NN 来表示一个 NameService，因此需要一个逻辑的名称来代替之前的 NameNode Id，这个名称被称为 `nameservice-id`。
+
+隔离(Fencing)方法
+-------------------
+
+当活跃的 NN 变得不再响应时，需要有些机制可以确保不健康的 NN 放弃其操作，并有等候的 NN 变为活跃。因为在某些情况下，虽然 NN 停止响应了，但是其进程并没有意识到自己已出故障，而继续向共享编辑目录写入信息，这会导致多个 NN 写入一个数据，而导致数据损坏。**这种设法让不健康 NN 终止其行为的办法称为隔离(Fencing)。**
+
+Fencing的办法有很多种。比如，通过 RPC 或者 `kill -15` 来平和的请求 NN 进程退出；或者通过 `kill -9` 强制进程退出；或者通过电源管理的组件直接切断该 NN 主机的电源（通常称为一枪爆头 STONITH）；或者告之共享存储的媒介(如NFS)禁止该失效的 NN 写入。
+
+在实际中，应该使用多种办法，以防止一种办法失效的情况。**Fencing 的办法应该按照顺序执行，其中最平和的办法放到最前面，最严厉的办法放到后面。**
+
+Hadoop 内置了一个标准的 **RPC** fencing和两个用户可配置的 **sshfence** 与 **shell** fencing 机制。Hadoop 会先尝试其内置的 RPC 机制来请求 NN 退出，如果不成功，才会执行用户定义在 `dfs.ha.fencing.methods` 配置下的方法。
+
+- `sshfence`： 利用 ssh 连入要终止的 NN 主机，利用 `fuser` 来确定所听端口的进程，并终止该进程。其格式为 `sshfence(username:port)`。需要注意的是，应该配置好 SSH 的密钥，这样可以无密码登录。由于无法判断目标主机是真的已经关闭了，还是 ssh 无响应，因此如果当对方主机已关闭的时候，`sshfence`不会返回成功，而会返回失败。因此必须准备一个非 ssh 的fencing方式，来在其失败时进一步的操作。
+
+- `shell`： 顾名思义，允许指定一个 shell 脚本或命令，因此这个选项非常灵活。其中需要注意的是 Hadoop 的配置属性会位于环境变量，只不过 `.` 变成了 `_`， 如：
+
+  - `$target_host`: 目标主机；
+  - `$target_port`: 目标主机的 RPC 端口；
+  - `$target_address`: `$target_host:$target_port`；
+  - `$target_nameserviceid`: NameService ID；
+  - `$target_namenodeid`: NameNode ID；
+
+`shell` 的形式为：
+
+```bash
+shell(/path/to/script.py --namenode=$target_host --nameservice=$target_nameserviceid)
+```
+
+脚本如果成功，应返回0；如果失败返回非0的值。
+
+**如果所有的 fencing 方法都失败的话，那么故障切换(failover)的行为就会中止，需要人为的介入来解决问题，以防止盲目的切换导致数据损毁。**
+
+需要注意的是，脚本没有超时机制，因此如果所写脚本未能退出，则切换控制行为将永远不会发生。
+
+基本配置
+----------
+
+如未说明，下面的配置都是在 `hdfs-site.xml` 中的：
+
+### dfs.nameservices
+
+指定 NameService ID，既一对 NN 所表示的逻辑名。HA 和 Federation 都将使用该配置。
+
+- 使用该配置的有：NN、客户端
+
+### dfs.ha.namenodes.<nameservice-id>
+
+指定 NameService ID 所代表的 NN 列表，以逗号分割，如：`nn1,nn2`。其中 `<nameservice-id>` 表示的是 `dfs.nameservices` 中指定的 id。
+
+- 使用该配置的有：NN、客户端
+
+### dfs.namenode.rpc-address.<nameservice-id>.<namenode-id>
+
+指定对应 `<nameservice-id>` 中的 `<namenode-id>` 的 RPC 主机名和端口号，由冒号分割。如 `hadoop01.mycompany.com:8020`。
+
+- 使用该配置的有：NN、客户端
+
+
+### dfs.namenode.http-address.<nameservice-id>.<namenode-id>
+
+指定对应 `<nameservice-id>` 中的 `<namenode-id>` 的 HTTP的 主机名和端口号，由冒号分割。如 `hadoop01.mycompany.com:50070`。
+
+- 使用该配置的有：NN
+
+
+### dfs.namenode.shared.edits.dir
+
+NameNode HA 均可以访问到的共享文件系统。形式应为 `file://` 的URL，如：`file:///mnt/namenode/prod-analytics-edits`。
+
+- 使用该配置的有：NN
+
+### dfs.client.failover.proxy.provider.<nameservice-id>
+
+当使用 HA 的时候，客户端需要知道如何判断那个 NN 是活动状态。这个选项指定了一个类，该类将会被用于定位活动状态的 NN。当前 Hadoop 只提供了一个类，既：`org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider`。
+
+- 使用该配置的有：客户端
+
+### dfs.ha.fencing.methods
+
+行分割的隔离(fencing)方式列表，内容如前所述。如：
+
+```
+sshfence(hdfs:22)
+shell(/path/to/fence-nfs-filer.sh --host=$target_host)
+shell(/path/to/pdu-controller.sh --disable-power --host=$target_host)
+```
+
+- 使用该配置的有：NN、ZKFC
+
+自动故障切换配置
+-----------------
+
+现在默认配置下，NN HA 是需要手动故障切换。如果需要可以设置自动切换，自动切换需要额外的添加两个组件：
+
+- Apache ZooKeeper： 分布式锁定、协作、配置服务。需要额外安装。
+
+- The ZooKeeper Failover Controller (ZKFC)： 这个服务将随 NN 运行，用于监控 NN 的健康状态、维护 ZooKeeper 的会话信息、在必要的时候发起状态转换和隔离。这部分包含在 Hadoop 中，不需要额外安装，但需额外配置。
+
+### 配置
+
+需要进行下列设置，才可以实现自动故障切换：
+
+#### dfs.ha.automatic-failover.enabled （hdfs-site.xml)
+
+当该项为 `true` 时，会额外启动 ZKFC 来监控 NN 状态，以实施自动故障切换。并且，如果启用该选项，则必须合理配置 `ha.zookeeper.quorum` 指向用于控制故障切换的 ZooKeeper quorum。
+
+- 默认值：`false`
+- 示例：`true`
+- 使用该配置的有：NN、ZKFC、客户端
+
+#### ha.zookeeper.quorum (core-site.xml)
+
+要使用自动故障切换功能，这里必须指定 ZooKeeper 的成员。格式为逗号分割的成员信息，成员则有主机名和端口号组成。至少要有三个 ZooKeeper。
+
+- 示例：zk-node1:2181,zk-node2:2181,zk-node3:2181
+- 使用该配置的有：ZKFC
+
+### 初始化 ZooKeeper 状态
+
+在自动故障切换可以使用之前，需要先对 ZooKeeper 进行必要的初始化。命令为 `hdfs zkfc -formatZK`，该命令需要使用 HDFS 的 super user (既格式化 HDFS 的用户) 的用户来执行。当然，执行该命令前，需要都已经配置好，并且 ZooKeeper 已然在运行。
+
+```bash
+hdfs zkfc -formatZK
+```
+
+格式化并启动(bootstrap) NameNode
+----------------------
+
+随便选择一个 NN 作为主(primary) NN，这只是初始状态，所以选择任何一个都可以。选择后，另一个称为后备(standby) NN。
+
+使用 `hdfs namenode -format` 在主NN上格式化 NameNode。这将会格式化本地目录以及共享编辑目录。
+
+```bash
+sudo -u hdfs hdfs namenode -format
+```
+
+在standby NN 上，需要从 primary NN 上取回一份元数据信息并准备，可以使用命令 `hdfs namenode -bootstrapStandby`。
+
+不过在此之前，需要先让 primary NN 启动并成为 active 状态。
+
+启动 primary NN 很简单，只需要在 primary NN 上执行正常的启动指令即可。
+
+```bash
+sudo service hadoop-hdfs-namenode start
+sudo service hadoop-hdfs-zkfc start
+```
+
+如果**没有配置自动故障切换，则需要手动激活。** 通过 `-failover` 参数加两个 NN 的主机名，其顺序为，A ⇨ B，A 为 StandBy，B 为 Active。
+
+```bash
+hdfs haadmin -failover hadoop-ha02 hadoop-ha01
+```
+
+准备好后，就可以在 Standby NN 上执行 `-bootstrapStandby` 了。
+
+```bash
+sudo -u hdfs hdfs namenode -bootstrapStandby
+```
+
+启动 standby NN 时需注意，如果配置了自动故障切换，同 primary NN 上一样，也需要启动 ZKFC。
+
+```bash
+sudo service hadoop-hdfs-namenode start
+sudo service hadoop-hdfs-zkfc start
+```
+
+测试自动故障切换是否成功，可以直接将 primary NN 上的 NN 进程杀掉，然后观察 FC 的日志，正常情况会看到健康状况的状态切换，以及 ZooKeeper 锁的状态切换。
 
 Namenode Federation
 =====================
