@@ -15,7 +15,7 @@ date: 2014/04/10
 
 对于 tarball 安装来说，拥有很大的灵活性，但同样也带来了很多不确定性。作为管理员需要为其额外的创建用户，以及准备各种目录，配置各种目录的权限。**如果不确定自己应该使用哪种安装方式，应该先从软件源或者 RPM/Deb 软件包安装开始。**
 
-Hadoop 的运行不需要使用 root 权限。但是安装的时候，需要创建用户、调整个目录的权限、配置启动脚本等，因此安装时候一般会使用 root 权限，特别是如果需要 secure mode 时。但是一定要明白，**使用 root 安装，绝不意味着就使用 root 运行。** 
+Hadoop 的运行不需要使用 root 权限。但是安装的时候，需要创建用户、调整个目录的权限、配置启动脚本等，因此安装时候一般会使用 root 权限，特别是如果需要 secure mode 时。但是一定要明白，**使用 root 安装，绝不意味着就使用 root 运行。**
 
 Apache Hadoop
 ---------------
@@ -101,23 +101,23 @@ vagrant@precise64:/usr/local/hadoop-1.2.1$ sudo ln -s /etc/hadoop/conf-1.2.1/ co
 - ** CentOS/RedHat **
 
 ```bash
-[vagrant@vagrant-centos65 hadoop]$ sudo rpm -ivh hadoop-1.2.1-1.x86_64.rpm 
+[vagrant@vagrant-centos65 hadoop]$ sudo rpm -ivh hadoop-1.2.1-1.x86_64.rpm
 Preparing...                ########################################### [100%]
    1:hadoop                 ########################################### [100%]
-[vagrant@vagrant-centos65 hadoop]$ 
+[vagrant@vagrant-centos65 hadoop]$
 ```
 
 - ** Ubuntu/Debian **
 
 ```bash
-vagrant@precise64:~$ sudo dpkg -i hadoop_1.2.1-1_x86_64.deb 
+vagrant@precise64:~$ sudo dpkg -i hadoop_1.2.1-1_x86_64.deb
 Selecting previously unselected package hadoop.
 (Reading database ... 51101 files and directories currently installed.)
 Unpacking hadoop (from hadoop_1.2.1-1_x86_64.deb) ...
 Setting up hadoop (1.2.1) ...
 Processing triggers for ureadahead ...
 ureadahead will be reprofiled on next reboot
-vagrant@precise64:~$ 
+vagrant@precise64:~$
 ```
 
 使用安装包有很多优势：
@@ -127,7 +127,7 @@ vagrant@precise64:~$
 - 可集成性。由于位置是标准的，所以很容易与配置管理系统，如 Puppet 或 Chef 集成在一起，从而使得 Hadoop 的部署更加简单；
 - 版本控制。可以使用系统自身的包管理软件进行升级维护。
 
-关于 rpm 可以使用 `rpm -qlp hadoop-1.2.1-1.x86_64.rpm | less` 来检查包内文件，关于 deb 可以使用 `dpkg -c hadoop_1.2.1-1_x86_64.deb |less`。
+关于 rpm 可以使用 `rpm -qlp hadoop-1.2.1-1.x86_64.rpm | less` 来检查包内文件，关于 deb 可以使用 `dpkg -c hadoop_1.2.1-1_x86_64.deb | less`。
 
 需要了解的是下面的文件或目录：
 
@@ -165,7 +165,7 @@ Preparing...                ########################################### [100%]
 /etc/yum.repos.d/cloudera-cdh5.repo
 /usr/share/doc/cloudera-cdh-5
 /usr/share/doc/cloudera-cdh-5/LICENSE
-[vagrant@centos ~]$ 
+[vagrant@centos ~]$
 ```
 
 
@@ -194,7 +194,7 @@ gpg: keyring `/etc/apt/trusted.gpg.d/cloudera-cdh5.gpg' created
 gpg: key 02A818DD: public key "Cloudera Apt Repository" imported
 gpg: Total number processed: 1
 gpg:               imported: 1
-vagrant@ubuntu:~$ dpkg-query -L cdh5-repository             
+vagrant@ubuntu:~$ dpkg-query -L cdh5-repository
 /.
 /etc
 /etc/apt
@@ -206,7 +206,7 @@ vagrant@ubuntu:~$ dpkg-query -L cdh5-repository
 /usr/share/doc/cdh5-repository
 /usr/share/doc/cdh5-repository/copyright
 /usr/share/doc/cdh5-repository/cloudera-cdh5.key
-vagrant@ubuntu:~$ 
+vagrant@ubuntu:~$
 ```
 
 ### 获得可以安装的软件组件
@@ -333,7 +333,7 @@ zookeeper.x86_64                                           3.4.5+cdh5.0.0+28-1.c
 zookeeper-debuginfo.x86_64                                 3.4.5+cdh5.0.0+28-1.cdh5.0.0.p0.36.el6                      cloudera-cdh5
 zookeeper-native.x86_64                                    3.4.5+cdh5.0.0+28-1.cdh5.0.0.p0.36.el6                      cloudera-cdh5
 zookeeper-server.x86_64                                    3.4.5+cdh5.0.0+28-1.cdh5.0.0.p0.36.el6                      cloudera-cdh5
-[vagrant@centos ~]$ 
+[vagrant@centos ~]$
 ```
 
 
@@ -514,9 +514,9 @@ Installing for dependencies:
                                                             cloudera-cdh5 8.8 k
  cairo                    x86_64 1.8.8-3.1.el6              base          309 k
  cdparanoia-libs          x86_64 10.2-5.1.el6               base           47 k
- 
+
  ...
- 
+
  zookeeper                x86_64 3.4.5+cdh5.0.0+28-1.cdh5.0.0.p0.36.el6
                                                             cloudera-cdh5 3.7 M
 
@@ -528,19 +528,19 @@ Total download size: 137 M
 Installed size: 325 M
 Is this ok [y/N]: y
 Downloading Packages:
-(1/106): alsa-lib-1.0.22-3.el6.x86_64.rpm                | 370 kB     00:00     
-(2/106): at-3.1.10-43.el6_2.1.x86_64.rpm                 |  60 kB     00:00     
-(3/106): atk-1.30.0-1.el6.x86_64.rpm                     | 195 kB     00:00     
-(4/106): avahi-libs-0.6.25-12.el6.x86_64.rpm             |  54 kB     00:00     
-(5/106): avro-libs-1.7.5+cdh5.0.0+16-1.cdh5.0.0.p0.37.el |  12 MB     00:09     
-(6/106): bc-1.06.95-1.el6.x86_64.rpm                     | 110 kB     00:00     
-(7/106): bigtop-utils-0.7.0+cdh5.0.0+0-1.cdh5.0.0.p0.36. | 8.8 kB     00:00     
+(1/106): alsa-lib-1.0.22-3.el6.x86_64.rpm                | 370 kB     00:00
+(2/106): at-3.1.10-43.el6_2.1.x86_64.rpm                 |  60 kB     00:00
+(3/106): atk-1.30.0-1.el6.x86_64.rpm                     | 195 kB     00:00
+(4/106): avahi-libs-0.6.25-12.el6.x86_64.rpm             |  54 kB     00:00
+(5/106): avro-libs-1.7.5+cdh5.0.0+16-1.cdh5.0.0.p0.37.el |  12 MB     00:09
+(6/106): bc-1.06.95-1.el6.x86_64.rpm                     | 110 kB     00:00
+(7/106): bigtop-utils-0.7.0+cdh5.0.0+0-1.cdh5.0.0.p0.36. | 8.8 kB     00:00
 
 ...
-  
-(106/106): zookeeper-3.4.5+cdh5.0.0+28-1.cdh5.0.0.p0.36. | 3.7 MB     00:02     
+
+(106/106): zookeeper-3.4.5+cdh5.0.0+28-1.cdh5.0.0.p0.36. | 3.7 MB     00:02
 --------------------------------------------------------------------------------
-Total                                           1.3 MB/s | 137 MB     01:47     
+Total                                           1.3 MB/s | 137 MB     01:47
 warning: rpmts_HdrFromFdno: Header V4 DSA/SHA1 Signature, key ID e8f86acd: NOKEY
 Retrieving key from http://archive.cloudera.com/cdh5/redhat/6/x86_64/cdh/RPM-GPG-KEY-cloudera
 Importing GPG key 0xE8F86ACD:
@@ -551,43 +551,43 @@ Running rpm_check_debug
 Running Transaction Test
 Transaction Test Succeeded
 Running Transaction
-  Installing : freetype-2.3.11-14.el6_3.1.x86_64                          1/106 
-  Installing : fontconfig-2.8.0-3.el6.x86_64                              2/106 
-  Installing : libjpeg-turbo-1.2.1-3.el6_5.x86_64                         3/106 
-  Installing : 2:libpng-1.2.49-1.el6_2.x86_64                             4/106 
-  Installing : libICE-1.0.6-1.el6.x86_64                                  5/106 
-  Installing : libSM-1.2.1-2.el6.x86_64                                   6/106 
-  Installing : 1:qt-4.6.2-28.el6_5.x86_64                                 7/106 
+  Installing : freetype-2.3.11-14.el6_3.1.x86_64                          1/106
+  Installing : fontconfig-2.8.0-3.el6.x86_64                              2/106
+  Installing : libjpeg-turbo-1.2.1-3.el6_5.x86_64                         3/106
+  Installing : 2:libpng-1.2.49-1.el6_2.x86_64                             4/106
+  Installing : libICE-1.0.6-1.el6.x86_64                                  5/106
+  Installing : libSM-1.2.1-2.el6.x86_64                                   6/106
+  Installing : 1:qt-4.6.2-28.el6_5.x86_64                                 7/106
 
   ...
 
-  Installing : hadoop-2.3.0+cdh5.0.0+548-1.cdh5.0.0.p0.69.el6.x86_64    105/106 
-  Installing : parquet-format-1.0.0+cdh5.0.0+3-1.cdh5.0.0.p0.39.el6.n   106/106 
-  Verifying  : libXdamage-1.1.3-4.el6.x86_64                              1/106 
-  Verifying  : libSM-1.2.1-2.el6.x86_64                                   2/106 
-  Verifying  : at-3.1.10-43.el6_2.1.x86_64                                3/106 
-  Verifying  : hadoop-2.3.0+cdh5.0.0+548-1.cdh5.0.0.p0.69.el6.x86_64      4/106 
+  Installing : hadoop-2.3.0+cdh5.0.0+548-1.cdh5.0.0.p0.69.el6.x86_64    105/106
+  Installing : parquet-format-1.0.0+cdh5.0.0+3-1.cdh5.0.0.p0.39.el6.n   106/106
+  Verifying  : libXdamage-1.1.3-4.el6.x86_64                              1/106
+  Verifying  : libSM-1.2.1-2.el6.x86_64                                   2/106
+  Verifying  : at-3.1.10-43.el6_2.1.x86_64                                3/106
+  Verifying  : hadoop-2.3.0+cdh5.0.0+548-1.cdh5.0.0.p0.69.el6.x86_64      4/106
 
   ...
-  
-  Verifying  : libthai-0.1.12-3.el6.x86_64                              105/106 
-  Verifying  : libXv-1.0.7-2.el6.x86_64                                 106/106 
+
+  Verifying  : libthai-0.1.12-3.el6.x86_64                              105/106
+  Verifying  : libXv-1.0.7-2.el6.x86_64                                 106/106
 
 Installed:
-  hadoop.x86_64 0:2.3.0+cdh5.0.0+548-1.cdh5.0.0.p0.69.el6                       
+  hadoop.x86_64 0:2.3.0+cdh5.0.0+548-1.cdh5.0.0.p0.69.el6
 
 Dependency Installed:
-  alsa-lib.x86_64 0:1.0.22-3.el6                                                
-  at.x86_64 0:3.1.10-43.el6_2.1                                                 
-  atk.x86_64 0:1.30.0-1.el6                                                     
+  alsa-lib.x86_64 0:1.0.22-3.el6
+  at.x86_64 0:3.1.10-43.el6_2.1
+  atk.x86_64 0:1.30.0-1.el6
 
   ...
-                                          
-  xorg-x11-font-utils.x86_64 1:7.2-11.el6                                       
-  zookeeper.x86_64 0:3.4.5+cdh5.0.0+28-1.cdh5.0.0.p0.36.el6                     
+
+  xorg-x11-font-utils.x86_64 1:7.2-11.el6
+  zookeeper.x86_64 0:3.4.5+cdh5.0.0+28-1.cdh5.0.0.p0.36.el6
 
 Complete!
-[vagrant@centos ~]$ 
+[vagrant@centos ~]$
 
 ```
 
@@ -604,7 +604,7 @@ sudo apt-get update && sudo apt-get upgrade
 ```bash
 vagrant@ubuntu:~$ sudo apt-get install hadoop-hdfs hadoop-mapreduce
 Reading package lists... Done
-Building dependency tree       
+Building dependency tree
 Reading state information... Done
 The following extra packages will be installed:
   avro-libs bigtop-utils parquet parquet-format zookeeper
@@ -620,7 +620,7 @@ Get:3 http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/co
 Get:4 http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib parquet-format all 1.0.0+cdh5.0.0+3-1.cdh5.0.0.p0.39~precise-cdh5.0.0 [440 kB]
 Get:5 http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib parquet all 1.2.5+cdh5.0.0+91-1.cdh5.0.0.p0.31~precise-cdh5.0.0 [10.6 MB]
 Get:6 http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib hadoop all 2.3.0+cdh5.0.0+548-1.cdh5.0.0.p0.69~precise-cdh5.0.0 [20.3 MB]
-Fetched 48.1 MB in 2min 44s (293 kB/s)                                                                                             
+Fetched 48.1 MB in 2min 44s (293 kB/s)
 Selecting previously unselected package avro-libs.
 (Reading database ... 51141 files and directories currently installed.)
 Unpacking avro-libs (from .../avro-libs_1.7.5+cdh5.0.0+16-1.cdh5.0.0.p0.37~precise-cdh5.0.0_all.deb) ...
@@ -645,7 +645,7 @@ Setting up hadoop (2.3.0+cdh5.0.0+548-1.cdh5.0.0.p0.69~precise-cdh5.0.0) ...
 update-alternatives: using /etc/hadoop/conf.empty to provide /etc/hadoop/conf (hadoop-conf) in auto mode.
 Processing triggers for libc-bin ...
 ldconfig deferred processing now taking place
-vagrant@ubuntu:~$ 
+vagrant@ubuntu:~$
 
 ```
 
@@ -708,10 +708,10 @@ sudo apt-get install apt-mirror apache2
 下载：
 
 ```bash
-vagrant@ubuntu:~$ sudo apt-mirror /etc/apt/sources.list.d/cloudera-cdh5.list 
+vagrant@ubuntu:~$ sudo apt-mirror /etc/apt/sources.list.d/cloudera-cdh5.list
 Downloading 10 index files using 10 threads...
 Begin time: Mon Apr 14 17:14:25 2014
-[10]... [9]... [8]... [7]... [6]... [5]... [4]... [3]... [2]... [1]... [0]... 
+[10]... [9]... [8]... [7]... [6]... [5]... [4]... [3]... [2]... [1]... [0]...
 End time: Mon Apr 14 17:14:27 2014
 
 Proceed indexes: [SP]
@@ -719,7 +719,7 @@ Proceed indexes: [SP]
 3.0 GiB will be downloaded into archive.
 Downloading 193 archive files using 20 threads...
 Begin time: Mon Apr 14 17:14:27 2014
-[20]... [19]... [18]... [17]... [16]... [15]... [14]... [13]... [12]... [11]... [10]... [9]... [8]... [7]... [6]... [5]... [4]... [3]... [2]... [1]... [0]... 
+[20]... [19]... [18]... [17]... [16]... [15]... [14]... [13]... [12]... [11]... [10]... [9]... [8]... [7]... [6]... [5]... [4]... [3]... [2]... [1]... [0]...
 End time: Mon Apr 14 18:15:31 2014
 
 0.0 bytes in 0 files and 0 directories can be freed.
@@ -888,7 +888,7 @@ HDFS
 
 ### dfs.name.dir
 
-**配置 HDFS 中 NameNode 数据存储位置，这是非常重要的一个配置。** 该值为逗号分割的无空格字符串，可以包含一个到多个路径。如： `/data/1/dfs/nn,/data/2/dfs/nn,/data/3/dfs/nn`，如果是多个路径，每个路径将存放相同的内容，目的为冗余备份。一般情况下，在这里配置至少两个本地路径，分别指向不同的物理硬盘。此外，还会再有一个 NFS 的路径，目的为避免物理机火灾类的严重故障时的 HDFS 的核心信息不至于丢失。由于这种冗余能力，所以不需要再额外的使用RAID作为存储，不过一些管理员还是会选择 RAID，为了再加一层保险。这个目录中的数据量不是海量的，是 GB 级别，而不会到 TB 级。
+**配置 HDFS 中 NameNode 数据存储位置，这是非常重要的一个配置。** 该值为逗号分割的无空格字符串，可以包含一个到多个路径。如： `/data/1/dfs/nn,/data/2/dfs/nn,/data/3/dfs/nn`，如果是多个路径，每个路径将存放**相同**的内容，目的为冗余备份。一般情况下，在这里配置至少两个本地路径，分别指向不同的物理硬盘。此外，还会再有一个 NFS 的路径，目的为避免物理机火灾类的严重故障时的 HDFS 的核心信息不至于丢失。由于这种冗余能力，所以不需要再额外的使用RAID作为存储，不过一些管理员还是会选择 RAID，为了再加一层保险。这个目录中的数据量不是海量的，是 GB 级别，而不会到 TB 级。
 
 > **需要注意**： 由于很多部署采用同质化部署，既所有机器使用相同的配置。而由于 NameNode 不需要很多硬盘空间，导致 NameNode 上的硬盘空间很大部分被闲置。于是一些管理员总觉得应该充分利用磁盘，从而**在 NameNode 上还跑一些其它的服务，这是非常错误的。**
 
@@ -949,7 +949,7 @@ DataNode 会将其本地可供 HDFS 使用的磁盘空间(`dfs.data.dir`)大小�
 
 NameNode 维护一个线程池，用以响应来自包括客户端和服务端的并发服务请求。`dfs.namenode.handler.count` 配置了线程池的规模，其默认值是10。越大的集群则需要越高的并发池。**一般会设置为 `20 * log(n)`。** 比如一个200节点的集群，该值应该设置为 `20 * log(200) = 106`。
 
-该数值过低会导致 DN 经常因为超时而被 NN 所拒绝链接，NN 的 RPC 的队列很长，以及 RPC 的高延迟。
+该数值过低会导致 DN 经常因为超时而被 NN 所拒绝链接、NN 的 RPC 的队列很长、以及 RPC 的高延迟。
 
 - 使用该配置的有：NN
 
@@ -1056,7 +1056,7 @@ shell(/path/to/script.py --namenode=$target_host --nameservice=$target_nameservi
 
 **如果所有的 fencing 方法都失败的话，那么故障切换(failover)的行为就会中止，需要人为的介入来解决问题，以防止盲目的切换导致数据损毁。**
 
-需要注意的是，脚本没有超时机制，因此如果所写脚本未能退出，则切换控制行为将永远不会发生。
+需要注意的是，**脚本没有超时机制**，因此如果所写脚本未能退出，则切换控制行为将永远不会发生。
 
 基本配置
 ----------
@@ -1069,20 +1069,20 @@ shell(/path/to/script.py --namenode=$target_host --nameservice=$target_nameservi
 
 - 使用该配置的有：NN、客户端
 
-### dfs.ha.namenodes.<nameservice-id>
+### dfs.ha.namenodes.[nameservice-id]
 
 指定 NameService ID 所代表的 NN 列表，以逗号分割，如：`nn1,nn2`。其中 `<nameservice-id>` 表示的是 `dfs.nameservices` 中指定的 id。
 
 - 使用该配置的有：NN、客户端
 
-### dfs.namenode.rpc-address.<nameservice-id>.<namenode-id>
+### dfs.namenode.rpc-address.[nameservice-id].[namenode-id]
 
 指定对应 `<nameservice-id>` 中的 `<namenode-id>` 的 RPC 主机名和端口号，由冒号分割。如 `hadoop01.mycompany.com:8020`。
 
 - 使用该配置的有：NN、客户端
 
 
-### dfs.namenode.http-address.<nameservice-id>.<namenode-id>
+### dfs.namenode.http-address.[nameservice-id].[namenode-id]
 
 指定对应 `<nameservice-id>` 中的 `<namenode-id>` 的 HTTP的 主机名和端口号，由冒号分割。如 `hadoop01.mycompany.com:50070`。
 
@@ -1095,7 +1095,7 @@ NameNode HA 均可以访问到的共享文件系统。形式应为 `file://` 的
 
 - 使用该配置的有：NN
 
-### dfs.client.failover.proxy.provider.<nameservice-id>
+### dfs.client.failover.proxy.provider.[nameservice-id]
 
 当使用 HA 的时候，客户端需要知道如何判断那个 NN 是活动状态。这个选项指定了一个类，该类将会被用于定位活动状态的 NN。当前 Hadoop 只提供了一个类，既：`org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider`。
 
@@ -1126,7 +1126,7 @@ shell(/path/to/pdu-controller.sh --disable-power --host=$target_host)
 
 需要进行下列设置，才可以实现自动故障切换：
 
-#### dfs.ha.automatic-failover.enabled （hdfs-site.xml)
+#### dfs.ha.automatic-failover.enabled (hdfs-site.xml)
 
 当该项为 `true` 时，会额外启动 ZKFC 来监控 NN 状态，以实施自动故障切换。并且，如果启用该选项，则必须合理配置 `ha.zookeeper.quorum` 指向用于控制故障切换的 ZooKeeper quorum。
 
@@ -1195,18 +1195,326 @@ sudo service hadoop-hdfs-zkfc start
 Namenode Federation
 =====================
 
+不同于为了保持高可用性的 NN HA，NN Federation 的目的是为了克服 NN 的内存限制性问题。NN 需要把其管辖的所有的HDFS元数据都加载于内存之中，如果集群非常巨大，比如空间非常庞大、或文件数目非常多，有可能出现 NN 的内存被消耗尽了，而 HDFS 的空间还尚未充分利用的问题。
+
+NN Federation 的出现则解决了这个问题，它的概念和 Linux 中挂载文件系统非常相似。NN Federation 将允许存在多组(如果没有HA的话就是多个) NN，每组 NN 负责一个**命名空间**，我们可以将其理解为挂载点。比如，一组 NN 负责 `/hbase`，另一组 NN 负责 `/user` 等。与没有 NN Federation 不同，DN 可以同时向多组 NN 报告，因此，每组 NN 都可以使用该 DN 的存储空间来保存本命名空间中的文件 block。
+
+这样的设计带来了一系列的好处：
+
+- 首先，是由于 HDFS 被切分成了多个命名空间，因此整个集群的 HDFS 元数据不在全部保存于一台 NN 了，因此**DN 的空间可以被更充分的利用**；
+- 其次，我们**可以针对不同的命名空间采取不同的策略**。比如，对于 `/hbase` 命名空间的使用 NN HA 并且特意的针对 HBase 的特征，对 JVM 进行一些优化配置，而对于 `/user` 则不启用 NN HA等；
+- 在没有 NN Federation 的时候，我们可以把集群划分为多个 Hadoop 集群来解决问题。但局限性是，当某个集群过载的时候，另外一个集群可能会闲的很。而 NN Federation 的设计则使得**DN 的负载则更加均衡**。
+- 由于存在多组命名空间的 NN，因此客户端访问的时候，将通过一个插件 `ViewFS` 来访问这个逻辑的、统一的、全局的命名空间。因此，客户端将不会意识到自己到底具体在访问哪组 NN，**多组 NN 的细节被隐藏了，客户端可以很平滑的使用各个命名空间**。
+
+配置 NN Federation 很简单。
+
+- 首先，需要为每组 NN 指定一个逻辑名（当然，如果没有配置 HA的话，这个逻辑名应该为 NN 的名称)，该配置和 NN HA 一样，为 `dfs.nameservices`，所不同的是，此时存在多个 `[nameservice-id]`，它们以逗号分隔；
+- 然后，为每组 NN 配置 RPC。如果配置了 NN 的话，配置为 `dfs.namenode.rpc-address.[nameservice-id].[namenode-id]`，否则，则配置 `dfs.namenode.rpc-address.[namenode-id]；
+
+以下面的配置为例：
+
+```xml
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<!--
+定义了两个命名空间：nn1和nn2，所有数据节点都将为这两个空间服务。
+-->
+	<property>
+		<name>dfs.nameservices</name>
+		<value>nn01,nn02</value>
+	</property>
+<!-- 绑定 nn01 的 RPC 到 hadoop-fed01.mycompany.com，端口 8020. -->
+	<property>
+		<name>dfs.namenode.rpc-address.nn01</name>
+		<value>hadoop-fed01.mycompany.com:8020</value>
+	</property>
+<!-- 绑定 nn02 到 hadoop-fed02.mycompany.com, 端口 8020. -->
+	<property>
+		<name>dfs.namenode.rpc-address.nn02</name>
+		<value>hadoop-fed02.mycompany.com:8020</value>
+	</property>
+<!--
+NN 保存元数据的目录列表。
+-->
+	<property>
+		<name>dfs.name.dir</name>
+		<value>/data/1/hadoop/dfs/nn,/data/2/hadoop/dfs/nn</value>
+	</property>
+</configuration>
+```
+
+当配置好后，集群中的每一组 NN 都需要格式化。不过与之前不同的是，所有的 NN 需要使用相同的 `cluster-id`。有两种做法：
+
+- 一种是我们自己指定一个 `cluster-id` 然后对所有 NN 格式化的时候，使用该 id；
+- 另一种则是不自己指定 `cluster-id` 的情况下，先格式化第一个 NN，这样会自动生成一个 id，然后，用该 id 格式化剩余 NN；
+
+```bash
+sudo -u hdfs hdfs namenode -format -clusterID prod-analytics
+```
+
+当所有 NN 都格式化后，则可以启动所有的 NN 和 DN 了。需要确认所有 DN 都访问到了所有的 NN。可以通过 NN 的 HTTP 服务来查看。对于每个 NN 有两个链接需要检查。
+
+- `http://[namenode]:50070/dfshealth.jsp`: 查看该 NN 负责的命名空间的信息；
+- `http://[namenode]:50070/dfsclusterhealth.jsp`: 查看整个集群（包括所有 federation 命名空间）的信息。
+
+此时我们可以通过 `hdfs dfs` 命令来直接访问不同 NN，比如：
+
+```bash
+sudo -u hdfs hdfs dfs -ls hdfs://hadoop-fed01:8020/
+```
+
+**注意：此时尚未配置 `ViewFS`，因此我们只能通过直接访问各个 NN 的形式访问集群。**
+
+如同 `/etc/fstab` 一样，客户端需要一个挂载表，来指定每个 NN 是负责哪个命名空间。而与 Linux 不同的是，允许存在多个挂载表。一个 NN 可能在这个挂载表里是 `/data1`，而在另一个挂载表里是 `/data2`。使用时，只需要在配置 `fs.defaultFS` 中，以 `viewfs://[table-name]/` 的形式，指定要使用的挂载表的名字即可。若省略挂载表名字，如：`viewfs:///`，则使用默认挂载。默认的挂载表的名字为 `default`。挂载点的配置都要加上对应挂载表前缀，以表明是哪个挂载表的配置，前缀形式为：`fs.viewfs.mounttable.[table-name]`。下面以配置默认挂载表配置为例进行配置(`core-site.xml`)：
+
+```xml
+<?xml version="1.0"?>
+<configuration>
+<!-- 客户端将使用默认的 ViewFS 挂载表 -->
+	<property>
+		<name>fs.defaultFS</name>
+		<value>viewfs:///</value>
+	</property>
+<!-- 将 hadoop-fed01.mycompany.com:8020/ 挂载为 ‘/a’ -->
+	<property>
+		<name>fs.viewfs.mounttable.default.link./a</name>
+		<value>hdfs://hadoop-fed01.mycompany.com:8020/</value>
+	</property>
+<!-- 将 hadoop-fed02.mycompany.com:8020/ 挂载为 ‘/b’ -->
+	<property>
+		<name>fs.viewfs.mounttable.default.link./b</name>
+		<value>hdfs://hadoop-fed02.mycompany.com:8020/</value>
+	</property>
+...
+</configuration>
+```
+
+> 在 Linux 中允许嵌套绑定，既可以将一个文件系统挂载于 `/var`，而将另一个文件系统挂载于 `/var/log` 下。当前的 NN Federation 并不支持这个特性。
+
+此时，我们将可以通过直接访问 `/a` 和 `/b` 等来访问各个文件系统：
+
+```bash
+hdfs dfs -ls /a
+hdfs dfs -ls /b
+```
+
+自此，客户端不再需要了解各个命名空间的 NN 和绑定路径之间的关系了。
 
 MapReduce
 =============
+
+如非特殊说明，下面的配置将位于 `mapred-site.xml`。
+
+身份和位置
+----------
+
+### mapred.job.tracker
+
+如同 `fs.defaultFS` 是告知 DN 其 NN 的位置一样，`mapred.job.tracker` 是告知 TaskTracker 其 JobTracker 的位置，内容包括主机名及 RPC 端口号。
+
+
+当该项为 `true` 时，会额外启动 ZKFC 来监控 NN 状态，以实施自动故障切换。并且，如果启用该选项，则必须合理配置 `ha.zookeeper.quorum` 指向用于控制故障切换的 ZooKeeper quorum。
+
+- 默认值：`local`，既表明 MapReduce 将以`本地模式`运行。包括所有的Hadoop Framework以及客户端程序，都将运行在一个进程中，便于开发和调试。由于`local`的特殊性，其没有端口号。其它情况下，默认端口号是`8021`。
+- 示例：`hadoop01.sf.cloudera.com:8021`
+- 使用该配置的有：JT、TT、客户端
+
+
+### mapred.local.dir
+
+MapReduce 运行时需要本地磁盘保存中间结果，`mapred.local.dir`就是指定该位置的配置选项。和 `dfs.data.dir` 一样，它允许逗号分隔的多个路径，并且以轮询形式依次访问各个路径，以均衡多个存储设备负载，减少IO瓶颈。
+
+关于 `mapred.local.dir` 和 `dfs.data.dir` 是否应当共享物理磁盘的问题，目前是有争议的。共享的好处是IO将会分散到更多的物理设备上，从而使得IO带宽更大；而缺陷是，共享将会破坏原本高速的可预测的IO读写，变为低速的随机读写。
+
+如果选择将单独的磁盘作为 MapReduce 使用的话，那么 `dfs.datanode.du.reserved`，将不需要配置。因为 `dfs.data.dir` 将只供 HDFS 使用。
+
+- 示例：`/data/1/mapred/local,/data/2/mapred/local`
+- 使用该配置的有：JT、TT
+
+
+优化调整
+--------
+
+### mapred.java.child.opts
+
+TT 会启动一个**独立的 JVM 进程来运行新的任务**，该选项用以指定该新的JVM的配置参数。这个选项主要是用于设置 JVM heap 大小、垃圾回收策略、库搜索路径等等。
+
+常用的选项：
+
+  - -Xmx*Nu*: 设置 JVM 最大 Heap size。其中 `N` 为数值，`u` 为单位（k⇨KB, m⇨MB, g⇨GB）。
+  - -Xms*Nu*: 设置 JVM 初始 Heap size。`Nu` 含义同上选项。当已知任务启动后会立即占用很大内存时，可以使用该选项来避免逐步分配内存的性能开销。
+  - -D*property*=*value*: 设置 Java 系统属性，比如垃圾回收参数。
+
+
+- 默认值： `-Xmx200m`。该默认值对大多数数据处理来说都太小了，一般是分配1-4GB的空间。
+- 示例： `-Xmx2g`
+- 使用该配置的有：子任务
+
+### mapred.child.ulimit
+
+除了设置 JVM 的 Heap size 外，我们还可以直接通过配置 Linux 的标准的进程虚拟内存限制来进行内存控制（详情查阅： `man 2 getrlimit`）。虚拟内存，既虚拟地址空间，包括了物理内存、交换空间、资源映射等。其单位为 KB。通常设置为 JVM Heap size 的 1.5 倍。
+
+- 示例： `1572864`
+- 使用该配置的有：子任务
+
+> ** 为什么同时需要 `mapred.java.child.opts` 和 `mapred.child.ulimit` **
+> `mapred.java.child.opts` 只能够限制所启动的 JVM 的 Heap size。而对于该任务内部启动的子进程则无效。特别是 Hadoop Streaming，该API 将启动新的进程以运行非Java程序。而 `ulimit` 则可以对进程资源进行限定，并且该限定会被子进程所继承，从而对内存开销有所控制。
+
+
+### mapred.tasktracker.map.tasks.maximum 或 mapred.tasktracker.reduce.tasks.maximum
+
+集群中的每个工作节点都会配置一个可以同时并行运行的map/reduce的最大数额。
+
+之所以会需要分别配置 map 和 reduce，是因为二者的特性不同。 map 会尽量使用本地数据，并尽可能少的使用网络；而 reduce 则相反，其输入数据基本上都要从网络获得。
+
+需要注意的是，每一个工作节点同时运行的任务数量是map, reduce二者的叠加。每一个任务的内存会由 `mapred.java.child.opts` 来控制。如果累加后的最大资源超过系统实际资源，可能会造成交换空间的使用，从而降低系统性能。
+
+初始配置可以从 CPU 物理核数的 1.5 倍，作为总任务数。比如 12核的 CPU，并行的总任务数可以设置为 18。至于 map 和 reduce 的任务比例可以以 map:reduce = 2:1 为一个初始设置。
+
+- 示例: `mapred.tasktracker.map.tasks.maximum`: `12`, `mapred.tasktracker.reduce.tasks.maximum`: `6`。
+- 使用该配置的有: TT
+
+
+### io.sort.mb
+
+当 map 产生输出时，其输出结果会先存储于内存中的一个循环缓冲区，而非直接写入磁盘。该缓冲区的大小由 `io.sort.mb` 来配置。
+
+当缓冲区使用超过一定值时（默认是80%），将会有一个背景线程负责把其内容写入磁盘 `mapred.local.dir`，如果该配置有过个目录，则会轮询写入。写入磁盘前，数据会先被分区、排序。
+
+当 map 任务结束时，可能会产生很多个这种分批写入的已排序的小文件，TT 会负责将这些文件依照分区，排序合并为一个独立的大文件，将会由 reduce 使用。
+
+`io.sort.mb` 的单位是 `MB`。其默认值为 `100`。增加其值会减少写入磁盘的次数，并减少所需合并的小文件的数量，从而降低对磁盘IO的需求。其缺陷是，这个缓冲区位于 JVM Heap size内，因此会占用用户任务的内存空间。初始设置可以设为 JVM heap size 的1/8，然后，观察 `map output records` 和 `spilled records`数值，如果后者远高于前者，则需要增加 `io.sort.mb` 空间。
+
+> 需要注意的是，`io.sort.mb`，可以在用户程序中被覆盖（因此该配置不应被标注为 `final`），因此如果只有少量任务需要调整该配置时，应该直接在程序中处理，而无需修改集群配置文件。
+
+- 示例: `128`
+- 使用该配置的有: 子任务
+
+
+### io.sort.factor
+
+该配置和上面的配置 `io.sort.mb` 相关，是指在将小文件合并时，同时合并的文件数量。
+
+所不同的是，这里有两种情况需要用到该配置进行合并：
+
+- 前面所提到的，map 结束时，需要将所有的小文件进行合并；
+- reduce 从各个 map 取回结果时，需要先进行合并，然后才可以交于用户 reduce 程序。
+
+增大该数值会降低磁盘读写次数，并且减少磁盘IO，但是也意味着需要更多的内存。对于 heap size 为 1GB 左右时，`io.sort.factor` 可以初始设置为 `64`。其后观察 sort/shuffle 阶段的本地磁盘IO，如果太高，则需要增加该值。
+
+- 示例: `64`
+- 使用该配置的有:子任务
+
+### mapred.compress.map.output
+
+默认情况下，map输出写入到磁盘时是未压缩的。启用压缩会大幅降低sort/shuffle阶段的磁盘IO以及网络带宽。
+
+- 示例: `true`
+- 使用该配置的有: 子map任务
+
+
+### mapred.map.output.compression.codec
+
+通过这个配置选择压缩算法。大多数情况下可以使用 `SnappyCodec`，如果发现网络IO或者磁盘IO非常繁忙，可以考虑使用 `org.apache.io.compress.GzipCodec`。
+
+- 默认: `org.apache.hadoop.io.compress.DefaultCodec`
+- 示例: `org.apache.hadoop.io.compress.SnappyCodec`
+- 使用该配置的有: 子map任务
+
+### mapred.output.compression.type
+
+当 MapReduce 任务输出格式为 `SequenceFile` 时，`mapred.output.compression.type` 指定了压缩的类型。
+
+压缩类型有三种：
+
+- `RECORD`: 每一个值将被单独压缩；
+- `BLOCK`: 将依据给定大小对记录分组，每组进行压缩；
+- `NONE`: 不被压缩。
+
+为了能够充分利用压缩去重复的特性，一般来说会选用 `BLOCK` 作为压缩类型。而对于记录中包含了图像或其它二进制内容的时候，分记录压缩与合并组压缩区别不大，此时则可以考虑使用 `RECORD` 的压缩方式。
+
+**注意，该`BLOCK`只是分组，而不是 `HDFS block`**，目前为止 HDFS 没有压缩机制，均由写入方负责压缩，读出方负责解压缩。
+
+- 示例: `BLOCK`
+- 使用该配置的有: 子任务
+
+### mapred.jobtracker.handler.count
+
+JT 维护一个线程池，其中每个线程负责响应 TT 的请求。该参数配置了线程池的大小。
+
+默认该值为 `10`。同 `dfs.namenode.handler.count` 一样，`mapred.jobtracker.handler.count` 应当是 `log (TT的数量) * 20`。
+
+- 默认: `10`
+- 示例: `105`
+- 使用该配置的有: JT
+
+### mapred.jobtracker.taskScheduler
+
+当 MR job 被切分为 task 时，JT 的调度器插件负责调度*哪一个 task* 以*什么样的顺序*运行在*哪一个 TT* 上。 `mapred.jobtracker.taskScheduler` 指定了该调度插件的类名。
+
+默认调度器是 `FIFO` 的，而在生产环境中，应该调整为 `FairScheduler` 或者 `CapacityScheduler`。
+
+- 默认: `org.apache.hadoop.mapred.JobQueueTaskScheduler`
+- 示例: `org.apache.hadoop.mapred.FairScheduler`
+- 使用该配置的有: JT
+
+### mapred.reduce.parallel.copies
+
+在 shuffle 阶段，reducer 需要从所有的 map 中取得自己所负责的数据。`mapred.reduce.parallel.copies` 配置了可以同时从多少个 mapper 中并行获取数据。
+
+**配置时需要注意不要拥塞整个网络。**
+
+- 默认: `5`
+- 示例: `10`。建议 `log(TT数量) * 4`
+- 使用该配置的有: 子任务
+
+
+### mapred.reduce.tasks
+
+MR 任务执行时，用户不需指定 map 的数量，这是因为 map 的数量是由 `InputFormat` 决定的。但用户需要指定 reducer 的数量，因为系统无法对尚未产生的数据进行分析。
+
+`mapred.reduce.tasks` 是配置 reducer 的数量的，其默认值为 `1`，不过，一般会在 job 级别被用户覆盖该值。
+
+配置时，可以以集群中 slot 数量的半数为初始设置。比如，一个*20*节点的集群，每个节点配置了*6个并发reducer*，因此总容量是*120个并发 reducer*。如果没有额外的信息的话，可以将 `mapred.reduce.tasks` 配置为 `60` 作为起始。
+
+- 默认: `1`
+- 示例: `64`
+- 使用该配置的有: JT
+
+
+### tasktracker.http.threads
+
+之前我们知道了 `mapred.reduce.parallel.copies` 是 reducer 控制自己可以同时并发多少个请求从 mapper 中获取数据。而 `tasktracker.http.threads` 则是 TT 决定自身可以同时有多少个并发线程来处理 reducer 的这种请求。**前者可以理解为客户端的并发数量，后者可以理解为服务端的线程池大小。**
+
+- 示例: `64`
+- 使用该配置的有: TT
+
+
+### mapred.reduce.slowstart.completed.maps
+
+我们知道，在 map 执行完毕前，reduce 的任务是无法开始执行的。但是，我们可以提前进行 sort/shuffle 的部分，从而避免 map 执行完毕时，突然间的网络带宽的拥塞，从而在时间上均衡一部分网络流量。而这个*提前*的时间量，是需要好好把握的。过早的开始 reduce，会导致 reduce slot 的占用，而浪费了资源。该配置是用以配置在 map 执行完毕百分之多少之后，开始 reduce 的任务。
+
+默认该配置为 0.05，即 5%。这种设计是针对缓慢或者比较拥塞的网络考虑的。对于现在更好地网络条件，可以适当的增加该值。对于1Gbps非阻塞网络而言，可以将该值初始设为 `0.8`，也就是 80%，之后如果发现 shuffle 时间网络并无拥塞，速度很快，可以将其调整为接近 `1` 的值。
+
+- 默认: `0.05`
+- 示例: `0.8`
+- 使用该配置的有: JT
+
+
 
 
 机架拓扑
 ===========
 
+Hadoop 一个很重要的优化就是在执行 map 任务时，会优选距离数据最近的 TT 来执行任务。理想情况是本地，稍差一些就是同机架。要使得 Hadoop 拥有这种能力，特别是机架识别能力，就需要使用*机架拓扑*的配置。
 
-安全
-======
+在写入 HDFS block 时，该 block 会被复写三份。第1份将*随机*选择一个 DN 来写入，而第2份、第3份则将写入**其它的同一个机架中**。这里并非是将后两份写入不同的机架，原因在于避免顶级交换机的负载过重。写入同一个机架内的不同 DN 的话，其后数据的流量是机架内的。
 
+机架拓扑的实现是通过脚本的执行。用户给 Hadoop 提供一个脚本，该脚本接受 IP 或者 主机名 作为参数，输出则是机架的拓扑位置。Hadoop 会在需要时调用该脚本，以取得拓扑结构。
 
+脚本实现可以很简单，比如在脚本内部写入主机名和拓扑对应关系；或者灵活一些，读取一个 CSV 文件，其中包含了 IP 和*拓扑*的对应关系。
 
+拓扑以Linux路径形式存在，既各个拓扑层级间以`/`分割（如 `/rack1`）。当前 Hadoop 只支持是否在同一机架的检测，不过将来可能会有所扩充。
 
+写好脚本后，将其放置到固定的目录（比如 `/etc/hadoop/conf/topology.py`），然后配置 `core-site.xml` 中的 `topology.script.file.name` 项，写入该脚本全路径名。检查是否调用了该脚本，可以执行 `hadoop dfsadmin -report`，其中各个 DN 的 `Rack` 项会给出脚本执行的结果。
