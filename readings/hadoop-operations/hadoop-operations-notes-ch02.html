@@ -1,0 +1,428 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS | Tao Wang&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Tao Wang">
+    
+    <meta name="description" content="Chapter 2: HDFSEric Sammer “Hadoop Operations” - O’Reilly (2012) … (p7 ~ p24)
+
+传统存储是 SAN 或者 NAS，提供了集中化、低延时的块存储或者文件系统，以支持TB级数据。在面对关系型数据库之类的服务时，这是很好的选择。">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="Tao Wang&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bear.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/bear.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/bear.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/bear.svg" alt="Tao Wang&#39;s Blog" title="Tao Wang&#39;s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Tao Wang&#39;s Blog">Tao Wang&#39;s Blog</a></h1>
+				<h2 class="blog-motto">无善无恶心之体，有善有恶意之动，知善知恶是良知，为善去恶是格物。</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:twang2218.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/readings/hadoop-operations/hadoop-operations-notes-ch02.html" title="《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS" itemprop="url">《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://twang2218.github.io" title="Tao Wang">Tao Wang</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-03-16T13:00:00.000Z" itemprop="datePublished">2014年3月17日</time>
+    更新日期:<time datetime="2014-05-09T18:17:24.000Z" itemprop="dateModified">2014年5月10日</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HDFS的设计目标"><span class="toc-number">1.</span> <span class="toc-text">HDFS的设计目标</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HDFS_和传统文件系统异同"><span class="toc-number">2.</span> <span class="toc-text">HDFS 和传统文件系统异同</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三个服务"><span class="toc-number">3.</span> <span class="toc-text">三个服务</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DataNode"><span class="toc-number">3.1.</span> <span class="toc-text">DataNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NameNode"><span class="toc-number">3.2.</span> <span class="toc-text">NameNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SecondaryNameNode"><span class="toc-number">3.3.</span> <span class="toc-text">SecondaryNameNode</span></a></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#HDFS_读文件"><span class="toc-number">4.</span> <span class="toc-text">HDFS 读文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HDFS_写文件"><span class="toc-number">5.</span> <span class="toc-text">HDFS 写文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#元数据"><span class="toc-number">6.</span> <span class="toc-text">元数据</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SNN_与_NN_交流合并元数据的过程"><span class="toc-number">7.</span> <span class="toc-text">SNN 与 NN 交流合并元数据的过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NameNode_High_Availability"><span class="toc-number">8.</span> <span class="toc-text">NameNode High Availability</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Namenode_Federation"><span class="toc-number">9.</span> <span class="toc-text">Namenode Federation</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#访问和使用_HDFS"><span class="toc-number">10.</span> <span class="toc-text">访问和使用 HDFS</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用HDFS_API"><span class="toc-number">10.1.</span> <span class="toc-text">使用HDFS API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FUSE"><span class="toc-number">10.2.</span> <span class="toc-text">FUSE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#REST_API"><span class="toc-number">10.3.</span> <span class="toc-text">REST API</span></a></li></ol>
+		</div>
+		
+		<blockquote>
+<p><strong>Chapter 2: HDFS</strong><br>Eric Sammer <a href="http://shop.oreilly.com/product/0636920025085.do" target="_blank">“Hadoop Operations” - O’Reilly (2012)</a> … (p7 ~ p24)</p>
+</blockquote>
+<p>传统存储是 SAN 或者 NAS，提供了集中化、低延时的块存储或者文件系统，以支持TB级数据。在面对关系型数据库之类的服务时，这是很好的选择。但是面对上万台计算机同时提取几百TB的数据时，这种集中型存储就难以胜任了。</p>
+<h1 id="HDFS的设计目标">HDFS的设计目标</h1>
+<ul>
+<li>存储上百万的大文件，每个文件都大于几十TB的数量级；</li>
+<li>使用普通服务器，横向扩展，不必使用RAID；</li>
+<li>针对大规模、流式读写进行优化，而不考虑低延时或者小文件。批处理重要性优于即时响应；</li>
+<li>对机器、硬盘错误可以从容应对。</li>
+</ul>
+<h1 id="HDFS_和传统文件系统异同">HDFS 和传统文件系统异同</h1>
+<p>相似处：</p>
+<ul>
+<li>使用块儿保存文件</li>
+<li>metadata保存了文件名、所用的块儿、目录结构、权限等。</li>
+</ul>
+<p>不同处：</p>
+<ul>
+<li>没有使用内核驱动实现，是userspace的文件系统</li>
+<li>分布式文件系统：metadata存在NameNode上，Block数据存在DataNode上。均是构建于现有文件系统之上的文件系统。</li>
+<li>本地文件系统Block大小是4KB、8KB这个级别；而为了应对大规模的数据文件，HDFS的Block大小，一般是64MB(1.x默认), 128MB(2.x默认)，甚至管理员会调整为256MB以及1GB也不罕见。Block越大，意味着磁盘寻址时间越少，因为更多的将是大块的顺序读写。</li>
+</ul>
+<p>HDFS会以Block为单位保存多份副本（默认是3份）。更多的副本除了更好的容错性，也会因为应用可以获取最近的副本的数据而取得更好的性能。</p>
+<p>HDFS API 类似于 POSIX API，提供了文件IO操作，因此用户不需要关心底层的分布式、以及副本问题。</p>
+<h1 id="三个服务">三个服务</h1>
+<h2 id="DataNode">DataNode</h2>
+<p>HDFS的DN不需要RAID，只需要JBOD(Just a Bunch of Disks 就一堆磁盘)。对于 Hadoop 的应用特征而言，一大堆独立的硬盘要比RAID性能好。</p>
+<p>DN启动后，每个小时会向NN发送Block Report（包括DN刚启动的时候），其中包含了该节点所存储的所有Block列表。这样做的好处是，当DN的IP或者主机名发生改变后，不影响其所存储的数据。另外一种常见的问题是当一个DN的主板类硬件损坏后，管理员只需要把硬盘拔下来，插在一个新的计算机上，启动DN，数据并不会丢失。</p>
+<h2 id="NameNode">NameNode</h2>
+<p>NameNode 所记录的所有HDFS文件系统元数据全部存储于内存，以方便快速遍历。因此在1.x中NN的内存大小决定了集群的规模。粗略估计的话，1百万Block(或1百万空文件)需要1GB内存。</p>
+<h2 id="SecondaryNameNode">SecondaryNameNode</h2>
+<p>SecondaryNameNode 只是负责打理日志合并等事物，并不是热备，不过在必须时，NN可以从SNN中回复最近的元数据。</p>
+<h1 id="HDFS_读文件">HDFS 读文件</h1>
+<p>假设一个客户端，比如Java Jar程序，需要一份 <code>/user/esammer/foo.txt</code>。</p>
+<ul>
+<li>首先，客户端中会指定NN的位置，或者是配置文件，或者是代码中直接指定；</li>
+<li>客户端会先联系 NN，告知其想读取该文件</li>
+<li>对于NN来说，首先需要验证对方身份。验证分两种，一种是相信客户端，客户端说自己是谁就是谁，比如默认会直接取当前系统的用户名；另一种则是使用Kerberos认证。</li>
+<li>然后NN需要确定该用户是否拥有适当的权限访问该文件</li>
+<li>如果文件存在，并且权限允许，则NN向客户端返回第一个Block的ID，以及一个保存有该Block的DN列表，列表由据客户端距离排序，最近的放在最上面。距离由所定义的拓扑结构来决定：同一个机器 &lt; 同一个机架 &lt; 不同机架</li>
+<li>收到了Block ID和DN列表后，客户端会尝试联系第一个DN读取该Block。读完之后，会向NN请求下一个Block，以此类推，直到读完所有 Block了。</li>
+<li>如果客户端联系DN的过程中发生了错误，DN不可用，客户端则会尝试列表中下一个DN，直至所有DN均无法访问，则读操作失败，客户端产生异常</li>
+</ul>
+<h1 id="HDFS_写文件">HDFS 写文件</h1>
+<p>HDFS 写文件操作比读文件略为复杂。</p>
+<ul>
+<li>客户端会先使用 Hadoop <code>FileSystem</code> API 打开一个命名文件用于写入。这个请求会发送给 NameNode。</li>
+<li>NN 接受请求，验证用户有相应权限后，开始在元数据中添加对应文件项（此时不分配Block），并回应客户端说文件已创建/打开成功；</li>
+<li>如果NN回应，客户端会打开一个流供客户端写入数据；</li>
+<li>当客户端写入数据时，并不直接发送出去，而是会先在本地以一段段数据包(既不是TCP包，也不是HDFS Block)的形式于内存中压入队列；</li>
+<li>一个独立的线程会开始消化这个队列中的包。这个独立的线程，会向NN发请求，宣称需要一个数据块以写入数据。</li>
+<li>NN接到请求后，按照剩余空间、拓扑、副本数（默认3份）等综合考虑后，会产生一个将要建立数据块的DN列表返回给客户端</li>
+<li>客户端收到列表后，会连接到列表中第一个DN，以写入数据；注意，第一个DN会去连接列表中第二DN，以将客户端写入的副本传递给第二个DN；以此类推，一直到最后一个DN收到连接写入数据为止。这被称为 Replication Pipeline，复制流水线。</li>
+<li>任何一个DN成功写入数据后，会向流水线中上一级回报写入成功。</li>
+<li>当客户端收到写入成功后，说明所有副本都成功写入，客户端则会去写下一个数据包，直至需要下一个数据块为止。</li>
+<li>当需要下一个数据块时，客户端会联系NN重新分配一个Block，并建立一个新的复制流水线，直至所有数据写入完毕，客户端会close文件，所有数据都会写入磁盘。</li>
+<li>当流水线中间一个节点出现问题时，会向流水线上游报告错误，整个流水线会立刻关闭。并且分配一个新的Block ID，对剩余健康节点建立一个新的流水线，将之前的数据包，重新写入。分配新的ID的目的，是防止坏的DN又再次上线，为该ID的Block提供了错误的数据。</li>
+<li>可能会有更多流水线中的DN出现错误，重建流水线的过程会持续，直至达到最低副本书（默认是1份），如果无法保证最低副本数，客户端则产生异常报错。</li>
+<li>如果由于错误导致了副本数量达不到指定副本数量，NN会被告知，从而开始安排针对 Under-replicated 块进行新的复制任务；</li>
+</ul>
+<h1 id="元数据">元数据</h1>
+<p>元数据保存于 NN 的本地文件系统中。主要由两部分组成：<code>fsimage</code> 和 <code>edits</code>（或称为 editlogs）。和数据库一样，fsimage 是元数据完整快照；而 edits 则是增量修改日志。一般是 WAL （Write Ahead Log）的形式。二者都会处于内存，并且本地有一份固化版本。当 NN 启动的时候，会从文件系统加载 fsimage，然后再加载 edits 日志，并回放 edits，从而得到最新的元数据信息。</p>
+<p>也因此，随着时间增加，edits会越来越大，NN 启动会需要很长一段时间，甚至由于超过 NN 的资源而导致启动失败。这时 SNN 的作用就体现了，由于SNN的作用是合并元数据，因此当SNN存在的时候，可以使用更新的快照，而使得启动速度会加快。</p>
+<h1 id="SNN_与_NN_交流合并元数据的过程">SNN 与 NN 交流合并元数据的过程</h1>
+<ul>
+<li>SNN 通知 NN 开始合并日志，NN 从即刻起将使用 edits.new 保存新的日志</li>
+<li>SNN 从 NN 复制 fsimage 和 edits 到本地的 checkpoint 目录</li>
+<li>SNN 基于 fsimage 开始回放 edits，然后将结果写入新的 fsimage 到磁盘上</li>
+<li>SNN 将新的 fsimage 发送给 NN</li>
+<li>NN 接受 SNN 提交过来的 fsimage 作为新的快照，并且将之前的 edits.new 改名为 edits。这样就完成了一次合并。</li>
+</ul>
+<p>每经过一个小时（默认），或者当 edits 到达 64 MB (默认）时，这个合并日志的操作就会发生一次。</p>
+<h1 id="NameNode_High_Availability">NameNode High Availability</h1>
+<p>很长一段时间以来 HDFS 是管理员的噩梦，因为NN存在单点故障(SPOF)。所以在 Hadoop 2.x 开始，NameNode 开始支持 High Availablity。允许存在一对儿NN以active/standby方式同时运行。NN之间必须有方式可以共享 fsimage 和 edits。目前有两种方式，一种是传统的通过 NFS 共享；另一种是通过新的 Quorum Journal Manager 来实现。</p>
+<p>HA可以配置为故障出现后自动激活standby，也可以手动。默认是手动。active/standby可以是由管理员在可控环境下转换，也可以由于失败被迫转换。</p>
+<p>管理员需要注意的是，需要确认active的NN确实出了问题，还是说只是单纯的由于网络等问题standby暂时无法访问到active了。否则，贸然激活standby，会导致两个NN都认为自己是active，共同撰写edits，然后就傻了。这被称为 split brain，有人翻译成“脑裂”。当然，有些人会认为只要激活standby，先通过RPC让active停止。不过这可能会导致另一个问题，STONITH (Shoot the other node in the head 一枪爆头……)，有些时候这是没办法的事情，但是依旧需要小心。</p>
+<p>standby的NN会承担起 SNN 中合并日志的职责，因此配置了NN HA后，不再需要额外的SNN了。</p>
+<p>1.x的时候由于无奈，只能考虑使用传统的HA方式，比如Linux HA进行热备。但是，对于HDFS来说并不是一个很好的方案。主要的问题是，各个DN的 Block Report 只会保留于内存中，而不会写入磁盘。从而导致切换时会产生和某些DN Block不一致的东西。而且更惨的是由于采用虚拟IP技术，各个DN并不会意识到NN已经挂了，还会以为NN啥都明白呢，而不会发送新的Block Report过去。就算各个DN开始发送Block Report，对于几千节点的集群而言，依旧会有许多分钟的时间NN才能收集齐以及消化这些Block Report。</p>
+<h1 id="Namenode_Federation">Namenode Federation</h1>
+<p>1.x的Hadoop还有一个问题，集群的规模受NN的内存所限制。为了解决这个问题 2.x 提出了 Namenode Federation。这个东西实际上非常像 Linux 文件系统中将各个驱动器挂载(<code>mount</code>)到各个不同的目录位置的方式。使用 NN Federation 后，会使用一个新的FS叫做 <code>ViewFS</code>，然后不同的NN将负责ViewFS下面不同的目录，也称为 Namespace。</p>
+<h1 id="访问和使用_HDFS">访问和使用 HDFS</h1>
+<h2 id="使用HDFS_API">使用HDFS API</h2>
+<p>最常见的使用 HDFS 的方式是直接使用其 Java API。如果要使用HDFS API必须满足两个条件，一个是需要配置文件，通过配置文件可以得知 NN 的位置；另一个可以访问到Hadoop API的库，一般是 JAR 文件。</p>
+<p>所谓 Hadoop API 的客户端有许多种情况，比如，独立的应用程序，像<code>hadoop fs</code>命令行工具；MapReduce的Job；HBase的 Region Server等。</p>
+<p>需要注意的是，由于客户端除了需要联系NN外，还需要直接访问 DN，因此必须要保证客户端和HDFS中所有节点的连接互通能力。</p>
+<p>hadoop fs 中可以指定副本数，如：<code>hadoop fs -setrep 5 -R /user/esammer/tmp</code></p>
+<h2 id="FUSE">FUSE</h2>
+<p>虽然一般不会这么做，但是 HDFS 支持使用 FUSE (Filesystem In Userspace) 挂载在文件系统中。不过需要注意的是HDFS的特性，比如不支持随机写入、延时较长、随机读性能较差。</p>
+<h2 id="REST_API">REST API</h2>
+<p>从 Apache Hadoop 1.0、CDH 4之后，NN的Web接口中提供了 REST API 访问的能力，这称之为 WebHDFS。比如，对应于 <code>hadoop fs -ls /hbase</code> 这么一条命令的 REST 访问是： <code>http://namenode:50070/webhdfs/v1/hbase/?op=liststatus</code>。需要注意的是，客户端使用WebHDFS访问HDFS和通过HDFS API的流程几乎相同，换句话说，客户端需要自己去连接所需数据块的DataNode，从而以取得数据。</p>
+<p>于此同时，还引入了一个成为 HttpFS 的东西，这个解决了上面 WebHDFS 的问题，它相当于一个代理，客户端只需连接HttpFS所在服务器，该服务器会负责与集群内的其他DN联系。当然，这样也会导致数据集中于此服务器，如果很多客户端的话，可能会在这里产生瓶颈。</p>
+  
+		<p>【该文档最新版本请查看： <a href="http://twang2218.github.io/readings/hadoop-operations/hadoop-operations-notes-ch02.html">http://twang2218.github.io/readings/hadoop-operations/hadoop-operations-notes-ch02.html</a> 】</p>
+
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/hadoop/">hadoop</a><a href="/tags/Hadoop Operations/">Hadoop Operations</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/readings/">readings</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://twang2218.github.io/readings/hadoop-operations/hadoop-operations-notes-ch02.html" data-title="《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS | Tao Wang&#39;s Blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/readings/hadoop-operations/hadoop-operations-notes-ch03.html" title="《Hadoop Operations》读书笔记 - 2 - 第三章 MapReduce">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  《Hadoop Operations》读书笔记 - 2 - 第三章 MapReduce</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/readings/random/raw-and-the-cooked-kate-crawford.html"  title="生与熟：大数据的神话 - Kate Crawford在伯克利的讲座的笔记与思考">
+ <strong>NEXT:</strong><br/> 
+ <span>生与熟：大数据的神话 - Kate Crawford在伯克利的讲座的笔记与思考
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+	<div id="disqus_thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/readings/" title="readings">readings<sup>5</sup></a></li>
+		
+			<li><a href="/categories/tutorial/" title="tutorial">tutorial<sup>7</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Hadoop Operations/" title="Hadoop Operations">Hadoop Operations<sup>4</sup></a></li>
+		
+			<li><a href="/tags/big data/" title="big data">big data<sup>1</sup></a></li>
+		
+			<li><a href="/tags/hadoop/" title="hadoop">hadoop<sup>10</sup></a></li>
+		
+			<li><a href="/tags/hadoop install/" title="hadoop install">hadoop install<sup>6</sup></a></li>
+		
+			<li><a href="/tags/vagrant/" title="vagrant">vagrant<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a href="https://github.com/twang2218" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2014 
+		
+		<a href="http://twang2218.github.io" target="_blank" title="Tao Wang">Tao Wang</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"twang2218-github"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<script type="text/javascript">
+  var disqus_shortname = 'twang2218-github';
+  
+  var disqus_url = 'http://twang2218.github.io/readings/hadoop-operations/hadoop-operations-notes-ch02.html';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-3066512-10', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

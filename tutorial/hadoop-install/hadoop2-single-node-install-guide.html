@@ -1,0 +1,973 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Hadoop 2.2.0 单节点伪分布配置 | Tao Wang&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Tao Wang">
+    
+    <meta name="description" content="前言
+本安装指南是针对 Ubuntu Server 12.04 进行 Hadoop 2.x 单节点伪分布模式配置的。其它系统或其它版本请酌情调整配置方法。
+一、准备工作
+我们需要有一台 Ubuntu Server 12.04 64位的虚拟机，如果尚未建立，请参考：【在 VirtualBox 中安装 ">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="Tao Wang&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bear.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/bear.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/bear.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/bear.svg" alt="Tao Wang&#39;s Blog" title="Tao Wang&#39;s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Tao Wang&#39;s Blog">Tao Wang&#39;s Blog</a></h1>
+				<h2 class="blog-motto">无善无恶心之体，有善有恶意之动，知善知恶是良知，为善去恶是格物。</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:twang2218.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/tutorial/hadoop-install/hadoop2-single-node-install-guide.html" title="Hadoop 2.2.0 单节点伪分布配置" itemprop="url">Hadoop 2.2.0 单节点伪分布配置</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://twang2218.github.io" title="Tao Wang">Tao Wang</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-02-21T13:00:00.000Z" itemprop="datePublished">2014年2月22日</time>
+    更新日期:<time datetime="2014-05-09T18:17:24.000Z" itemprop="dateModified">2014年5月10日</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一、准备工作"><span class="toc-number">2.</span> <span class="toc-text">一、准备工作</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、安装_Hadoop"><span class="toc-number">3.</span> <span class="toc-text">二、安装 Hadoop</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1_解压缩_Hadoop_包"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 解压缩 Hadoop 包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2_配置_Hadoop"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 配置 Hadoop</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1_配置_PATH_环境变量"><span class="toc-number">3.2.1.</span> <span class="toc-text"> 环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2_配置_*-site-xml"><span class="toc-number">3.2.2.</span> <span class="toc-text">*-site.xml</code></span></a></li><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#core-site-xml:"><span class="toc-number">3.2.2.1.</span> <span class="toc-text">:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#hdfs-site-xml:"><span class="toc-number">3.2.2.2.</span> <span class="toc-text">:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#yarn-site-xml:"><span class="toc-number">3.2.2.3.</span> <span class="toc-text">:</span></a></li></ol></ol></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#三、操作伪分布集群"><span class="toc-number">4.</span> <span class="toc-text">三、操作伪分布集群</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1_格式化_NameNode"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 格式化 NameNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2_启动_Hadoop"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 启动 Hadoop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3_运行示例程序"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 运行示例程序</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-1_下载"><span class="toc-number">4.3.1.</span> <span class="toc-text">3.3.1 下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-2_解压缩"><span class="toc-number">4.3.2.</span> <span class="toc-text">3.3.2 解压缩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-3_将书籍放到_HDFS_云"><span class="toc-number">4.3.3.</span> <span class="toc-text">3.3.3 将书籍放到 HDFS 云</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-4_执行_WordCount_示例程序"><span class="toc-number">4.3.4.</span> <span class="toc-text"> 示例程序</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#3-4_停止_Hadoop"><span class="toc-number">4.4.</span> <span class="toc-text">3.4 停止 Hadoop</span></a></li></ol>
+		</div>
+		
+		<h1 id="前言">前言</h1>
+<p>本安装指南是针对 Ubuntu Server 12.04 进行 Hadoop 2.x 单节点伪分布模式配置的。其它系统或其它版本请酌情调整配置方法。</p>
+<h1 id="一、准备工作">一、准备工作</h1>
+<p>我们需要有一台 Ubuntu Server 12.04 64位的虚拟机，如果尚未建立，请参考：【<a href="/tutorial/hadoop-install/install-ubuntu-server-12.04-on-virtualbox.html">在 VirtualBox 中安装 Ubuntu Server 12.04 64位版</a>】 进行安装。</p>
+<p>此外，我们还需要在这台虚拟机中为 Hadoop 的运行环境进行一些准备工作，具体的内容，请参考： 【<a href="/tutorial/hadoop-install/prepare-hadoop-runtime-environment.html">准备 Hadoop 运行环境</a>】。</p>
+<p><strong>需要注意的是，如果之前做了 Hadoop 1.x 的实验，那么为了避免IP冲突，我们需要定义一套新的各节点 IP 和主机名，在准备 Hadoop 运行环境的时候，参考下面定义的节点进行配置。</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="number">10.0</span>.<span class="number">1.210</span> hadoop2-master1
+<span class="number">10.0</span>.<span class="number">1.211</span> hadoop2-master2
+<span class="number">10.0</span>.<span class="number">1.221</span> hadoop2-data1
+<span class="number">10.0</span>.<span class="number">1.222</span> hadoop2-data2
+<span class="number">10.0</span>.<span class="number">1.223</span> hadoop2-data3
+</pre></td></tr></table></figure>
+
+<p>我们这里假定已经拥有了 Hadoop 2.2.0 的编译好的64位二进制包，<code>hadoop-2.2.0.tar.gz</code>，并且位于本机：<code>~/hadoop2/</code>目录下。如果尚未拥有编译好的安装包，请参考另一篇文章：【<a href="/tutorial/hadoop-install/compile-hadoop2.html">编译 Hadoop 2.2</a>】。</p>
+<h1 id="二、安装_Hadoop">二、安装 Hadoop</h1>
+<h2 id="2-1_解压缩_Hadoop_包">2.1 解压缩 Hadoop 包</h2>
+<p>我们所有的Hadoop相关文件都会位于 <code>~/hadoop2</code>目录下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre><span class="built_in">cd</span> ~/hadoop2
+tar -zxvf hadoop-<span class="number">2.2</span>.<span class="number">0</span>.tar.gz
+</pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里需要说明的是，许多教程都最终将 hadoop 放到了 <code>/usr/local/hadoop</code> 目录下，这样做会带来很多权限问题。而很多教程，或者最后干脆使用 <code>root</code> 用户操作一切，或者使用 <code>chown</code> 来解决权限冲突，这都是非常不好的，很多时候是因为写这些教程的人对 Linux 不熟悉，把 Windows 的一些习惯带到了 Linux 里来。生产环境的搭建绝不是这么简单粗暴的改变所有权，更不可能是这样子滥用<code>root</code>权限。除了需要将 hadoop 放到符合 Linux 目录结构的位置外，包括配置文件和日志，也都应该指向正确的位置，并且建立适当的用户组，以及对不同的目录使用不同的权限，这将引入很多额外的工作，因此不适合在初学时涉及。对于开发和实验环境的搭建，我们这里的做法非常简单，足以胜任后续的学习、开发。</p>
+</blockquote>
+<h2 id="2-2_配置_Hadoop">2.2 配置 Hadoop</h2>
+<h3 id="2-2-1_配置_PATH_环境变量">2.2.1 配置 <code>PATH</code> 环境变量</h3>
+<p>hadoop 的可执行文件在 <code>hadoop-2.2.0/bin</code> 下，我们如果想执行该文件，或者使用完整路径的方式，或者将该路径加入到 <code>PATH</code> 环境变量中，以后我们直接执行文件即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>nano ~/.profile
+</pre></td></tr></table></figure>
+
+<p>在最后一行添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="keyword">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HOME</span>/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/bin:<span class="variable">$HOME</span>/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/sbin
+</pre></td></tr></table></figure>
+
+<p>保存退出。然后应用该配置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">source</span> ~/.profile
+</pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里注意到有的教程提到的是修改 <code>~/.bashrc</code> 文件。在很多情况下这是工作的，但是某些情况下则不能工作，因此<a href="https://help.ubuntu.com/community/EnvironmentVariables#A.2BAH4ALw.profile" target="_blank">Ubuntu 官网关于环境变量的配置</a> 建议放在<code>~/.profile</code>文件中。</p>
+</blockquote>
+<p>我们可以通过显示 hadoop 的版本来判断之前的配置是否正确。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>hadoop version
+</pre></td></tr></table></figure>
+
+<h3 id="2-2-2_配置_*-site-xml">2.2.2 配置 <code>*-site.xml</code></h3>
+<p>之前的配置一直是环境配置，现在才是真正的 Hadoop 相关的配置。对于单节点伪分布模式，配置非常简单，我们只需要修改三个 <code>*-site.xml</code> 文件即可。默认情况下，这三个文件都包含一个空的<code>&lt;configuration&gt;</code> ，在这里，我们需要为三个文件的<code>&lt;configuration&gt;</code>中加入对应的配置。</p>
+<p>为方便起见，我们将当前目录换到 <code>etc/hadoop/</code> 目录下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">cd</span> hadoop-<span class="number">2.2</span>.<span class="number">0</span>/etc/hadoop
+</pre></td></tr></table></figure>
+
+<h4 id="core-site-xml:"><code>core-site.xml</code>:</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>nano core-site.xml
+</pre></td></tr></table></figure>
+
+<p>在 <code>&lt;configuration&gt;</code>中加入：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre>    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">name</span>&gt;</span>fs.defaultFS<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">value</span>&gt;</span>hdfs://hadoop2-master1:9000<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">value</span>&gt;</span>${user.home}/hadoop2/tmp<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+<ul>
+<li><code>fs.defaultFS</code>： 在 1.x 中，该项名为 <code>fs.default.name</code>，在 2.x 中改名为 <code>fs.defaultFS</code>。通过这里指定 NameNode 的位置。我们可以在这里手动指定端口号，也可以忽略以使用默认的端口号。</li>
+<li><code>hadoop.tmp.dir</code>：Hadoop 临时文件的位置，默认是 <code>/tmp</code>。这里如果不设置 <code>hadoop.tmp.dir</code>，Hadoop 是可以正常运行的。但由于使用的是 <code>/tmp</code> 目录，即内存，这显然不符合大容量存储的意图，而且数据也会随着关机而丢失。因此，我们需要将目录指定到硬盘上的位置。在这里，我们使用了 <code>${user.home}</code> 变量，该变量代表的是用户主目录 <code>$HOME</code>。 <strong>这个目录需要记住，因为后续排障过程中，可能会需要到这个目录中检查 <code>current/VERSION</code> 文件的<code>namespaceID</code>以及<code>storageID</code>等。</strong></li>
+</ul>
+<h4 id="hdfs-site-xml:"><code>hdfs-site.xml</code>:</h4>
+<p>默认的情况下，<code>dfs.replication</code>，也就是数据块默认副本份数，是3份。由于这里是单节点的伪分布模式，只存在一个 DataNode，因此，数据只可能有1份，所以我们需要将其修改为1。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>nano hdfs-site.xml
+</pre></td></tr></table></figure>
+
+<p>在 <code>&lt;configuration&gt;</code>中加入：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">name</span>&gt;</span>dfs.replication<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">value</span>&gt;</span>1<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+<h4 id="yarn-site-xml:"><code>yarn-site.xml</code>:</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>nano yarn-site.xml
+</pre></td></tr></table></figure>
+
+<p>在 <code>&lt;configuration&gt;</code>中加入：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre>    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">name</span>&gt;</span>yarn.resourcemanager.address<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">value</span>&gt;</span>hadoop2-master1<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">name</span>&gt;</span>yarn.nodemanager.resource.memory-mb<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">value</span>&gt;</span>2048<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">name</span>&gt;</span>yarn.nodemanager.aux-services<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">value</span>&gt;</span>mapreduce_shuffle<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">property</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">name</span>&gt;</span>yarn.nodemanager.remote-app-log-dir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">value</span>&gt;</span>${hadoop.tmp.dir}/nm-remote-app-logs<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+<p>分别保存退出。</p>
+<h1 id="三、操作伪分布集群">三、操作伪分布集群</h1>
+<h2 id="3-1_格式化_NameNode">3.1 格式化 NameNode</h2>
+<p>在配置完成后，我们需要进行一次 NameNode 的格式化。如果未格式化，NameNode 会因 HDFS 所需的数据结构错误而无法启动。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>hdfs namenode -format
+</pre></td></tr></table></figure>
+
+<blockquote>
+<p>原有的 <code>hadoop</code> 命令已不推荐使用，使用 <code>hdfs</code> 命令代替。</p>
+</blockquote>
+<p>格式化之后，应该会出现与下面相似的输出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+</pre></td><td class="code"><pre><span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">11</span> INFO namenode.NameNode: STARTUP_MSG: 
+/************************************************************
+STARTUP_MSG: Starting NameNode
+STARTUP_MSG:   host = hadoop2-master/<span class="number">10.0</span>.<span class="number">1.210</span>
+STARTUP_MSG:   args = [-format]
+STARTUP_MSG:   version = <span class="number">2.2</span>.<span class="number">0</span>
+STARTUP_MSG:   classpath = /home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/etc/hadoop:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jasper-compiler-<span class="number">5.5</span>.<span class="number">23</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jasper-runtime-<span class="number">5.5</span>.<span class="number">23</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jersey-server-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-beanutils-<span class="number">1.7</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jackson-core-asl-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jsch-<span class="number">0.1</span>.<span class="number">42</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/xz-<span class="number">1.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/zookeeper-<span class="number">3.4</span>.<span class="number">5</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/xmlenc-<span class="number">0.52</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-lang-<span class="number">2.5</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/protobuf-java-<span class="number">2.5</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jsr305-<span class="number">1.3</span>.<span class="number">9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-compress-<span class="number">1.4</span>.<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-net-<span class="number">3.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/hadoop-auth-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/log4j-<span class="number">1.2</span>.<span class="number">17</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-cli-<span class="number">1.2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jersey-core-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jackson-xc-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-logging-<span class="number">1.1</span>.<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jetty-<span class="number">6.1</span>.<span class="number">26</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-collections-<span class="number">3.2</span>.<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/servlet-api-<span class="number">2.5</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jackson-mapper-asl-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/paranamer-<span class="number">2.3</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jsp-api-<span class="number">2.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/stax-api-<span class="number">1.0</span>.<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/hadoop-annotations-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/guava-<span class="number">11.0</span>.<span class="number">2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jaxb-api-<span class="number">2.2</span>.<span class="number">2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/snappy-java-<span class="number">1.0</span>.<span class="number">4.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-io-<span class="number">2.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jettison-<span class="number">1.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-digester-<span class="number">1.8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jackson-jaxrs-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-codec-<span class="number">1.4</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-configuration-<span class="number">1.6</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/avro-<span class="number">1.7</span>.<span class="number">4</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-httpclient-<span class="number">3.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/slf4j-log4j12-<span class="number">1.7</span>.<span class="number">5</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jersey-json-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-el-<span class="number">1.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/netty-<span class="number">3.6</span>.<span class="number">2</span>.Final.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jetty-util-<span class="number">6.1</span>.<span class="number">26</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/mockito-all-<span class="number">1.8</span>.<span class="number">5</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jets3t-<span class="number">0.6</span>.<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/activation-<span class="number">1.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/jaxb-impl-<span class="number">2.2</span>.<span class="number">3</span>-<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/junit-<span class="number">4.8</span>.<span class="number">2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/slf4j-api-<span class="number">1.7</span>.<span class="number">5</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-beanutils-core-<span class="number">1.8</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/commons-math-<span class="number">2.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/lib/asm-<span class="number">3.2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/hadoop-common-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/hadoop-common-<span class="number">2.2</span>.<span class="number">0</span>-tests.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/common/hadoop-nfs-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jasper-runtime-<span class="number">5.5</span>.<span class="number">23</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jersey-server-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jackson-core-asl-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/xmlenc-<span class="number">0.52</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/commons-lang-<span class="number">2.5</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/protobuf-java-<span class="number">2.5</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jsr305-<span class="number">1.3</span>.<span class="number">9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/log4j-<span class="number">1.2</span>.<span class="number">17</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/commons-cli-<span class="number">1.2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jersey-core-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/commons-logging-<span class="number">1.1</span>.<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jetty-<span class="number">6.1</span>.<span class="number">26</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/servlet-api-<span class="number">2.5</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jackson-mapper-asl-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jsp-api-<span class="number">2.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/guava-<span class="number">11.0</span>.<span class="number">2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/commons-io-<span class="number">2.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/commons-codec-<span class="number">1.4</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/commons-daemon-<span class="number">1.0</span>.<span class="number">13</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/commons-el-<span class="number">1.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/netty-<span class="number">3.6</span>.<span class="number">2</span>.Final.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/jetty-util-<span class="number">6.1</span>.<span class="number">26</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/lib/asm-<span class="number">3.2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/hadoop-hdfs-nfs-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/hadoop-hdfs-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/hdfs/hadoop-hdfs-<span class="number">2.2</span>.<span class="number">0</span>-tests.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/jersey-server-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/jackson-core-asl-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/xz-<span class="number">1.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/protobuf-java-<span class="number">2.5</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/guice-<span class="number">3.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/junit-<span class="number">4.10</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/commons-compress-<span class="number">1.4</span>.<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/aopalliance-<span class="number">1.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/log4j-<span class="number">1.2</span>.<span class="number">17</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/guice-servlet-<span class="number">3.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/jersey-core-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/jackson-mapper-asl-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/paranamer-<span class="number">2.3</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/hadoop-annotations-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/jersey-guice-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/snappy-java-<span class="number">1.0</span>.<span class="number">4.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/commons-io-<span class="number">2.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/avro-<span class="number">1.7</span>.<span class="number">4</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/netty-<span class="number">3.6</span>.<span class="number">2</span>.Final.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/hamcrest-core-<span class="number">1.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/javax.inject-<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/lib/asm-<span class="number">3.2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-server-web-proxy-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-applications-distributedshell-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-client-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-server-nodemanager-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-server-tests-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-site-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-common-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-applications-unmanaged-am-launcher-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-server-common-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-api-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/yarn/hadoop-yarn-server-resourcemanager-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/jersey-server-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/jackson-core-asl-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/xz-<span class="number">1.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/protobuf-java-<span class="number">2.5</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/guice-<span class="number">3.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/junit-<span class="number">4.10</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/commons-compress-<span class="number">1.4</span>.<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/aopalliance-<span class="number">1.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/log4j-<span class="number">1.2</span>.<span class="number">17</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/guice-servlet-<span class="number">3.0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/jersey-core-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/jackson-mapper-asl-<span class="number">1.8</span>.<span class="number">8</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/paranamer-<span class="number">2.3</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/hadoop-annotations-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/jersey-guice-<span class="number">1.9</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/snappy-java-<span class="number">1.0</span>.<span class="number">4.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/commons-io-<span class="number">2.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/avro-<span class="number">1.7</span>.<span class="number">4</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/netty-<span class="number">3.6</span>.<span class="number">2</span>.Final.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/hamcrest-core-<span class="number">1.1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/javax.inject-<span class="number">1</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/lib/asm-<span class="number">3.2</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-examples-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-<span class="number">2.2</span>.<span class="number">0</span>-tests.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-plugins-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-client-app-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-client-shuffle-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-client-common-<span class="number">2.2</span>.<span class="number">0</span>.jar:/home/tao/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-client-core-<span class="number">2.2</span>.<span class="number">0</span>.jar:/contrib/capacity-scheduler/*.jar
+STARTUP_MSG:   build = Unknown -r Unknown; compiled by <span class="string">'tao'</span> on <span class="number">2014</span>-<span class="number">02</span>-<span class="number">22</span>T06:<span class="number">48</span>Z
+STARTUP_MSG:   java = <span class="number">1.7</span>.<span class="number">0</span>_51
+************************************************************/
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">11</span> INFO namenode.NameNode: registered UNIX signal handlers <span class="keyword">for</span> [TERM, HUP, INT]
+Formatting using clusterid: CID-<span class="number">0107</span>de99-dfbd-<span class="number">4142</span>-b321-<span class="number">72</span>c40297b8fd
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.HostFileManager: <span class="built_in">read</span> includes:
+HostSet(
+)
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.HostFileManager: <span class="built_in">read</span> excludes:
+HostSet(
+)
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.DatanodeManager: dfs.block.invalidate.limit=<span class="number">1000</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: Computing capacity <span class="keyword">for</span> map BlocksMap
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: VM <span class="built_in">type</span>       = <span class="number">64</span>-bit
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: <span class="number">2.0</span>% max memory = <span class="number">966.7</span> MB
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: capacity      = <span class="number">2</span>^<span class="number">21</span> = <span class="number">2097152</span> entries
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.BlockManager: dfs.block.access.token.enable=<span class="literal">false</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.BlockManager: defaultReplication         = <span class="number">1</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.BlockManager: maxReplication             = <span class="number">512</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.BlockManager: minReplication             = <span class="number">1</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.BlockManager: maxReplicationStreams      = <span class="number">2</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.BlockManager: shouldCheckForEnoughRacks  = <span class="literal">false</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.BlockManager: replicationRecheckInterval = <span class="number">3000</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO blockmanagement.BlockManager: encryptDataTransfer        = <span class="literal">false</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: fsOwner             = tao (auth:SIMPLE)
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: supergroup          = supergroup
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: isPermissionEnabled = <span class="literal">true</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: HA Enabled: <span class="literal">false</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: Append Enabled: <span class="literal">true</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: Computing capacity <span class="keyword">for</span> map INodeMap
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: VM <span class="built_in">type</span>       = <span class="number">64</span>-bit
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: <span class="number">1.0</span>% max memory = <span class="number">966.7</span> MB
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: capacity      = <span class="number">2</span>^<span class="number">20</span> = <span class="number">1048576</span> entries
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.NameNode: Caching file names occuring more than <span class="number">10</span> times
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: dfs.namenode.safemode.threshold-pct = <span class="number">0.9990000128746033</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: dfs.namenode.safemode.min.datanodes = <span class="number">0</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: dfs.namenode.safemode.extension     = <span class="number">30000</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: Retry cache on namenode is enabled
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSNamesystem: Retry cache will use <span class="number">0.03</span> of total heap and retry cache entry expiry time is <span class="number">600000</span> millis
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: Computing capacity <span class="keyword">for</span> map Namenode Retry Cache
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: VM <span class="built_in">type</span>       = <span class="number">64</span>-bit
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: <span class="number">0.029999999329447746</span>% max memory = <span class="number">966.7</span> MB
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.GSet: capacity      = <span class="number">2</span>^<span class="number">15</span> = <span class="number">32768</span> entries
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO common.Storage: Storage directory /home/tao/hadoop2/tmp/dfs/name has been successfully formatted.
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSImage: Saving image file /home/tao/hadoop2/tmp/dfs/name/current/fsimage.ckpt_0000000000000000000 using no compression
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.FSImage: Image file /home/tao/hadoop2/tmp/dfs/name/current/fsimage.ckpt_0000000000000000000 of size <span class="number">195</span> bytes saved <span class="keyword">in</span> <span class="number">0</span> seconds.
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.NNStorageRetentionManager: Going to retain <span class="number">1</span> images with txid &gt;= <span class="number">0</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO util.ExitUtil: Exiting with status <span class="number">0</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">21</span>:<span class="number">45</span>:<span class="number">12</span> INFO namenode.NameNode: SHUTDOWN_MSG: 
+/************************************************************
+SHUTDOWN_MSG: Shutting down NameNode at hadoop2-master/<span class="number">10.0</span>.<span class="number">1.210</span>
+************************************************************/
+</pre></td></tr></table></figure>
+
+<p>特别是关注其中是否报告格式化成功：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>Storage <span class="built_in">directory</span> /home/tao/hadoop2/tmp/dfs/name has been successfully formatted.
+</pre></td></tr></table></figure>
+
+<p>如果没有，则需要根据错误信息进行分析。</p>
+<p>至此，Hadoop 单节点伪分布模式就配置完毕了。</p>
+<h2 id="3-2_启动_Hadoop">3.2 启动 Hadoop</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>start-dfs.sh
+start-yarn.sh
+</pre></td></tr></table></figure>
+
+<p>这条命令将根据之前配置的 <code>*-site.xml</code>，来启动 Hadoop 云（当然，此时，我们这个云是伪分布，就一个节点）。</p>
+<blockquote>
+<p>这里与 1.x 不同，<code>start-all.sh</code> 已不推荐使用，推荐对 <code>HDFS</code> 和 <code>YARN</code> 分开操作。</p>
+</blockquote>
+<p>然后，我们需要确定节点是否正常运行了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>jps
+</pre></td></tr></table></figure>
+
+<p>这条命令可以帮助我们查看当前系统运行的 Java 程序进程。如果配置正确，我们将看到类似下面的结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="number">28264</span> ResourceManager
+<span class="number">28671</span> Jps
+<span class="number">28365</span> NodeManager
+<span class="number">28122</span> SecondaryNameNode
+<span class="number">27972</span> DataNode
+<span class="number">27854</span> NameNode
+</pre></td></tr></table></figure>
+
+<p>需要注意的是，单节点伪分布正确运行后，应该会有5个组件运行：<code>NameNode</code>、<code>DataNode</code>、<code>SecondaryNameNode</code>、<code>ResourceManager</code>、以及<code>NodeManager</code>。缺少任何一个，都说明配置上有所错误。需要回去检查各项配置。</p>
+<blockquote>
+<p>在出现故障后向论坛、朋友求助的时候，需要给对方提供你的 <code>conf</code> 目录下的配置文件、以及日志，否则对方无法理解你的故障可能的问题。日志目录：<code>$HOME/hadoop/hadoop-2.2.0/logs</code></p>
+</blockquote>
+<h2 id="3-3_运行示例程序">3.3 运行示例程序</h2>
+<p>就如同我们搭建好其它语言的编译环境后，会编写一个 <code>HelloWorld</code> 程序来测试整个环境是否工作一样，在 Hadoop 中，我们有自己的<code>HelloWorld</code>类的程序，叫做<code>WordCount</code>。</p>
+<p><code>ＷordCount</code> 是对纯文本进行单词出现次数统计的，为了使用 <code>WordCount</code>，我们需要先准备一些数据，也就是一些文本文件。这里，我们使用 <a href="http://www.gutenberg.org/" target="_blank">古腾堡计划</a>中的英文图书。</p>
+<h3 id="3-3-1_下载">3.3.1 下载</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>mkdir -p ~/hadoop2/data/book/download
+<span class="built_in">cd</span> ~/hadoop2/data/book/download
+wget -r <span class="operator">-l</span> <span class="number">2</span> -H <span class="string">"http://www.gutenberg.org/robot/harvest?filetypes[]=txt&langs[]=en"</span>
+</pre></td></tr></table></figure>
+
+<p>这里<code>-l 2</code>是只取 2 级，因此并没有下载很多书，大约有200本英文书籍，解压缩后大约 90MB 左右。，如果觉得数据量不够可以酌情增加一些。根据当前的网速，下载需要一段时间。下载完成后，会出现类似于：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>FINISHED <span class="comment">--2014-02-18 19:44:10--</span>
+Total wall clock <span class="built_in">time</span>: <span class="number">7</span>m <span class="number">42</span>s
+Downloaded: <span class="number">204</span> <span class="built_in">files</span>, <span class="number">34</span>M <span class="operator">in</span> <span class="number">6</span>m <span class="number">39</span>s (<span class="number">86.0</span> KB/s)
+</pre></td></tr></table></figure>
+
+<h3 id="3-3-2_解压缩">3.3.2 解压缩</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="keyword">for</span> f <span class="keyword">in</span> `find ~/hadoop2/data/book/download -name *.zip` ; <span class="keyword">do</span> unzip -j <span class="variable">$f</span> *.txt <span class="operator">-d</span> ~/hadoop2/data/book/input; <span class="keyword">done</span>
+</pre></td></tr></table></figure>
+
+<h3 id="3-3-3_将书籍放到_HDFS_云">3.3.3 将书籍放到 HDFS 云</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>hdfs dfs -mkdir -p /data/book
+hdfs dfs -put ~/hadoop2/data/book/input /data/book
+</pre></td></tr></table></figure>
+
+<p>上传到云后，我们可以用过命令 <code>hdfs dfs -ls /data/book/input</code> 来检查是否都已进入云了。</p>
+<blockquote>
+<p>原有的 <code>hadoop fs</code> 已不推荐使用，使用 <code>hdfs dfs</code> 代替。</p>
+</blockquote>
+<h3 id="3-3-4_执行_WordCount_示例程序">3.3.4 执行 <code>WordCount</code> 示例程序</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>hadoop jar ~/hadoop2/hadoop-<span class="number">2.2</span>.<span class="number">0</span>/share/hadoop/mapreduce/hadoop-mapreduce-examples-<span class="number">2.2</span>.<span class="number">0</span>.jar wordcount /data/book/input /data/book/output
+</pre></td></tr></table></figure>
+
+<blockquote>
+<p>在执行过程中，可以新开一个 SSH 终端窗口连接到 <code>hadoop-master1</code>，然后运行命令 <code>htop</code> 来观察任务执行期间的节点负载情况，包括内存占用率、CPU占用率、最消耗资源的程序等等。这些信息将来可能会作为云性能优化调整的依据。</p>
+</blockquote>
+<p>执行结束后，会输出类似下面的输出：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+</pre></td><td class="code"><pre><span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: session.id <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> dfs.metrics.session-id
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO jvm.JvmMetrics: Initializing JVM Metrics <span class="keyword">with</span> processName=JobTracker, sessionId=
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO input.FileInputFormat: Total input paths <span class="keyword">to</span> <span class="keyword">process</span> : <span class="number">201</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO mapreduce.JobSubmitter: number <span class="keyword">of</span> splits:<span class="number">201</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: user.name <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.user.name
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.jar <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.jar
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.output.value.class <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.output.value.class
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapreduce.combine.class <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.combine.class
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapreduce.<span class="keyword">map</span>.class <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.<span class="keyword">map</span>.class
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.job.name <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.name
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapreduce.reduce.class <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.reduce.class
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.input.dir <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.input.fileinputformat.inputdir
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.output.dir <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.output.fileoutputformat.outputdir
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.<span class="keyword">map</span>.tasks <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.maps
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.output.key.class <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.output.key.class
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">52</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.working.dir <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.working.dir
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapreduce.JobSubmitter: Submitting tokens <span class="keyword">for</span> job: job_local693675167_0001
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> WARN conf.<span class="keyword">Configuration</span>: <span class="keyword">file</span>:/home/tao/hadoop2/hdfs-tmp/mapred/staging/tao693675167/.staging/job_local693675167_0001/job.xml:an attempt <span class="keyword">to</span> override final parameter: mapreduce.job.<span class="keyword">end</span>-notification.max.retry.interval;  Ignoring.
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> WARN conf.<span class="keyword">Configuration</span>: <span class="keyword">file</span>:/home/tao/hadoop2/hdfs-tmp/mapred/staging/tao693675167/.staging/job_local693675167_0001/job.xml:an attempt <span class="keyword">to</span> override final parameter: mapreduce.job.<span class="keyword">end</span>-notification.max.attempts;  Ignoring.
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> WARN conf.<span class="keyword">Configuration</span>: <span class="keyword">file</span>:/home/tao/hadoop2/hdfs-tmp/mapred/local/localRunner/tao/job_local693675167_0001/job_local693675167_0001.xml:an attempt <span class="keyword">to</span> override final parameter: mapreduce.job.<span class="keyword">end</span>-notification.max.retry.interval;  Ignoring.
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> WARN conf.<span class="keyword">Configuration</span>: <span class="keyword">file</span>:/home/tao/hadoop2/hdfs-tmp/mapred/local/localRunner/tao/job_local693675167_0001/job_local693675167_0001.xml:an attempt <span class="keyword">to</span> override final parameter: mapreduce.job.<span class="keyword">end</span>-notification.max.attempts;  Ignoring.
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapreduce.Job: The url <span class="keyword">to</span> track the job: http://localhost:<span class="number">8080</span>/
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapreduce.Job: Running job: job_local693675167_0001
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.LocalJobRunner: OutputCommitter set <span class="keyword">in</span> config <span class="keyword">null</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.LocalJobRunner: OutputCommitter <span class="keyword">is</span> org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.LocalJobRunner: Starting task: attempt_local693675167_0001_m_000000_0
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.LocalJobRunner: Waiting <span class="keyword">for</span> <span class="keyword">map</span> tasks
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.Task:  Using ResourceCalculatorProcessTree : [ ]
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.MapTask: Processing split: hdfs://hadoop2-master1:<span class="number">9000</span>/data/book/input/<span class="number">00</span>ws110.txt:<span class="number">0</span>+<span class="number">4651867</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.MapTask: <span class="keyword">Map</span> output collector class = org.apache.hadoop.mapred.MapTask$MapOutputBuffer
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.MapTask: (EQUATOR) <span class="number">0</span> kvi <span class="number">26214396</span>(<span class="number">104857584</span>)
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.MapTask: mapreduce.task.io.sort.mb: <span class="number">100</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.MapTask: soft limit at <span class="number">83886080</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.MapTask: bufstart = <span class="number">0</span>; bufvoid = <span class="number">104857600</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">53</span> INFO mapred.MapTask: kvstart = <span class="number">26214396</span>; length = <span class="number">6553600</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">54</span> INFO mapred.LocalJobRunner: 
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">54</span> INFO mapred.MapTask: Starting flush <span class="keyword">of</span> <span class="keyword">map</span> output
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">54</span> INFO mapred.MapTask: Spilling <span class="keyword">map</span> output
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">54</span> INFO mapred.MapTask: bufstart = <span class="number">0</span>; bufend = <span class="number">7680316</span>; bufvoid = <span class="number">104857600</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">54</span> INFO mapred.MapTask: kvstart = <span class="number">26214396</span>(<span class="number">104857584</span>); kvend = <span class="number">22943156</span>(<span class="number">91772624</span>); length = <span class="number">3271241</span>/<span class="number">6553600</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">54</span> INFO mapreduce.Job: Job job_local693675167_0001 running <span class="keyword">in</span> uber mode : false
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">54</span> INFO mapreduce.Job:  <span class="keyword">map</span> <span class="number">0</span>% reduce <span class="number">0</span>%
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">55</span> INFO mapred.MapTask: Finished spill <span class="number">0</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">22</span>:<span class="number">58</span>:<span class="number">55</span> INFO mapred.Task: Task:attempt_local693675167_0001_m_000000_0 <span class="keyword">is</span> done. <span class="keyword">And</span> <span class="keyword">is</span> <span class="keyword">in</span> the <span class="keyword">process</span> <span class="keyword">of</span> committing
+
+...
+
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">23</span> INFO mapred.LocalJobRunner: Finishing task: attempt_local827466818_0001_m_000200_0
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">23</span> INFO mapred.LocalJobRunner: <span class="keyword">Map</span> task executor complete.
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">23</span> INFO mapred.Task:  Using ResourceCalculatorProcessTree : [ ]
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">23</span> INFO mapred.Merger: Merging <span class="number">201</span> sorted segments
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">23</span> INFO mapred.Merger: Merging <span class="number">3</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">201</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">199</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">190</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">181</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">172</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">163</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">154</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">145</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">136</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">127</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">118</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">109</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">100</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">91</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">82</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">73</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">64</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">24</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">55</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">25</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">46</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">25</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">37</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">25</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">28</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">25</span> INFO mapred.Merger: Merging <span class="number">10</span> intermediate segments <span class="keyword">out</span> <span class="keyword">of</span> a total <span class="keyword">of</span> <span class="number">19</span>
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">25</span> INFO mapred.Merger: Down <span class="keyword">to</span> the last merge-pass, <span class="keyword">with</span> <span class="number">10</span> segments left <span class="keyword">of</span> total size: <span class="number">37524727</span> bytes
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">25</span> INFO mapred.LocalJobRunner: 
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">25</span> INFO <span class="keyword">Configuration</span>.deprecation: mapred.skip.<span class="keyword">on</span> <span class="keyword">is</span> deprecated. Instead, <span class="keyword">use</span> mapreduce.job.skiprecords
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO mapred.Task: Task:attempt_local827466818_0001_r_000000_0 <span class="keyword">is</span> done. <span class="keyword">And</span> <span class="keyword">is</span> <span class="keyword">in</span> the <span class="keyword">process</span> <span class="keyword">of</span> committing
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO mapred.LocalJobRunner: 
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO mapred.Task: Task attempt_local827466818_0001_r_000000_0 <span class="keyword">is</span> allowed <span class="keyword">to</span> commit now
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO output.FileOutputCommitter: Saved output <span class="keyword">of</span> task <span class="attribute">'attempt_local827466818_0001_r_000000_0</span>' <span class="keyword">to</span> hdfs://hadoop2-master1:<span class="number">9000</span>/data/book/output/_temporary/<span class="number">0</span>/task_local827466818_0001_r_000000
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO mapred.LocalJobRunner: reduce &gt; reduce
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO mapred.Task: Task <span class="attribute">'attempt_local827466818_0001_r_000000_0</span>' done.
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO mapreduce.Job:  <span class="keyword">map</span> <span class="number">100</span>% reduce <span class="number">100</span>%
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO mapreduce.Job: Job job_local827466818_0001 completed successfully
+<span class="number">14</span>/<span class="number">02</span>/<span class="number">22</span> <span class="number">23</span>:<span class="number">01</span>:<span class="number">27</span> INFO mapreduce.Job: Counters: <span class="number">32</span>
+	<span class="keyword">File</span> System Counters
+		<span class="keyword">FILE</span>: Number <span class="keyword">of</span> bytes read=<span class="number">228369909</span>
+		<span class="keyword">FILE</span>: Number <span class="keyword">of</span> bytes written=<span class="number">5350292504</span>
+		<span class="keyword">FILE</span>: Number <span class="keyword">of</span> read operations=<span class="number">0</span>
+		<span class="keyword">FILE</span>: Number <span class="keyword">of</span> large read operations=<span class="number">0</span>
+		<span class="keyword">FILE</span>: Number <span class="keyword">of</span> write operations=<span class="number">0</span>
+		HDFS: Number <span class="keyword">of</span> bytes read=<span class="number">13902047117</span>
+		HDFS: Number <span class="keyword">of</span> bytes written=<span class="number">8206570</span>
+		HDFS: Number <span class="keyword">of</span> read operations=<span class="number">41815</span>
+		HDFS: Number <span class="keyword">of</span> large read operations=<span class="number">0</span>
+		HDFS: Number <span class="keyword">of</span> write operations=<span class="number">204</span>
+	<span class="keyword">Map</span>-Reduce Framework
+		<span class="keyword">Map</span> input records=<span class="number">1868098</span>
+		<span class="keyword">Map</span> output records=<span class="number">15542147</span>
+		<span class="keyword">Map</span> output bytes=<span class="number">151082969</span>
+		<span class="keyword">Map</span> output materialized bytes=<span class="number">37525957</span>
+		Input split bytes=<span class="number">23944</span>
+		Combine input records=<span class="number">15542147</span>
+		Combine output records=<span class="number">2509502</span>
+		Reduce input groups=<span class="number">561390</span>
+		Reduce shuffle bytes=<span class="number">0</span>
+		Reduce input records=<span class="number">2509502</span>
+		Reduce output records=<span class="number">561390</span>
+		Spilled Records=<span class="number">8275287</span>
+		Shuffled Maps =<span class="number">0</span>
+		Failed Shuffles=<span class="number">0</span>
+		Merged <span class="keyword">Map</span> outputs=<span class="number">0</span>
+		GC <span class="typename">time</span> elapsed (ms)=<span class="number">3524</span>
+		CPU <span class="typename">time</span> spent (ms)=<span class="number">0</span>
+		Physical memory (bytes) snapshot=<span class="number">0</span>
+		Virtual memory (bytes) snapshot=<span class="number">0</span>
+		Total committed heap usage (bytes)=<span class="number">105619390464</span>
+	<span class="keyword">File</span> Input Format Counters 
+		Bytes Read=<span class="number">92529611</span>
+	<span class="keyword">File</span> Output Format Counters 
+		Bytes Written=<span class="number">8206570</span>
+</pre></td></tr></table></figure>
+
+<p>如果有错误，会有异常报错。执行下面的命令确定正常执行完毕：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>hdfs dfs -ls /data/book/output/
+</pre></td></tr></table></figure>
+
+<p>该命令会列出我们指定的HDFS云中的输出目录内容：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>Found <span class="number">2</span> items
+<span class="attribute">-rw</span><span class="attribute">-r</span><span class="subst">--</span>r<span class="subst">--</span>   <span class="number">1</span> tao supergroup          <span class="number">0</span> <span class="number">2014</span><span class="subst">-</span><span class="number">02</span><span class="subst">-</span><span class="number">22</span> <span class="number">23</span>:<span class="number">01</span> /<span class="built_in">data</span>/book/output/_SUCCESS
+<span class="attribute">-rw</span><span class="attribute">-r</span><span class="subst">--</span>r<span class="subst">--</span>   <span class="number">1</span> tao supergroup    <span class="number">8206570</span> <span class="number">2014</span><span class="subst">-</span><span class="number">02</span><span class="subst">-</span><span class="number">22</span> <span class="number">23</span>:<span class="number">01</span> /<span class="built_in">data</span>/book/output/part<span class="attribute">-r</span><span class="subst">-</span><span class="number">00000</span>
+</pre></td></tr></table></figure>
+
+<p>注意其中若存在 <code>_SUCCESS</code> 文件，即说明执行成功了。统计的结果就在 <code>part-r-xxxxx</code> 这类文件里。可以拷贝到本地查看其内容，也可以通过 <code>http://hadoop-master1:50070</code> 的 Web 界面来查看其内容。</p>
+<h2 id="3-4_停止_Hadoop">3.4 停止 Hadoop</h2>
+<p>我们知道了怎么启动 Hadoop 云；知道了怎么运行 Hadoop 程序；接下来我们需要停止 Hadoop 云：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>stop-yarn.sh
+stop-dfs.sh
+</pre></td></tr></table></figure>
+
+<p>可以通过 <code>jps</code> 确定一下确实都关闭了。如果需要关机，则执行 <code>sudo poweroff</code> 即可。</p>
+  
+		<p>【该文档最新版本请查看： <a href="http://twang2218.github.io/tutorial/hadoop-install/hadoop2-single-node-install-guide.html">http://twang2218.github.io/tutorial/hadoop-install/hadoop2-single-node-install-guide.html</a> 】</p>
+
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/hadoop/">hadoop</a><a href="/tags/hadoop install/">hadoop install</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/tutorial/">tutorial</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://twang2218.github.io/tutorial/hadoop-install/hadoop2-single-node-install-guide.html" data-title="Hadoop 2.2.0 单节点伪分布配置 | Tao Wang&#39;s Blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/tutorial/openstack/vagrant.html" title="Vagrant 简介">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Vagrant 简介</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/tutorial/hadoop-install/compile-hadoop2.html"  title="编译 Hadoop 2.2.0">
+ <strong>NEXT:</strong><br/> 
+ <span>编译 Hadoop 2.2.0
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+	<div id="disqus_thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/readings/" title="readings">readings<sup>5</sup></a></li>
+		
+			<li><a href="/categories/tutorial/" title="tutorial">tutorial<sup>7</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Hadoop Operations/" title="Hadoop Operations">Hadoop Operations<sup>4</sup></a></li>
+		
+			<li><a href="/tags/big data/" title="big data">big data<sup>1</sup></a></li>
+		
+			<li><a href="/tags/hadoop/" title="hadoop">hadoop<sup>10</sup></a></li>
+		
+			<li><a href="/tags/hadoop install/" title="hadoop install">hadoop install<sup>6</sup></a></li>
+		
+			<li><a href="/tags/vagrant/" title="vagrant">vagrant<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a href="https://github.com/twang2218" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2014 
+		
+		<a href="http://twang2218.github.io" target="_blank" title="Tao Wang">Tao Wang</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"twang2218-github"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<script type="text/javascript">
+  var disqus_shortname = 'twang2218-github';
+  
+  var disqus_url = 'http://twang2218.github.io/tutorial/hadoop-install/hadoop2-single-node-install-guide.html';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-3066512-10', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

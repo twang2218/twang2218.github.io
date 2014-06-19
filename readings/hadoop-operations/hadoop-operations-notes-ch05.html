@@ -1,0 +1,2165 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>《Hadoop Operations》读书笔记 - 4 - 第五章 安装与配置 | Tao Wang&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Tao Wang">
+    
+    <meta name="description" content="Chapter 5: Installation and ConfigurationEric Sammer “Hadoop Operations” - O’Reilly (2012) … (p75 ~ p134)
+
+安装 Hadoop
+有无数种办法可以安装 Hadoop，这里给出的只是最佳实践的建议。">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="Tao Wang&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bear.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/bear.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/bear.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/bear.svg" alt="Tao Wang&#39;s Blog" title="Tao Wang&#39;s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Tao Wang&#39;s Blog">Tao Wang&#39;s Blog</a></h1>
+				<h2 class="blog-motto">无善无恶心之体，有善有恶意之动，知善知恶是良知，为善去恶是格物。</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:twang2218.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/readings/hadoop-operations/hadoop-operations-notes-ch05.html" title="《Hadoop Operations》读书笔记 - 4 - 第五章 安装与配置" itemprop="url">《Hadoop Operations》读书笔记 - 4 - 第五章 安装与配置</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://twang2218.github.io" title="Tao Wang">Tao Wang</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-04-09T14:00:00.000Z" itemprop="datePublished">2014年4月10日</time>
+    更新日期:<time datetime="2014-06-19T08:17:29.000Z" itemprop="dateModified">2014年6月19日</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#安装_Hadoop"><span class="toc-number">1.</span> <span class="toc-text">安装 Hadoop</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Apache_Hadoop"><span class="toc-number">1.1.</span> <span class="toc-text">Apache Hadoop</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#tarball_的安装"><span class="toc-number">1.1.1.</span> <span class="toc-text">tarball 的安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装包安装"><span class="toc-number">1.1.2.</span> <span class="toc-text">安装包安装</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#CDH"><span class="toc-number">1.2.</span> <span class="toc-text">CDH</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置软件源"><span class="toc-number">1.2.1.</span> <span class="toc-text">配置软件源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获得可以安装的软件组件"><span class="toc-number">1.2.2.</span> <span class="toc-text">获得可以安装的软件组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装所需组件"><span class="toc-number">1.2.3.</span> <span class="toc-text">安装所需组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#同_Apache_Hadoop_的差异"><span class="toc-number">1.2.4.</span> <span class="toc-text">同 Apache Hadoop 的差异</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立软件源镜像"><span class="toc-number">1.2.5.</span> <span class="toc-text">建立软件源镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立软件源缓存代理"><span class="toc-number">1.2.6.</span> <span class="toc-text">建立软件源缓存代理</span></a></li></ol></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#配置：概述"><span class="toc-number">2.</span> <span class="toc-text">配置：概述</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hadoop_XML_配置文件"><span class="toc-number">2.1.</span> <span class="toc-text">Hadoop XML 配置文件</span></a></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#环境变量和_Shell_脚本"><span class="toc-number">3.</span> <span class="toc-text">环境变量和 Shell 脚本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#日志配置"><span class="toc-number">4.</span> <span class="toc-text">日志配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HDFS"><span class="toc-number">5.</span> <span class="toc-text">HDFS</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#标识和定位"><span class="toc-number">5.1.</span> <span class="toc-text">标识和定位</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fs-default-name_(core-site-xml)"><span class="toc-number">5.1.1.</span> <span class="toc-text">fs.default.name (core-site.xml)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-name-dir"><span class="toc-number">5.1.2.</span> <span class="toc-text">dfs.name.dir</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-data-dir"><span class="toc-number">5.1.3.</span> <span class="toc-text">dfs.data.dir</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fs-checkpoint-dir"><span class="toc-number">5.1.4.</span> <span class="toc-text">fs.checkpoint.dir</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-permissions-supergroup"><span class="toc-number">5.1.5.</span> <span class="toc-text">dfs.permissions.supergroup</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#优化调整"><span class="toc-number">5.2.</span> <span class="toc-text">优化调整</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#io-file-buffer-size_(core-site-xml)"><span class="toc-number">5.2.1.</span> <span class="toc-text">io.file.buffer.size (core-site.xml)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-balance-bandwidthPerSec"><span class="toc-number">5.2.2.</span> <span class="toc-text">dfs.balance.bandwidthPerSec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-block-size"><span class="toc-number">5.2.3.</span> <span class="toc-text">dfs.block.size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-datanode-du-reserved"><span class="toc-number">5.2.4.</span> <span class="toc-text">dfs.datanode.du.reserved</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-namenode-handler-count"><span class="toc-number">5.2.5.</span> <span class="toc-text">dfs.namenode.handler.count</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-datanode-failed-volumes-tolerated"><span class="toc-number">5.2.6.</span> <span class="toc-text">dfs.datanode.failed.volumes.tolerated</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-hosts"><span class="toc-number">5.2.7.</span> <span class="toc-text">dfs.hosts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-host-exclude"><span class="toc-number">5.2.8.</span> <span class="toc-text">dfs.host.exclude</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fs-trash-interval_(core-site-xml)"><span class="toc-number">5.2.9.</span> <span class="toc-text">fs.trash.interval (core-site.xml)</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#格式化_NameNode"><span class="toc-number">5.3.</span> <span class="toc-text">格式化 NameNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建_/tmp_目录"><span class="toc-number">5.4.</span> <span class="toc-text">创建 /tmp 目录</span></a></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#NameNode_High_Availability"><span class="toc-number">6.</span> <span class="toc-text">NameNode High Availability</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用_NFS_建立_NameNode_High_Availability"><span class="toc-number">6.1.</span> <span class="toc-text">使用 NFS 建立 NameNode High Availability</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#隔离(Fencing)方法"><span class="toc-number">6.2.</span> <span class="toc-text">隔离(Fencing)方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本配置"><span class="toc-number">6.3.</span> <span class="toc-text">基本配置</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-nameservices"><span class="toc-number">6.3.1.</span> <span class="toc-text">dfs.nameservices</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-ha-namenodes-[nameservice-id]"><span class="toc-number">6.3.2.</span> <span class="toc-text">dfs.ha.namenodes.[nameservice-id]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-namenode-rpc-address-[nameservice-id]-[namenode-id]"><span class="toc-number">6.3.3.</span> <span class="toc-text">dfs.namenode.rpc-address.[nameservice-id].[namenode-id]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-namenode-http-address-[nameservice-id]-[namenode-id]"><span class="toc-number">6.3.4.</span> <span class="toc-text">dfs.namenode.http-address.[nameservice-id].[namenode-id]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-namenode-shared-edits-dir"><span class="toc-number">6.3.5.</span> <span class="toc-text">dfs.namenode.shared.edits.dir</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-client-failover-proxy-provider-[nameservice-id]"><span class="toc-number">6.3.6.</span> <span class="toc-text">dfs.client.failover.proxy.provider.[nameservice-id]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dfs-ha-fencing-methods"><span class="toc-number">6.3.7.</span> <span class="toc-text">dfs.ha.fencing.methods</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#自动故障切换配置"><span class="toc-number">6.4.</span> <span class="toc-text">自动故障切换配置</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置"><span class="toc-number">6.4.1.</span> <span class="toc-text">配置</span></a></li><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#dfs-ha-automatic-failover-enabled_(hdfs-site-xml)"><span class="toc-number">6.4.1.1.</span> <span class="toc-text">dfs.ha.automatic-failover.enabled (hdfs-site.xml)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ha-zookeeper-quorum_(core-site-xml)"><span class="toc-number">6.4.1.2.</span> <span class="toc-text">ha.zookeeper.quorum (core-site.xml)</span></a></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化_ZooKeeper_状态"><span class="toc-number">6.4.2.</span> <span class="toc-text">初始化 ZooKeeper 状态</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#格式化并启动(bootstrap)_NameNode"><span class="toc-number">6.5.</span> <span class="toc-text">格式化并启动(bootstrap) NameNode</span></a></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#Namenode_Federation"><span class="toc-number">7.</span> <span class="toc-text">Namenode Federation</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MapReduce"><span class="toc-number">8.</span> <span class="toc-text">MapReduce</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#身份和位置"><span class="toc-number">8.1.</span> <span class="toc-text">身份和位置</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-job-tracker"><span class="toc-number">8.1.1.</span> <span class="toc-text">mapred.job.tracker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-local-dir"><span class="toc-number">8.1.2.</span> <span class="toc-text">mapred.local.dir</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#优化调整-1"><span class="toc-number">8.2.</span> <span class="toc-text">优化调整</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-java-child-opts"><span class="toc-number">8.2.1.</span> <span class="toc-text">mapred.java.child.opts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-child-ulimit"><span class="toc-number">8.2.2.</span> <span class="toc-text">mapred.child.ulimit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-tasktracker-map-tasks-maximum_或_mapred-tasktracker-reduce-tasks-maximum"><span class="toc-number">8.2.3.</span> <span class="toc-text">mapred.tasktracker.map.tasks.maximum 或 mapred.tasktracker.reduce.tasks.maximum</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-sort-mb"><span class="toc-number">8.2.4.</span> <span class="toc-text">io.sort.mb</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-sort-factor"><span class="toc-number">8.2.5.</span> <span class="toc-text">io.sort.factor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-compress-map-output"><span class="toc-number">8.2.6.</span> <span class="toc-text">mapred.compress.map.output</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-map-output-compression-codec"><span class="toc-number">8.2.7.</span> <span class="toc-text">mapred.map.output.compression.codec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-output-compression-type"><span class="toc-number">8.2.8.</span> <span class="toc-text">mapred.output.compression.type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-jobtracker-handler-count"><span class="toc-number">8.2.9.</span> <span class="toc-text">mapred.jobtracker.handler.count</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-jobtracker-taskScheduler"><span class="toc-number">8.2.10.</span> <span class="toc-text">mapred.jobtracker.taskScheduler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-reduce-parallel-copies"><span class="toc-number">8.2.11.</span> <span class="toc-text">mapred.reduce.parallel.copies</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-reduce-tasks"><span class="toc-number">8.2.12.</span> <span class="toc-text">mapred.reduce.tasks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tasktracker-http-threads"><span class="toc-number">8.2.13.</span> <span class="toc-text">tasktracker.http.threads</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapred-reduce-slowstart-completed-maps"><span class="toc-number">8.2.14.</span> <span class="toc-text">mapred.reduce.slowstart.completed.maps</span></a></li></ol></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#机架拓扑"><span class="toc-number">9.</span> <span class="toc-text">机架拓扑</span></a></li></ol>
+		</div>
+		
+		<blockquote>
+<p><strong>Chapter 5: Installation and Configuration</strong><br>Eric Sammer <a href="http://shop.oreilly.com/product/0636920025085.do" target="_blank">“Hadoop Operations” - O’Reilly (2012)</a> … (p75 ~ p134)</p>
+</blockquote>
+<h1 id="安装_Hadoop">安装 Hadoop</h1>
+<p>有无数种办法可以安装 Hadoop，这里给出的只是最佳实践的建议。</p>
+<p>对于 tarball 安装来说，拥有很大的灵活性，但同样也带来了很多不确定性。作为管理员需要为其额外的创建用户，以及准备各种目录，配置各种目录的权限。<strong>如果不确定自己应该使用哪种安装方式，应该先从软件源或者 RPM/Deb 软件包安装开始。</strong></p>
+<p>Hadoop 的运行不需要使用 root 权限。但是安装的时候，需要创建用户、调整个目录的权限、配置启动脚本等，因此安装时候一般会使用 root 权限，特别是如果需要 secure mode 时。但是一定要明白，<strong>使用 root 安装，绝不意味着就使用 root 运行。</strong></p>
+<h2 id="Apache_Hadoop">Apache Hadoop</h2>
+<p>Apache Hadoop 是 ASF 官方发布的 Hadoop 发行版本。可以直接从 <a href="http://hadoop.apache.org" target="_blank">http://hadoop.apache.org</a> 下载。有 tarball 文件，以及 RPM 和 Deb 文件可供安装选择。</p>
+<p>如果管理员有极特殊的需求的话，可能会考虑使用 tarball 文件安装。除此以外，一般都会选择使用 RPM/Deb安装方式。因为通过安装包安装的会遵循Linux标准文件结构。</p>
+<h3 id="tarball_的安装">tarball 的安装</h3>
+<blockquote>
+<p>这里使用的是当前 1.x 稳定版本 1.2.1，书中使用的是 1.0.0。</p>
+</blockquote>
+<p>首先是下载 hadoop：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>wget http://&lt;selected-mirror&gt;/hadoop/core/hadoop-<span class="number">1.2</span>.<span class="number">1</span>/hadoop-<span class="number">1.2</span>.<span class="number">1</span>.tar.gz
+</pre></td></tr></table></figure>
+
+<p>解压缩</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre>vagrant@precise64:~/hadoop$ tar -zxvf hadoop-<span class="number">1.2</span>.<span class="number">1</span>.tar.gz
+...
+vagrant@precise64:~/hadoop$ ls hadoop-<span class="number">1.2</span>.<span class="number">1</span>
+bin          hadoop-ant-<span class="number">1.2</span>.<span class="number">1</span>.jar          ivy          sbin
+build.xml    hadoop-client-<span class="number">1.2</span>.<span class="number">1</span>.jar       ivy.xml      share
+c++          hadoop-core-<span class="number">1.2</span>.<span class="number">1</span>.jar         lib          src
+CHANGES.txt  hadoop-examples-<span class="number">1.2</span>.<span class="number">1</span>.jar     libexec      webapps
+conf         hadoop-minicluster-<span class="number">1.2</span>.<span class="number">1</span>.jar  LICENSE.txt
+contrib      hadoop-test-<span class="number">1.2</span>.<span class="number">1</span>.jar         NOTICE.txt
+docs         hadoop-tools-<span class="number">1.2</span>.<span class="number">1</span>.jar        README.txt
+vagrant@precise64:~/hadoop$
+</pre></td></tr></table></figure>
+
+<p>可以看到一些常见的目录：</p>
+<ul>
+<li><code>bin</code>, <code>sbin</code>, <code>lib</code>, <code>libexec</code>, <code>share</code>；</li>
+<li><code>conf</code> 这个目录包含了配置文件；</li>
+<li>Hadoop的主要代码都在 <code>hadoop-core-1.2.1.jar</code> 以及 <code>hadoop-tools-1.2.1.jar</code>；</li>
+<li><code>src</code> 这个目录包含了 Hadoop 的源代码，参考目的；</li>
+</ul>
+<p>很奇怪的是，在 1.2.1 的版本中有不少文件是可写的，可写也就意味着可以被人篡改，这显然是不正确的。</p>
+<p>如果需要检查目录里是否存在除了 owner 以外拥有的写权限，可以使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>find hadoop-<span class="number">1.2</span>.<span class="number">1</span> -type f -perm -g+w
+find hadoop-<span class="number">1.2</span>.<span class="number">1</span> -type f -perm -o+w
+</pre></td></tr></table></figure>
+
+<p>一般管理员会禁止这些可写，使用下面的命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>chmod -R g-w hadoop-<span class="number">1.2</span>.<span class="number">1</span>
+</pre></td></tr></table></figure>
+
+<p>对于测试和实验来说，hadoop 留在自己的 home 目录没有任何问题。对于生产环境来说，需要移动到符合系统规范的地方：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> mv hadoop-<span class="number">1.2</span>.<span class="number">1</span> /usr/local/
+</pre></td></tr></table></figure>
+
+<p>移动之后，不要忘记了修改文件的所有权，因为生产环境可不是为了给安装用户用的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre><span class="built_in">cd</span> /usr/local
+<span class="built_in">sudo</span> chown -R root:root hadoop-<span class="number">1.2</span>.<span class="number">1</span>/
+</pre></td></tr></table></figure>
+
+<p>默认情况下 <code>conf</code> 配置文件在 Hadoop 目录下，我们可以让其留在那里。但是正常情况下，会考虑将其移动到标准的 <code>/etc</code> 目录下。这样很多系统方面的工具都可以使用。比如 IDS 的 Tripwire、配置备份，以及将来升级Hadoop软件不必担心配置文件被覆盖掉。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>vagrant@precise64:/usr/local$ <span class="built_in">sudo</span> mkdir /etc/hadoop/
+vagrant@precise64:/usr/local$ <span class="built_in">cd</span> hadoop-<span class="number">1.2</span>.<span class="number">1</span>/
+vagrant@precise64:/usr/local/hadoop-<span class="number">1.2</span>.<span class="number">1</span>$ <span class="built_in">sudo</span> mv conf /etc/hadoop/conf-<span class="number">1.2</span>.<span class="number">1</span>
+vagrant@precise64:/usr/local/hadoop-<span class="number">1.2</span>.<span class="number">1</span>$ <span class="built_in">sudo</span> ln <span class="operator">-s</span> /etc/hadoop/conf-<span class="number">1.2</span>.<span class="number">1</span>/ conf
+</pre></td></tr></table></figure>
+
+<h3 id="安装包安装">安装包安装</h3>
+<p>使用 rpm 或者 deb 安装包则要比 tarball 简单许多。不过，同样需要一些额外的关注。因为 Apache Hadoop 发行版本没有针对 CentOS, RHEL, Ubuntu 之类系统进行定制，因此有可能会有依赖冲突或者不满足依赖的情况，安装中一定要注意。</p>
+<ul>
+<li><strong> CentOS/RedHat </strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>[vagrant@vagrant-centos65 hadoop]$ <span class="built_in">sudo</span> rpm -ivh hadoop-<span class="number">1.2</span>.<span class="number">1</span>-<span class="number">1</span>.x86_64.rpm
+Preparing...                <span class="comment">########################################### [100%]</span>
+   <span class="number">1</span>:hadoop                 <span class="comment">########################################### [100%]</span>
+[vagrant@vagrant-centos65 hadoop]$
+</pre></td></tr></table></figure>
+
+<ul>
+<li><strong> Ubuntu/Debian </strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre>vagrant@precise64:~$ <span class="built_in">sudo</span> dpkg -i hadoop_1.<span class="number">2.1</span>-<span class="number">1</span>_x86_64.deb
+Selecting previously unselected package hadoop.
+(Reading database ... <span class="number">51101</span> files and directories currently installed.)
+Unpacking hadoop (from hadoop_1.<span class="number">2.1</span>-<span class="number">1</span>_x86_64.deb) ...
+Setting up hadoop (<span class="number">1.2</span>.<span class="number">1</span>) ...
+Processing triggers <span class="keyword">for</span> ureadahead ...
+ureadahead will be reprofiled on next reboot
+vagrant@precise64:~$
+</pre></td></tr></table></figure>
+
+<p>使用安装包有很多优势：</p>
+<ul>
+<li>简单。文件目录都会自动安装到正确的位置，并赋予正确的权限；</li>
+<li>一致性。由于遵循了标准文件目录结构，配置文件会位于 <code>/etc/hadoop</code>、日志会位于 <code>/var/log/hadoop</code>，可执行文件会位于 <code>/usr/bin</code> 等等；</li>
+<li>可集成性。由于位置是标准的，所以很容易与配置管理系统，如 Puppet 或 Chef 集成在一起，从而使得 Hadoop 的部署更加简单；</li>
+<li>版本控制。可以使用系统自身的包管理软件进行升级维护。</li>
+</ul>
+<p>关于 rpm 可以使用 <code>rpm -qlp hadoop-1.2.1-1.x86_64.rpm | less</code> 来检查包内文件，关于 deb 可以使用 <code>dpkg -c hadoop_1.2.1-1_x86_64.deb | less</code>。</p>
+<p>需要了解的是下面的文件或目录：</p>
+<ul>
+<li><code>/etc/hadoop</code>： 配置目录；</li>
+<li><code>/etc/rc.d/init.d</code>： 启动脚本。可以通过这些脚本启动和停止 Hadoop 服务；</li>
+<li><code>/usr/bin</code>： hadoop的可执行文件会放置在这里，还包括 <code>task-controller</code>；</li>
+<li><code>/usr/include/hadoop</code>： 供 Hadoop Pipes 的 C/C++ 使用的头文件；</li>
+<li><code>/usr/lib</code>： Hadoop 的 C 库，如 <code>libhdfs.so</code>, <code>libhadoop.a</code>, <code>libhadoop-pipes.a</code>等；</li>
+<li><code>/usr/libexec</code>： 一些比较杂的东西，包括一些库所需要的文件和一些脚本；</li>
+<li><code>/usr/sbin</code>： 一系列供管理员维护用的脚本，比如 <code>start-*.sh</code>、<code>stop-*.sh</code>、<code>hadoop-daemon.sh</code>等脚本；</li>
+<li><code>/usr/share/doc/hadoop</code>： 文档、协议类的文件。</li>
+</ul>
+<h2 id="CDH">CDH</h2>
+<p>CDH 如同 Apache Hadoop 一样，也是全部开源的项目。在 Apache Hadoop 的基础上，Cloudera 公司还负责将一些重要的补丁回溯打到老的版本上，以进行支持。并且 CDH 包含了大量的 Hadoop 生态圈的其它软件，包括 Hive, HBase, Pig 等等。</p>
+<p>CDH 也提供了 tarball、RPM/Deb 之类的安装方式，此外，CDH 提供了更方便的 Yum/Apt 软件源的形式，这会自然解决依赖问题，所以更建议使用这种方式安装。</p>
+<blockquote>
+<p>书中使用的是当时的 CDH 3 的版本，这里使用的是当前的 CDH 5。</p>
+</blockquote>
+<h3 id="配置软件源">配置软件源</h3>
+<ul>
+<li><strong> CentOS/RedHat </strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre>[vagrant@centos ~]$ <span class="built_in">sudo</span> rpm -ivh http://archive.cloudera.com/cdh5/one-click-install/redhat/<span class="number">6</span>/x86_64/cloudera-cdh-<span class="number">5</span>-<span class="number">0</span>.x86_64.rpm
+Retrieving http://archive.cloudera.com/cdh5/one-click-install/redhat/<span class="number">6</span>/x86_64/cloudera-cdh-<span class="number">5</span>-<span class="number">0</span>.x86_64.rpm
+Preparing...                <span class="comment">########################################### [100%]</span>
+   <span class="number">1</span>:cloudera-cdh           <span class="comment">########################################### [100%]</span>
+[vagrant@centos ~]$ rpm -q cloudera-cdh <span class="operator">-l</span>
+/etc/pki/rpm-gpg
+/etc/pki/rpm-gpg/RPM-GPG-KEY-cloudera
+/etc/yum.repos.d/cloudera-cdh5.repo
+/usr/share/doc/cloudera-cdh-<span class="number">5</span>
+/usr/share/doc/cloudera-cdh-<span class="number">5</span>/LICENSE
+[vagrant@centos ~]$
+</pre></td></tr></table></figure>
+
+<ul>
+<li><strong> Ubuntu/Debian </strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+</pre></td><td class="code"><pre>vagrant@ubuntu:~$ wget http://archive.cloudera.com/cdh5/one-click-install/precise/amd64/cdh5-repository_1.<span class="number">0</span>_all.deb
+--<span class="number">2014</span>-<span class="number">04</span>-<span class="number">14</span> <span class="number">13</span>:<span class="number">11</span>:<span class="number">11</span>--  http://archive.cloudera.com/cdh5/one-click-install/precise/amd64/cdh5-repository_1.<span class="number">0</span>_all.deb
+Resolving archive.cloudera.com (archive.cloudera.com)... <span class="number">54.230</span>.<span class="number">132.16</span>, <span class="number">54.230</span>.<span class="number">133.164</span>, <span class="number">54.230</span>.<span class="number">133.136</span>, ...
+Connecting to archive.cloudera.com (archive.cloudera.com)|<span class="number">54.230</span>.<span class="number">132.16</span>|:<span class="number">80</span>... connected.
+HTTP request sent, awaiting response... <span class="number">200</span> OK
+Length: <span class="number">3306</span> (<span class="number">3.2</span>K) [application/x-debian-package]
+Saving to: `cdh5-repository_1.<span class="number">0</span>_all.deb<span class="string">'
+
+100%[======================================&gt;] 3,306       --.-K/s   in 0.001s  
+
+2014-04-14 13:11:12 (2.90 MB/s) - `cdh5-repository_1.0_all.deb'</span> saved [<span class="number">3306</span>/<span class="number">3306</span>]
+
+vagrant@ubuntu:~$ <span class="built_in">sudo</span> dpkg -i cdh5-repository_1.<span class="number">0</span>_all.deb
+Selecting previously unselected package cdh5-repository.
+(Reading database ... <span class="number">51095</span> files and directories currently installed.)
+Unpacking cdh5-repository (from cdh5-repository_1.<span class="number">0</span>_all.deb) ...
+Setting up cdh5-repository (<span class="number">1.0</span>) ...
+gpg: keyring `/etc/apt/secring.gpg<span class="string">' created
+gpg: keyring `/etc/apt/trusted.gpg.d/cloudera-cdh5.gpg'</span> created
+gpg: key <span class="number">02</span>A818DD: public key <span class="string">"Cloudera Apt Repository"</span> imported
+gpg: Total number processed: <span class="number">1</span>
+gpg:               imported: <span class="number">1</span>
+vagrant@ubuntu:~$ dpkg-query -L cdh5-repository
+/.
+/etc
+/etc/apt
+/etc/apt/sources.list.d
+/etc/apt/sources.list.d/cloudera-cdh5.list
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/cdh5-repository
+/usr/share/doc/cdh5-repository/copyright
+/usr/share/doc/cdh5-repository/cloudera-cdh5.key
+vagrant@ubuntu:~$
+</pre></td></tr></table></figure>
+
+<h3 id="获得可以安装的软件组件">获得可以安装的软件组件</h3>
+<p>要列出 CDH 都有哪些组件，可以使用下面的命令：</p>
+<ul>
+<li><strong> CentOS/RedHat </strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+</pre></td><td class="code"><pre>[vagrant@centos ~]$ yum --disablerepo=<span class="string">"*"</span> --enablerepo=<span class="string">"cloudera-cdh5"</span> list available
+Failed to <span class="keyword">set</span> locale, defaulting to C
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+Available Packages
+avro-doc.noarch                                            <span class="number">1.7</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">16</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>.el6                      cloudera-cdh5
+avro-libs.noarch                                           <span class="number">1.7</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">16</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>.el6                      cloudera-cdh5
+avro-tools.noarch                                          <span class="number">1.7</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">16</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>.el6                      cloudera-cdh5
+bigtop-jsvc.x86_64                                         <span class="number">0.6</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">427</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                     cloudera-cdh5
+bigtop-jsvc-debuginfo.x86_64                               <span class="number">0.6</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">427</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                     cloudera-cdh5
+bigtop-tomcat.noarch                                       <span class="number">0.7</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">33</span>.el6                       cloudera-cdh5
+bigtop-utils.noarch                                        <span class="number">0.7</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>.el6                       cloudera-cdh5
+crunch.noarch                                              <span class="number">0.9</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">21</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">24</span>.el6                      cloudera-cdh5
+crunch-doc.noarch                                          <span class="number">0.9</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">21</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">24</span>.el6                      cloudera-cdh5
+flume-ng.noarch                                            <span class="number">1.4</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">111</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">22</span>.el6                     cloudera-cdh5
+flume-ng-agent.noarch                                      <span class="number">1.4</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">111</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">22</span>.el6                     cloudera-cdh5
+flume-ng-doc.noarch                                        <span class="number">1.4</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">111</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">22</span>.el6                     cloudera-cdh5
+hadoop.x86_64                                              <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-<span class="number">0.20</span>-conf-pseudo.x86_64                             <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-<span class="number">0.20</span>-mapreduce.x86_64                               <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-<span class="number">0.20</span>-mapreduce-jobtracker.x86_64                    <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-<span class="number">0.20</span>-mapreduce-jobtrackerha.x86_64                  <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-<span class="number">0.20</span>-mapreduce-tasktracker.x86_64                   <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-<span class="number">0.20</span>-mapreduce-zkfc.x86_64                          <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-client.x86_64                                       <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-conf-pseudo.x86_64                                  <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-debuginfo.x86_64                                    <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-doc.x86_64                                          <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-hdfs.x86_64                                         <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-hdfs-datanode.x86_64                                <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-hdfs-fuse.x86_64                                    <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-hdfs-journalnode.x86_64                             <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-hdfs-namenode.x86_64                                <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-hdfs-nfs3.x86_64                                    <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-hdfs-secondarynamenode.x86_64                       <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-hdfs-zkfc.x86_64                                    <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-httpfs.x86_64                                       <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-libhdfs.x86_64                                      <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-libhdfs-devel.x86_64                                <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-mapreduce.x86_64                                    <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-mapreduce-historyserver.x86_64                      <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-yarn.x86_64                                         <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-yarn-nodemanager.x86_64                             <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-yarn-proxyserver.x86_64                             <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hadoop-yarn-resourcemanager.x86_64                         <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6                     cloudera-cdh5
+hbase.x86_64                                               <span class="number">0.96</span>.<span class="number">1.1</span>+cdh5.<span class="number">0.0</span>+<span class="number">60</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>.el6                   cloudera-cdh5
+hbase-doc.x86_64                                           <span class="number">0.96</span>.<span class="number">1.1</span>+cdh5.<span class="number">0.0</span>+<span class="number">60</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>.el6                   cloudera-cdh5
+hbase-master.x86_64                                        <span class="number">0.96</span>.<span class="number">1.1</span>+cdh5.<span class="number">0.0</span>+<span class="number">60</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>.el6                   cloudera-cdh5
+hbase-regionserver.x86_64                                  <span class="number">0.96</span>.<span class="number">1.1</span>+cdh5.<span class="number">0.0</span>+<span class="number">60</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>.el6                   cloudera-cdh5
+hbase-rest.x86_64                                          <span class="number">0.96</span>.<span class="number">1.1</span>+cdh5.<span class="number">0.0</span>+<span class="number">60</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>.el6                   cloudera-cdh5
+hbase-solr.noarch                                          <span class="number">1.3</span>+cdh5.<span class="number">0.0</span>+<span class="number">38</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">23</span>.el6                        cloudera-cdh5
+hbase-solr-doc.noarch                                      <span class="number">1.3</span>+cdh5.<span class="number">0.0</span>+<span class="number">38</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">23</span>.el6                        cloudera-cdh5
+hbase-solr-indexer.noarch                                  <span class="number">1.3</span>+cdh5.<span class="number">0.0</span>+<span class="number">38</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">23</span>.el6                        cloudera-cdh5
+hbase-thrift.x86_64                                        <span class="number">0.96</span>.<span class="number">1.1</span>+cdh5.<span class="number">0.0</span>+<span class="number">60</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>.el6                   cloudera-cdh5
+hive.noarch                                                <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-hbase.noarch                                          <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-hcatalog.noarch                                       <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-hcatalog-server.noarch                                <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-jdbc.noarch                                           <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-metastore.noarch                                      <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-server.noarch                                         <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-server2.noarch                                        <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-webhcat.noarch                                        <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hive-webhcat-server.noarch                                 <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">308</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">34</span>.el6                    cloudera-cdh5
+hue.x86_64                                                 <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-beeswax.x86_64                                         <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-common.x86_64                                          <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-doc.x86_64                                             <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-hbase.x86_64                                           <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-impala.x86_64                                          <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-pig.x86_64                                             <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-plugins.x86_64                                         <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-rdbms.x86_64                                           <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-search.x86_64                                          <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-server.x86_64                                          <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-spark.x86_64                                           <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-sqoop.x86_64                                           <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+hue-zookeeper.x86_64                                       <span class="number">3.5</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">365</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">42</span>.el6                     cloudera-cdh5
+impala.x86_64                                              <span class="number">1.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">126</span>.el6                      cloudera-cdh5
+impala-catalog.x86_64                                      <span class="number">1.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">126</span>.el6                      cloudera-cdh5
+impala-debuginfo.x86_64                                    <span class="number">1.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">126</span>.el6                      cloudera-cdh5
+impala-server.x86_64                                       <span class="number">1.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">126</span>.el6                      cloudera-cdh5
+impala-shell.x86_64                                        <span class="number">1.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">126</span>.el6                      cloudera-cdh5
+impala-state-store.x86_64                                  <span class="number">1.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">126</span>.el6                      cloudera-cdh5
+impala-udf-devel.x86_64                                    <span class="number">1.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">126</span>.el6                      cloudera-cdh5
+kite.noarch                                                <span class="number">0.10</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">79</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">21</span>.el6                     cloudera-cdh5
+llama.noarch                                               <span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">38</span>.el6                       cloudera-cdh5
+llama-doc.noarch                                           <span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">38</span>.el6                       cloudera-cdh5
+llama-master.noarch                                        <span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">38</span>.el6                       cloudera-cdh5
+mahout.noarch                                              <span class="number">0.8</span>+cdh5.<span class="number">0.0</span>+<span class="number">27</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">19</span>.el6                        cloudera-cdh5
+mahout-doc.noarch                                          <span class="number">0.8</span>+cdh5.<span class="number">0.0</span>+<span class="number">27</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">19</span>.el6                        cloudera-cdh5
+oozie.noarch                                               <span class="number">4.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">174</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">26</span>.el6                     cloudera-cdh5
+oozie-client.noarch                                        <span class="number">4.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">174</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">26</span>.el6                     cloudera-cdh5
+parquet.noarch                                             <span class="number">1.2</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">91</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">31</span>.el6                      cloudera-cdh5
+parquet-format.noarch                                      <span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">3</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>.el6                       cloudera-cdh5
+pig.noarch                                                 <span class="number">0.12</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">27</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">26</span>.el6                     cloudera-cdh5
+pig-udf-datafu.noarch                                      <span class="number">1.1</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">7</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">18</span>.el6                       cloudera-cdh5
+search.noarch                                              <span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">19</span>.el6                       cloudera-cdh5
+sentry.noarch                                              <span class="number">1.2</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">71</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">25</span>.el6                      cloudera-cdh5
+solr.noarch                                                <span class="number">4.4</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">178</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>.el6                     cloudera-cdh5
+solr-doc.noarch                                            <span class="number">4.4</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">178</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>.el6                     cloudera-cdh5
+solr-mapreduce.noarch                                      <span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">19</span>.el6                       cloudera-cdh5
+solr-server.noarch                                         <span class="number">4.4</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">178</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>.el6                     cloudera-cdh5
+spark-core.noarch                                          <span class="number">0.9</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">31</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">31</span>.el6                      cloudera-cdh5
+spark-master.noarch                                        <span class="number">0.9</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">31</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">31</span>.el6                      cloudera-cdh5
+spark-python.noarch                                        <span class="number">0.9</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">31</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">31</span>.el6                      cloudera-cdh5
+spark-worker.noarch                                        <span class="number">0.9</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">31</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">31</span>.el6                      cloudera-cdh5
+sqoop.noarch                                               <span class="number">1.4</span>.<span class="number">4</span>+cdh5.<span class="number">0.0</span>+<span class="number">43</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">21</span>.el6                      cloudera-cdh5
+sqoop-metastore.noarch                                     <span class="number">1.4</span>.<span class="number">4</span>+cdh5.<span class="number">0.0</span>+<span class="number">43</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">21</span>.el6                      cloudera-cdh5
+sqoop2.noarch                                              <span class="number">1.99</span>.<span class="number">3</span>+cdh5.<span class="number">0.0</span>+<span class="number">26</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">24</span>.el6                     cloudera-cdh5
+sqoop2-client.noarch                                       <span class="number">1.99</span>.<span class="number">3</span>+cdh5.<span class="number">0.0</span>+<span class="number">26</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">24</span>.el6                     cloudera-cdh5
+sqoop2-server.noarch                                       <span class="number">1.99</span>.<span class="number">3</span>+cdh5.<span class="number">0.0</span>+<span class="number">26</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">24</span>.el6                     cloudera-cdh5
+whirr.noarch                                               <span class="number">0.9</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">4</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">20</span>.el6                       cloudera-cdh5
+zookeeper.x86_64                                           <span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>.el6                      cloudera-cdh5
+zookeeper-debuginfo.x86_64                                 <span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>.el6                      cloudera-cdh5
+zookeeper-native.x86_64                                    <span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>.el6                      cloudera-cdh5
+zookeeper-server.x86_64                                    <span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>.el6                      cloudera-cdh5
+[vagrant@centos ~]$
+</pre></td></tr></table></figure>
+
+<ul>
+<li><strong> Ubuntu/Debian </strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+</pre></td><td class="code"><pre>lessvagrant@ubuntu:~$ curl <span class="operator">-s</span> http://archive-primary.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/dists/precise-cdh5/contrib/binary-amd64/Packages.gz | gzip <span class="operator">-d</span> | grep Package
+Package: avro-doc
+Package: avro-libs
+Package: avro-tools
+Package: bigtop-jsvc
+Package: bigtop-tomcat
+Package: bigtop-utils
+Package: crunch
+Package: crunch-doc
+Package: flume-ng
+Package: flume-ng-agent
+Package: flume-ng-doc
+Package: hadoop
+Package: hadoop-<span class="number">0.20</span>-conf-pseudo
+Package: hadoop-<span class="number">0.20</span>-mapreduce
+Package: hadoop-<span class="number">0.20</span>-mapreduce-jobtracker
+Package: hadoop-<span class="number">0.20</span>-mapreduce-jobtrackerha
+Package: hadoop-<span class="number">0.20</span>-mapreduce-tasktracker
+Package: hadoop-<span class="number">0.20</span>-mapreduce-zkfc
+Package: hadoop-client
+Package: hadoop-conf-pseudo
+Package: hadoop-doc
+Package: hadoop-hdfs
+Package: hadoop-hdfs-datanode
+Package: hadoop-hdfs-fuse
+Package: hadoop-hdfs-journalnode
+Package: hadoop-hdfs-namenode
+Package: hadoop-hdfs-nfs3
+Package: hadoop-hdfs-secondarynamenode
+Package: hadoop-hdfs-zkfc
+Package: hadoop-httpfs
+Package: hadoop-mapreduce
+Package: hadoop-mapreduce-historyserver
+Package: hadoop-yarn
+Package: hadoop-yarn-nodemanager
+Package: hadoop-yarn-proxyserver
+Package: hadoop-yarn-resourcemanager
+Package: hbase
+Package: hbase-doc
+Package: hbase-master
+Package: hbase-regionserver
+Package: hbase-rest
+Package: hbase-solr
+Package: hbase-solr-doc
+Package: hbase-solr-indexer
+Package: hbase-thrift
+Package: hive
+Package: hive-hbase
+Package: hive-hcatalog
+Package: hive-hcatalog-server
+Package: hive-jdbc
+Package: hive-metastore
+Package: hive-server
+Package: hive-server2
+Package: hive-webhcat
+Package: hive-webhcat-server
+Package: hue
+Package: hue-beeswax
+Package: hue-common
+Package: hue-doc
+Package: hue-hbase
+Package: hue-impala
+Package: hue-pig
+Package: hue-plugins
+Package: hue-rdbms
+Package: hue-search
+Package: hue-server
+Package: hue-spark
+Package: hue-sqoop
+Package: hue-zookeeper
+Package: impala
+Package: impala-catalog
+Package: impala-dbg
+Package: impala-server
+Package: impala-shell
+Package: impala-state-store
+Package: impala-udf-dev
+Package: kite
+Package: libhdfs0
+Package: libhdfs0-dev
+Package: llama
+Package: llama-doc
+Package: llama-master
+Package: mahout
+Package: mahout-doc
+Package: oozie
+Package: oozie-client
+Package: parquet
+Package: parquet-format
+Package: pig
+Package: pig-udf-datafu
+Package: search
+Package: sentry
+Package: solr
+Package: solr-doc
+Package: solr-mapreduce
+Package: solr-server
+Package: spark-core
+Package: spark-master
+Package: spark-python
+Package: spark-worker
+Package: sqoop
+Package: sqoop-metastore
+Package: sqoop2
+Package: sqoop2-client
+Package: sqoop2-server
+Package: whirr
+Package: zookeeper
+Package: zookeeper-native
+Package: zookeeper-server
+vagrant@ubuntu:~$
+</pre></td></tr></table></figure>
+
+<h3 id="安装所需组件">安装所需组件</h3>
+<p>可以根据服务器的任务决定所需要安装的组件。下面以安装 Hadoop 为例。</p>
+<ul>
+<li><strong> CentOS/RedHat </strong></li>
+</ul>
+<p>安装任何软件前，应该先执行升级任务。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> yum update
+</pre></td></tr></table></figure>
+
+<p>然后是安装 Hadoop</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> yum install hadoop-hdfs hadoop-mapreduce
+
+[vagrant@centos ~]$ <span class="built_in">sudo</span> yum install hadoop
+Failed to <span class="keyword">set</span> locale, defaulting to C
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: centos.mirror.serversaustralia.com.au
+ * epel: mirror.optus.net
+ * extras: mirror.ventraip.net.au
+ * updates: mirror.ventraip.net.au
+Setting up Install Process
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package hadoop.x86_64 <span class="number">0</span>:<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6 will be installed
+--&gt; Processing Dependency: bigtop-utils &gt;= <span class="number">0.7</span> <span class="keyword">for</span> package: hadoop-<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6.x86_64
+--&gt; Processing Dependency: zookeeper &gt;= <span class="number">3.4</span>.<span class="number">0</span> <span class="keyword">for</span> package: hadoop-<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6.x86_64
+--&gt; Processing Dependency: avro-libs <span class="keyword">for</span> package: hadoop-<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6.x86_64
+--&gt; Processing Dependency: parquet <span class="keyword">for</span> package: hadoop-<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6.x86_64
+--&gt; Processing Dependency: redhat-lsb <span class="keyword">for</span> package: hadoop-<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6.x86_64
+
+...
+
+---&gt; Package poppler-data.noarch <span class="number">0</span>:<span class="number">0.4</span>.<span class="number">0</span>-<span class="number">1</span>.el6 will be installed
+---&gt; Package xml-common.noarch <span class="number">0</span>:<span class="number">0.6</span>.<span class="number">3</span>-<span class="number">32</span>.el6 will be installed
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package                  Arch   Version                    Repository     Size
+================================================================================
+Installing:
+ hadoop                   x86_64 <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6
+                                                            cloudera-cdh5  <span class="number">19</span> M
+Installing <span class="keyword">for</span> dependencies:
+ alsa-lib                 x86_64 <span class="number">1.0</span>.<span class="number">22</span>-<span class="number">3</span>.el6               base          <span class="number">370</span> k
+ at                       x86_64 <span class="number">3.1</span>.<span class="number">10</span>-<span class="number">43</span>.el6_2.<span class="number">1</span>          base           <span class="number">60</span> k
+ atk                      x86_64 <span class="number">1.30</span>.<span class="number">0</span>-<span class="number">1</span>.el6               base          <span class="number">195</span> k
+ avahi-libs               x86_64 <span class="number">0.6</span>.<span class="number">25</span>-<span class="number">12</span>.el6              base           <span class="number">54</span> k
+ avro-libs                noarch <span class="number">1.7</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">16</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>.el6
+                                                            cloudera-cdh5  <span class="number">12</span> M
+ bc                       x86_64 <span class="number">1.06</span>.<span class="number">95</span>-<span class="number">1</span>.el6              base          <span class="number">110</span> k
+ bigtop-utils             noarch <span class="number">0.7</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>.el6
+                                                            cloudera-cdh5 <span class="number">8.8</span> k
+ cairo                    x86_64 <span class="number">1.8</span>.<span class="number">8</span>-<span class="number">3.1</span>.el6              base          <span class="number">309</span> k
+ cdparanoia-libs          x86_64 <span class="number">10.2</span>-<span class="number">5.1</span>.el6               base           <span class="number">47</span> k
+
+ ...
+
+ zookeeper                x86_64 <span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>.el6
+                                                            cloudera-cdh5 <span class="number">3.7</span> M
+
+Transaction Summary
+================================================================================
+Install     <span class="number">106</span> Package(s)
+
+Total download size: <span class="number">137</span> M
+Installed size: <span class="number">325</span> M
+Is this ok [y/N]: y
+Downloading Packages:
+(<span class="number">1</span>/<span class="number">106</span>): alsa-lib-<span class="number">1.0</span>.<span class="number">22</span>-<span class="number">3</span>.el6.x86_64.rpm                | <span class="number">370</span> kB     <span class="number">00</span>:<span class="number">00</span>
+(<span class="number">2</span>/<span class="number">106</span>): at-<span class="number">3.1</span>.<span class="number">10</span>-<span class="number">43</span>.el6_2.<span class="number">1</span>.x86_64.rpm                 |  <span class="number">60</span> kB     <span class="number">00</span>:<span class="number">00</span>
+(<span class="number">3</span>/<span class="number">106</span>): atk-<span class="number">1.30</span>.<span class="number">0</span>-<span class="number">1</span>.el6.x86_64.rpm                     | <span class="number">195</span> kB     <span class="number">00</span>:<span class="number">00</span>
+(<span class="number">4</span>/<span class="number">106</span>): avahi-libs-<span class="number">0.6</span>.<span class="number">25</span>-<span class="number">12</span>.el6.x86_64.rpm             |  <span class="number">54</span> kB     <span class="number">00</span>:<span class="number">00</span>
+(<span class="number">5</span>/<span class="number">106</span>): avro-libs-<span class="number">1.7</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">16</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>.el |  <span class="number">12</span> MB     <span class="number">00</span>:<span class="number">09</span>
+(<span class="number">6</span>/<span class="number">106</span>): bc-<span class="number">1.06</span>.<span class="number">95</span>-<span class="number">1</span>.el6.x86_64.rpm                     | <span class="number">110</span> kB     <span class="number">00</span>:<span class="number">00</span>
+(<span class="number">7</span>/<span class="number">106</span>): bigtop-utils-<span class="number">0.7</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>. | <span class="number">8.8</span> kB     <span class="number">00</span>:<span class="number">00</span>
+
+...
+
+(<span class="number">106</span>/<span class="number">106</span>): zookeeper-<span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>. | <span class="number">3.7</span> MB     <span class="number">00</span>:<span class="number">02</span>
+--------------------------------------------------------------------------------
+Total                                           <span class="number">1.3</span> MB/s | <span class="number">137</span> MB     <span class="number">01</span>:<span class="number">47</span>
+warning: rpmts_HdrFromFdno: Header V4 DSA/SHA1 Signature, key ID e8f86acd: NOKEY
+Retrieving key from http://archive.cloudera.com/cdh5/redhat/<span class="number">6</span>/x86_64/cdh/RPM-GPG-KEY-cloudera
+Importing GPG key <span class="number">0</span>xE8F86ACD:
+ Userid: <span class="string">"Yum Maintainer &lt;webmaster@cloudera.com&gt;"</span>
+ From  : http://archive.cloudera.com/cdh5/redhat/<span class="number">6</span>/x86_64/cdh/RPM-GPG-KEY-cloudera
+Is this ok [y/N]: y
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing : freetype-<span class="number">2.3</span>.<span class="number">11</span>-<span class="number">14</span>.el6_3.<span class="number">1</span>.x86_64                          <span class="number">1</span>/<span class="number">106</span>
+  Installing : fontconfig-<span class="number">2.8</span>.<span class="number">0</span>-<span class="number">3</span>.el6.x86_64                              <span class="number">2</span>/<span class="number">106</span>
+  Installing : libjpeg-turbo-<span class="number">1.2</span>.<span class="number">1</span>-<span class="number">3</span>.el6_5.x86_64                         <span class="number">3</span>/<span class="number">106</span>
+  Installing : <span class="number">2</span>:libpng-<span class="number">1.2</span>.<span class="number">49</span>-<span class="number">1</span>.el6_2.x86_64                             <span class="number">4</span>/<span class="number">106</span>
+  Installing : libICE-<span class="number">1.0</span>.<span class="number">6</span>-<span class="number">1</span>.el6.x86_64                                  <span class="number">5</span>/<span class="number">106</span>
+  Installing : libSM-<span class="number">1.2</span>.<span class="number">1</span>-<span class="number">2</span>.el6.x86_64                                   <span class="number">6</span>/<span class="number">106</span>
+  Installing : <span class="number">1</span>:qt-<span class="number">4.6</span>.<span class="number">2</span>-<span class="number">28</span>.el6_5.x86_64                                 <span class="number">7</span>/<span class="number">106</span>
+
+  ...
+
+  Installing : hadoop-<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6.x86_64    <span class="number">105</span>/<span class="number">106</span>
+  Installing : parquet-format-<span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">3</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>.el6.n   <span class="number">106</span>/<span class="number">106</span>
+  Verifying  : libXdamage-<span class="number">1.1</span>.<span class="number">3</span>-<span class="number">4</span>.el6.x86_64                              <span class="number">1</span>/<span class="number">106</span>
+  Verifying  : libSM-<span class="number">1.2</span>.<span class="number">1</span>-<span class="number">2</span>.el6.x86_64                                   <span class="number">2</span>/<span class="number">106</span>
+  Verifying  : at-<span class="number">3.1</span>.<span class="number">10</span>-<span class="number">43</span>.el6_2.<span class="number">1</span>.x86_64                                <span class="number">3</span>/<span class="number">106</span>
+  Verifying  : hadoop-<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6.x86_64      <span class="number">4</span>/<span class="number">106</span>
+
+  ...
+
+  Verifying  : libthai-<span class="number">0.1</span>.<span class="number">12</span>-<span class="number">3</span>.el6.x86_64                              <span class="number">105</span>/<span class="number">106</span>
+  Verifying  : libXv-<span class="number">1.0</span>.<span class="number">7</span>-<span class="number">2</span>.el6.x86_64                                 <span class="number">106</span>/<span class="number">106</span>
+
+Installed:
+  hadoop.x86_64 <span class="number">0</span>:<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>.el6
+
+Dependency Installed:
+  alsa-lib.x86_64 <span class="number">0</span>:<span class="number">1.0</span>.<span class="number">22</span>-<span class="number">3</span>.el6
+  at.x86_64 <span class="number">0</span>:<span class="number">3.1</span>.<span class="number">10</span>-<span class="number">43</span>.el6_2.<span class="number">1</span>
+  atk.x86_64 <span class="number">0</span>:<span class="number">1.30</span>.<span class="number">0</span>-<span class="number">1</span>.el6
+
+  ...
+
+  xorg-x11-font-utils.x86_64 <span class="number">1</span>:<span class="number">7.2</span>-<span class="number">11</span>.el6
+  zookeeper.x86_64 <span class="number">0</span>:<span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>.el6
+
+Complete!
+[vagrant@centos ~]$
+</pre></td></tr></table></figure>
+
+<ul>
+<li><strong> Ubuntu/Debian </strong></li>
+</ul>
+<p>安装任何软件前，应该先执行升级任务。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> apt-get update && <span class="built_in">sudo</span> apt-get upgrade
+</pre></td></tr></table></figure>
+
+<p>然后是安装 Hadoop</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+</pre></td><td class="code"><pre>vagrant@ubuntu:~$ <span class="built_in">sudo</span> apt-get install hadoop-hdfs hadoop-mapreduce
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following extra packages will be installed:
+  avro-libs bigtop-utils parquet parquet-format zookeeper
+The following NEW packages will be installed:
+  avro-libs bigtop-utils hadoop parquet parquet-format zookeeper
+<span class="number">0</span> upgraded, <span class="number">6</span> newly installed, <span class="number">0</span> to remove and <span class="number">162</span> not upgraded.
+Need to get <span class="number">48.1</span> MB of archives.
+After this operation, <span class="number">56.6</span> MB of additional disk space will be used.
+Do you want to <span class="keyword">continue</span> [Y/n]? y
+Get:<span class="number">1</span> http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib avro-libs all <span class="number">1.7</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">16</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>~precise-cdh5.<span class="number">0.0</span> [<span class="number">12.6</span> MB]
+Get:<span class="number">2</span> http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib bigtop-utils all <span class="number">0.7</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>~precise-cdh5.<span class="number">0.0</span> [<span class="number">33.0</span> kB]
+Get:<span class="number">3</span> http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib zookeeper all <span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>~precise-cdh5.<span class="number">0.0</span> [<span class="number">4</span>,<span class="number">159</span> kB]
+Get:<span class="number">4</span> http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib parquet-format all <span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">3</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>~precise-cdh5.<span class="number">0.0</span> [<span class="number">440</span> kB]
+Get:<span class="number">5</span> http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib parquet all <span class="number">1.2</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">91</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">31</span>~precise-cdh5.<span class="number">0.0</span> [<span class="number">10.6</span> MB]
+Get:<span class="number">6</span> http://archive.cloudera.com/cdh5/ubuntu/precise/amd64/cdh/ precise-cdh5/contrib hadoop all <span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>~precise-cdh5.<span class="number">0.0</span> [<span class="number">20.3</span> MB]
+Fetched <span class="number">48.1</span> MB <span class="keyword">in</span> <span class="number">2</span>min <span class="number">44</span>s (<span class="number">293</span> kB/s)
+Selecting previously unselected package avro-libs.
+(Reading database ... <span class="number">51141</span> files and directories currently installed.)
+Unpacking avro-libs (from .../avro-libs_1.<span class="number">7.5</span>+cdh5.<span class="number">0.0</span>+<span class="number">16</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>~precise-cdh5.<span class="number">0.0</span>_all.deb) ...
+Selecting previously unselected package bigtop-utils.
+Unpacking bigtop-utils (from .../bigtop-utils_0.<span class="number">7.0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>~precise-cdh5.<span class="number">0.0</span>_all.deb) ...
+Selecting previously unselected package zookeeper.
+Unpacking zookeeper (from .../zookeeper_3.<span class="number">4.5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>~precise-cdh5.<span class="number">0.0</span>_all.deb) ...
+Selecting previously unselected package parquet-format.
+Unpacking parquet-format (from .../parquet-format_1.<span class="number">0.0</span>+cdh5.<span class="number">0.0</span>+<span class="number">3</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>~precise-cdh5.<span class="number">0.0</span>_all.deb) ...
+Selecting previously unselected package parquet.
+Unpacking parquet (from .../parquet_1.<span class="number">2.5</span>+cdh5.<span class="number">0.0</span>+<span class="number">91</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">31</span>~precise-cdh5.<span class="number">0.0</span>_all.deb) ...
+Selecting previously unselected package hadoop.
+Unpacking hadoop (from .../hadoop_2.<span class="number">3.0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>~precise-cdh5.<span class="number">0.0</span>_all.deb) ...
+Processing triggers <span class="keyword">for</span> man-db ...
+Setting up avro-libs (<span class="number">1.7</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">16</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">37</span>~precise-cdh5.<span class="number">0.0</span>) ...
+Setting up bigtop-utils (<span class="number">0.7</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">0</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>~precise-cdh5.<span class="number">0.0</span>) ...
+Setting up zookeeper (<span class="number">3.4</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">28</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">36</span>~precise-cdh5.<span class="number">0.0</span>) ...
+update-alternatives: using /etc/zookeeper/conf.dist to provide /etc/zookeeper/conf (zookeeper-conf) <span class="keyword">in</span> auto mode.
+Setting up parquet (<span class="number">1.2</span>.<span class="number">5</span>+cdh5.<span class="number">0.0</span>+<span class="number">91</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">31</span>~precise-cdh5.<span class="number">0.0</span>) ...
+Setting up parquet-format (<span class="number">1.0</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">3</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">39</span>~precise-cdh5.<span class="number">0.0</span>) ...
+Setting up hadoop (<span class="number">2.3</span>.<span class="number">0</span>+cdh5.<span class="number">0.0</span>+<span class="number">548</span>-<span class="number">1</span>.cdh5.<span class="number">0.0</span>.p0.<span class="number">69</span>~precise-cdh5.<span class="number">0.0</span>) ...
+update-alternatives: using /etc/hadoop/conf.empty to provide /etc/hadoop/conf (hadoop-conf) <span class="keyword">in</span> auto mode.
+Processing triggers <span class="keyword">for</span> libc-bin ...
+ldconfig deferred processing now taking place
+vagrant@ubuntu:~$
+</pre></td></tr></table></figure>
+
+<h3 id="同_Apache_Hadoop_的差异">同 Apache Hadoop 的差异</h3>
+<ul>
+<li>使用 <code>alternatives</code> 系统： CDH 使用了 Linux 中的 <code>alternatives</code> 系统。这个系统可以使一个计算机中对某个软件安装多个版本，可以通过系统的 <code>alternatives</code> 命令随时切换不同版本。对于 RedHat/CentOS 类用户可以通过 <code>man 8 alternatives</code> 查看进一步信息，对于 Debian/Ubuntu 用户可以通过 <code>man 8 update-alternatives</code>  查看进一步信息；</li>
+<li>CDH 会添加、修改 <code>/etc/security/limits.d</code> 中的文件，用以对用户 <code>hdfs</code> 以及 <code>mapred</code> 进行配置合适的 <code>nofile</code> 和 <code>nproc</code> 限额；</li>
+<li>Hadoop 主目录使用 <code>/usr/lib/hadoop*</code> 而不是使用 <code>/usr/share/hadoop</code>。</li>
+</ul>
+<h3 id="建立软件源镜像">建立软件源镜像</h3>
+<p>对于集群而言，经常的会在局域网内部建立一个 Yum/Apt 软件源的镜像。这样做有两个好处</p>
+<ul>
+<li>可以相当大的程度上减少安装、升级时对外部带宽、流量的占用；</li>
+<li>很多时候，集群中不是所有的机器都可以访问互联网，内部的软件源镜像可以解决这一问题；</li>
+</ul>
+<p>创建源：</p>
+<ul>
+<li><strong> CentOS/RedHat </strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> yum install httpd yum-utils createrepo
+<span class="built_in">sudo</span> mkdir -p /var/www/html/repo
+<span class="built_in">sudo</span> chmod a+w /var/www/html/repo
+<span class="built_in">cd</span> /var/www/html/repo
+<span class="built_in">sudo</span> reposync -r cloudera-cdh5
+<span class="built_in">sudo</span> createrepo cloudera-cdh5
+</pre></td></tr></table></figure>
+
+<p>不要忘记了在其它服务器配置 cloudera 源的时候，修改为该镜像源</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="attribute">baseurl</span>=<span class="string">http://mirror-server/cloudera-cdh5</span>
+</pre></td></tr></table></figure>
+
+<p>注意将其中的 <code>mirror-server</code> 换成实际的域名或者IP。</p>
+<ul>
+<li><strong> Ubuntu/Debian </strong></li>
+</ul>
+<p>需要注意的是由于 <code>apt-mirror</code> 不支持默认的 cloudera-cdh5.list 中的一些格式。需要先行修改一下其格式。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> nano /etc/apt/source.list.d/cloudera-cdh5.list
+</pre></td></tr></table></figure>
+
+<p>注意其中的 <code>[arch=amd64]</code> 行，修改为以下格式：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>deb-amd64 http://archive<span class="preprocessor">.cloudera</span><span class="preprocessor">.com</span>/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib
+deb-src http://archive<span class="preprocessor">.cloudera</span><span class="preprocessor">.com</span>/cdh5/ubuntu/precise/amd64/cdh precise-cdh5 contrib
+</pre></td></tr></table></figure>
+
+<p>然后安装镜像工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> apt-get install apt-mirror apache2
+</pre></td></tr></table></figure>
+
+<p>下载：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+</pre></td><td class="code"><pre>vagrant@ubuntu:~$ <span class="built_in">sudo</span> apt-mirror /etc/apt/sources.list.d/cloudera-cdh5.list
+Downloading <span class="number">10</span> index files using <span class="number">10</span> threads...
+Begin time: Mon Apr <span class="number">14</span> <span class="number">17</span>:<span class="number">14</span>:<span class="number">25</span> <span class="number">2014</span>
+[<span class="number">10</span>]... [<span class="number">9</span>]... [<span class="number">8</span>]... [<span class="number">7</span>]... [<span class="number">6</span>]... [<span class="number">5</span>]... [<span class="number">4</span>]... [<span class="number">3</span>]... [<span class="number">2</span>]... [<span class="number">1</span>]... [<span class="number">0</span>]...
+End time: Mon Apr <span class="number">14</span> <span class="number">17</span>:<span class="number">14</span>:<span class="number">27</span> <span class="number">2014</span>
+
+Proceed indexes: [SP]
+
+<span class="number">3.0</span> GiB will be downloaded into archive.
+Downloading <span class="number">193</span> archive files using <span class="number">20</span> threads...
+Begin time: Mon Apr <span class="number">14</span> <span class="number">17</span>:<span class="number">14</span>:<span class="number">27</span> <span class="number">2014</span>
+[<span class="number">20</span>]... [<span class="number">19</span>]... [<span class="number">18</span>]... [<span class="number">17</span>]... [<span class="number">16</span>]... [<span class="number">15</span>]... [<span class="number">14</span>]... [<span class="number">13</span>]... [<span class="number">12</span>]... [<span class="number">11</span>]... [<span class="number">10</span>]... [<span class="number">9</span>]... [<span class="number">8</span>]... [<span class="number">7</span>]... [<span class="number">6</span>]... [<span class="number">5</span>]... [<span class="number">4</span>]... [<span class="number">3</span>]... [<span class="number">2</span>]... [<span class="number">1</span>]... [<span class="number">0</span>]...
+End time: Mon Apr <span class="number">14</span> <span class="number">18</span>:<span class="number">15</span>:<span class="number">31</span> <span class="number">2014</span>
+
+<span class="number">0.0</span> bytes <span class="keyword">in</span> <span class="number">0</span> files and <span class="number">0</span> directories can be freed.
+Run /var/spool/apt-mirror/var/clean.sh <span class="keyword">for</span> this purpose.
+
+Running the Post Mirror script ...
+(/var/spool/apt-mirror/var/postmirror.sh)
+
+
+Post Mirror script has completed. See above output <span class="keyword">for</span> any possible errors.
+
+vagrant@ubuntu:~$
+</pre></td></tr></table></figure>
+
+<p>下载好的文件位于 <code>/var/spool/apt-mirror/mirror/</code> 目录下。我们可以将其链接到 apache 的www目录下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> ln <span class="operator">-s</span> /var/spool/apt-mirror/mirror/archive.cloudera.com /var/www/cloudera
+</pre></td></tr></table></figure>
+
+<p>然后，不要忘记在其他服务器上设置下载 cloudera 的源时，使用当前机器的服务器：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>deb-amd64 <span class="symbol">http:</span>/<span class="regexp">/mirror-server/cloudera</span><span class="regexp">/cdh5/ubuntu</span><span class="regexp">/precise/amd</span>64/cdh precise-cdh5 contrib
+deb-src <span class="symbol">http:</span>/<span class="regexp">/mirror-server/cloudera</span><span class="regexp">/cdh5/ubuntu</span><span class="regexp">/precise/amd</span>64/cdh precise-cdh5 contrib
+</pre></td></tr></table></figure>
+
+<p>注意将其中的 <code>mirror-server</code> 换成实际服务器的 IP 或者域名。</p>
+<h3 id="建立软件源缓存代理">建立软件源缓存代理</h3>
+<p>进行全源镜像是比较大型网络解决流量损耗问题的方案，但是它有些很明显的缺陷。</p>
+<p><strong>全源镜像很大。</strong>大约需要下载几十GB，如果包括了不同版本不同构架的系统的源，大小更是成倍增加，甚至需要几百个GB。这将是第一次初始化镜像时所需要下载的量。这除了意味着将占用大量的硬盘空间外，还意味着巨大的下载流量，以及长达几天甚至更久的初始化时间。</p>
+<p>其实绝大多数软件包我们不会用到，而且对于集群来说，机器又非常相似。所以，也可以选择另一种方式，既缓存/代理的方式。所有的计算机通过这个代理下载软件包，凡是别人下载过的，就不用再从公网下载，而只需从代理服务器下载即可。</p>
+<p>以 ubuntu 为例，安装配置非常简单。</p>
+<p>首先在将要做缓存的服务器上安装代理软件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> apt-get install squid-deb-proxy
+</pre></td></tr></table></figure>
+
+<p>然后再在所有计算机上安装代理客户端软件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> apt-get install squid-deb-proxy-client
+</pre></td></tr></table></figure>
+
+<p>然后就好了，当需要 <code>apt-get</code> 升级的时候，会自动寻找到代理服务器，并通过代理服务器下载。无需额外的配置。</p>
+<p>需要注意的是，<strong>默认的配置只是针对 Ubuntu 官方的源的</strong>，对于安装 CDH 而言，还需要配置 CDH 的源，否则会导致软件无法安装成功。添加一个文件 <code>/etc/squid-deb-proxy/mirror-dstdomain.acl.d/10-cloudera</code>，其内容为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>archive<span class="preprocessor">.cloudera</span><span class="preprocessor">.com</span>
+</pre></td></tr></table></figure>
+
+<p><strong>在修改了该配置后，不要忘记重新启动代理服务器</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> restart squid-deb-proxy
+</pre></td></tr></table></figure>
+
+<h1 id="配置：概述">配置：概述</h1>
+<p>Hadoop 是高度可配置的，其拥有几百项配置项目。了解这些配置，是维护大规模集群，确保系统正常运行所必需的。</p>
+<blockquote>
+<p>随着 Hadoop 的版本升级，很多之前使用的配置名称会发生改变，其目的是为了使其名称可以更准确的反应其功能。本书将使用 1.x 的配置名称。NameNode High Availability 以及 Fedoration 必须使用新版本的配置，因此该部分将使用新名称。</p>
+</blockquote>
+<p>Hadoop 的配置可以分为四大类：</p>
+<ul>
+<li>集群 (Cluster)</li>
+<li>服务 (Daemon)</li>
+<li>任务 (Job)</li>
+<li>操作 (Individual Operation)</li>
+</ul>
+<p>运维管理员将主要关注于前两者，而程序开发人员主要关注于后两者。</p>
+<p>要使集群和服务级别的参数变更生效，往往需要重新启动集群，因此部分参数变更可能会导致服务中断。</p>
+<p>许多参数可以由管理员设置默认值，但是执行期间可以由命令行、程序代码覆盖这些配置（如果允许的话）。如 <code>hadoop fs</code> 命令，可以控制该文件的副本数，甚至跨集群复制文件。</p>
+<p>配置文件列表：</p>
+<ul>
+<li><code>hadoop-env.sh</code>： Hadoop、JDK等环境变量，如需修改则在该文件中写入其值；</li>
+<li><code>core-site.xml</code>： 核心配置文件，和所有的 Hadoop 服务和客户端都有关系；</li>
+<li><code>hdfs-site.xml</code>： HDFS 相关的配置文件。HDFS 服务以及其客户端都需要该文件；</li>
+<li><code>mapred-site.xml</code>： MapReduce 相关的配置文件。MapReduce 服务和其客户端都需要该文件；</li>
+<li><code>log4j.properties</code>： log4j 的 Java 日志配置文件；</li>
+<li><code>masters</code> (可选)： 行分割文件，指定 SecondaryNameNode 的文件。该文件在 2.x 系列中已不需要；</li>
+<li><code>slaves</code> (可选)： 行分割文件。NameNode 将从该文件中读取 DataNode 列表，JobTracker 将从该文件中读取 TaskTracker 列表；</li>
+<li><code>fair-scheduler.xml</code>(可选)： 当使用 Fair Scheduler 调度器时，该文件用于配置；</li>
+<li><code>capacity-scheduler.xml</code>(可选)： 当使用 Capacity Scheduler 调度器时，该文件用于配置；</li>
+<li><code>dfs.include</code>(可选，常用名)： 行分割文件，包含允许加入HDFS集群的节点列表。该文件名需要通过配置指定，一般常用该名称；</li>
+<li><code>dfs.exclude</code>(可选，常用名)： 行分割文件，包含拒绝加入HDFS集群的节点列表。该文件名需要通过配置指定，一般常用该名称；</li>
+<li><code>hadoop-policy.xml</code>： 用于指定哪个用户或组允许访问某个RPC的配置文件；</li>
+<li><code>mapred-queue-acls.xml</code>： 指定哪个用户或组允许提交任务给 MapReduce 的哪一个队列；</li>
+<li><code>taskcontroller.cfg</code>： 在安全模式下，<code>task-controller</code> 所使用的属性配置文件；</li>
+</ul>
+<p>这些文件大多是使用 Java 的 <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/ClassLoader.html" target="_blank">ClassLoader</a> 资源加载机制从 classpath 中加载的，因此 Hadoop 的启动脚本将会确保配置文件目录位于 classpath 的头部。</p>
+<h2 id="Hadoop_XML_配置文件">Hadoop XML 配置文件</h2>
+<p>Hadoop 主要的配置文件是三个 XML 文件 <code>core-site.xml</code>、<code>hdfs-site.xml</code> 以及 <code>mapred-site.xml</code>。这三个文件中所配置的项，将覆盖默认值。</p>
+<p>当 MapReduce 运行的时候，部分参数可以有程序开发人员覆盖其值。管理员可以通过设置 <code>final</code> 属性，来阻止该配置被 MapReduce 程序所覆盖。</p>
+<p>如：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">property</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">name</span>&gt;</span>foo.bar.baz<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">value</span>&gt;</span>42<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">final</span>&gt;</span>true<span class="tag">&lt;/<span class="title">final</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+<p>后续章节描述配置是将直接使用名称和其值描述，而写入配置文件时，将使用上述格式，并依据需要决定是否需要 <code>&lt;final&gt;true&lt;/final&gt;</code> 项。</p>
+<h1 id="环境变量和_Shell_脚本">环境变量和 Shell 脚本</h1>
+<p>Hadoop Shell 脚本分两类：</p>
+<ul>
+<li>一类是定义 Hadoop 运行所必需的参数。如 JDK 的位置、选项、Hadoop 的位置参数等；</li>
+<li>另一类是为服务运行时提供配置环境变量的。</li>
+</ul>
+<p><code>haoop-env.sh</code> 中需要配置 <code>JAVA_HOME</code>，虽然 <code>hadoop</code> 会自己寻找 <code>JAVA_HOME</code>，如果没有配置好的 <code>JAVA_HOME</code> 依旧会导致访问时使用了错误的 JDK 版本，或者干脆找不到。</p>
+<p><code>HADOOP_daemon_OPTS</code> 的选项将会传给 对应的 daemon(服务)。</p>
+<p>新的 Hadoop 版本开始使用 <a href="http://bigtop.apache.org/" target="_blank">Apache Bigtop</a> 项目，该项目将会帮助 Hadoop 生态圈的软件寻找到合适的JDK以及其它所需软件，从而不必每个组件都实现一套这个需求。CDH 的发布版本中就使用了 Bigtop。</p>
+<p>有时，用户会要求管理员将他们所用的 jar 文件加入到 <code>$HADOOP_CLASSPATH</code> 中去。<strong>要尽一切可能不去把用户所需要的 jar 加入 <code>$HADOOP_CLASSPATH</code> 中去，要推荐用户使用 Hadoop Distributed Cache。</strong> 要知道，<code>$HADOOP_CLASSPATH</code> 的设计目的是为了给 Hadoop 服务程序提供所需的库的，而不是为用户的 MapReduce 程序提供库的。虽然把 MapReduce 程序所依赖的库放到 <code>$HADOOP_CLASSPATH</code> 中去可以让该 MapReduce 程序运行，但是却破坏了 Hadoop 服务的稳定性。此外，<strong>每次修改 <code>$HADOOP_CLASSPATH</code>，需要重启所有的 TaskTracker 以使之生效。</strong>相信没有人希望每次用户所依赖的库升级后都要重新启动一次集群。</p>
+<p><code>$HADOOP_HOME</code> 已经不推荐使用了，可以使用 <code>$HADOOP_PREFIX</code>代替。</p>
+<h1 id="日志配置">日志配置</h1>
+<p>几乎所有的 Hadoop 的服务都是用 log4j 来控制日志输出，因此，必须合理的配置 <code>log4j.properties</code> 才可以看到日志输出。Hadoop 默认的 <code>log4j.properties</code> 文件位于 <code>conf</code> 目录下，和其它的配置文件放在一起。</p>
+<p>自己撰写 MapReduce 程序的时候，特别是本机调试的时候，需要让 <code>log4j.properties</code> 文件位于 CLASSPATH 内，不然调试的时候会无法输出日志信息。</p>
+<h1 id="HDFS">HDFS</h1>
+<p>接下来说一下 <code>hdfs-site.xml</code> 配置。</p>
+<h2 id="标识和定位">标识和定位</h2>
+<h3 id="fs-default-name_(core-site-xml)">fs.default.name (core-site.xml)</h3>
+<p>该参数配置客户端默认的文件系统的位置。默认使用的是 <code>file:///</code>，既本地文件系统。一般开发环境会使用这个配置，而生产环境则会配置为真正的集群地址，其形式为： <code>hdfs://hostname:port</code>。其中 <code>hostname</code> 和 <code>port</code> 都是指 NameNode 的地址。</p>
+<p>这个地址有两方面用处，一方面供客户端读取以定位 NameNode 位置，另一方面供 NameNode 自己读取自己应该监听的端口。默认情况下，NameNode 监听端口为 <code>8020</code></p>
+<ul>
+<li>使用该配置的有：NN、DN、SNN、JT、TT、客户端</li>
+</ul>
+<h3 id="dfs-name-dir">dfs.name.dir</h3>
+<p><strong>配置 HDFS 中 NameNode 数据存储位置，这是非常重要的一个配置。</strong> 该值为逗号分割的无空格字符串，可以包含一个到多个路径。如： <code>/data/1/dfs/nn,/data/2/dfs/nn,/data/3/dfs/nn</code>，如果是多个路径，每个路径将存放<strong>相同</strong>的内容，目的为冗余备份。一般情况下，在这里配置至少两个本地路径，分别指向不同的物理硬盘。此外，还会再有一个 NFS 的路径，目的为避免物理机火灾类的严重故障时的 HDFS 的核心信息不至于丢失。由于这种冗余能力，所以不需要再额外的使用RAID作为存储，不过一些管理员还是会选择 RAID，为了再加一层保险。这个目录中的数据量不是海量的，是 GB 级别，而不会到 TB 级。</p>
+<blockquote>
+<p><strong>需要注意</strong>： 由于很多部署采用同质化部署，既所有机器使用相同的配置。而由于 NameNode 不需要很多硬盘空间，导致 NameNode 上的硬盘空间很大部分被闲置。于是一些管理员总觉得应该充分利用磁盘，从而<strong>在 NameNode 上还跑一些其它的服务，这是非常错误的。</strong></p>
+</blockquote>
+<p>该配置的默认值是 <code>${hadoop.tmp.dir}/dfs/name</code>，而默认情况下，<code>hadoop.tmp.dir</code>是 <code>/tmp/hadoop-${user.name}</code>。<code>/tmp</code> 重新启动后，内容会被清空。于是，如果没有修改 <code>dfs.name.dir</code> 或者 <code>hadoop.tmp.dir</code> 的话，NameNode 的所有信息实际上是存储于空中，重启后，所有信息都会丢失。因此一定要检查 <code>dfs.name.dir</code> 配置。</p>
+<ul>
+<li>使用该配置的有：NN</li>
+</ul>
+<h3 id="dfs-data-dir">dfs.data.dir</h3>
+<p><code>dfs.data.dir</code> 指定了 DataNode 存储 HDFS block 的位置。其内容也是逗号分割的字符串，来表示多个目录位置。一般来说是对应于多个物理硬盘，换句话说，硬盘只需要 JBOD 形式，而不需要用RAID，这样的性能较高。<strong>Hadoop 会将 block 轮训存入各个位置</strong>，这样将来读取时才可能会并发读入。HDFS 会将 block 副本存于多个 DataNode，因此不必担心磁盘故障会导致数据丢失的问题。</p>
+<ul>
+<li>使用该配置的有：DN</li>
+</ul>
+<h3 id="fs-checkpoint-dir">fs.checkpoint.dir</h3>
+<p><code>fs.checkpoint.dir</code> 指定了 SecondaryNameNode 所需要进行 checkpoint 合并的目录。也是逗号分割的字符串，与 <code>dfs.name.dir</code> 一样，不同的位置一般代表着不同的物理硬盘，并且所有的位置会入完全一样的信息，以达到冗余的目的。这个目录一般是作为恢复 NameNode 元数据的最后的解决办法。<strong>如果没有任何其它办法可以恢复元数据</strong>，这里可以起码有一个可以用的、虽然较老的元数据。</p>
+<ul>
+<li>使用该配置的有：SNN</li>
+</ul>
+<h3 id="dfs-permissions-supergroup">dfs.permissions.supergroup</h3>
+<p>HDFS 中存在一个超级用户的概念，凡是在 <code>dfs.permissions.supergroup</code> 中指定的用户组，将享有超级用户的身份。<strong>拥有该身份的用户可以执行 HDFS 上的任何操作。</strong>放入该组的用户需要被格外关注。</p>
+<ul>
+<li>使用该配置的有：NN、客户端</li>
+</ul>
+<h2 id="优化调整">优化调整</h2>
+<h3 id="io-file-buffer-size_(core-site-xml)">io.file.buffer.size (core-site.xml)</h3>
+<p>Hadoop 的代码中很多会使用文件IO操作，<code>io.file.buffer.size</code> 指定了通用的缓存大小。越大的缓存意味着更好地数据传输率，但也意味着更大的延迟和更大的内存占用。<strong>其值为内存页大小(默认为4KB)的倍数</strong>。比如可以调整为 64KB。</p>
+<ul>
+<li>使用该配置的有：客户端、所有服务</li>
+</ul>
+<h3 id="dfs-balance-bandwidthPerSec">dfs.balance.bandwidthPerSec</h3>
+<p>HDFS balancer 是负责 HDFS DataNode 的存储负载均衡的，它会调整数据在 DN 之间复制。如果没有对其流量进行限制，则可能会造成 balancer 占用了全部的网络带宽。该配置就是对其限定的。需要注意的是，其单位为字节每秒，而非网络中常用的位每秒。</p>
+<p><strong>该配置不能够动态调整</strong>，只有在 DN 启动时，方会读取一次该值。</p>
+<ul>
+<li>使用该配置的有：DN</li>
+</ul>
+<h3 id="dfs-block-size">dfs.block.size</h3>
+<p><code>dfs.block.size</code> 顾名思义，是 HDFS block 大小。但是需要注意的是，这里有一个常见的<strong>误解</strong>，该值的含义严格来说是<strong>默认</strong>的HDFS block 大小。因为设定该值并不会改变已有文件的存储方式，也就是说<strong>不会变动已有文件的块大小</strong>；此外，该值也可以在创建文件的时候被覆盖掉，<strong>客户端可以为该文件指定另外的块大小</strong>。</p>
+<p>默认值因Hadopp发行版本不同而不同，常见的是64MB或128MB。<strong>MapReduce 的 Job 会为每个块分配一个 map，因此 Block 的大小会明显的影响 Job 的性能。</strong> (实际情况会稍有差异，请查阅 《Hadoop 权威指南》中关于 <code>FileInputFormat</code> 的章节。)</p>
+<ul>
+<li>使用该配置的有：客户端</li>
+</ul>
+<h3 id="dfs-datanode-du-reserved">dfs.datanode.du.reserved</h3>
+<p>DataNode 会将其本地可供 HDFS 使用的磁盘空间(<code>dfs.data.dir</code>)大小通报 NameNode。而通常情况下，<code>mapred.local.dir</code> 使用同样的硬盘，因此它们的空间是共享的。一般为了确保 MapReduce 的任务执行，需要为其保留一定的空间供其使用。<code>dfs.datanode.du.reserved</code> 就是保留一部分空间，使 HDFS 不能够使用全部的硬盘空间。<strong>默认情况下该值为0，也就是说允许 HDFS 使用全部的硬盘空间。</strong>可以考虑给每个物理硬盘预留 10GB 空间供 MapReduce 使用，不过要观察实际情况，如果 MapReduce 会产生大量的中间结果，则应该适度增加该值。</p>
+<ul>
+<li>使用该配置的有：DN</li>
+</ul>
+<h3 id="dfs-namenode-handler-count">dfs.namenode.handler.count</h3>
+<p>NameNode 维护一个线程池，用以响应来自包括客户端和服务端的并发服务请求。<code>dfs.namenode.handler.count</code> 配置了线程池的规模，其默认值是10。越大的集群则需要越高的并发池。<strong>一般会设置为 <code>20 * log(n)</code>。</strong> 比如一个200节点的集群，该值应该设置为 <code>20 * log(200) = 106</code>。</p>
+<p>该数值过低会导致 DN 经常因为超时而被 NN 所拒绝链接、NN 的 RPC 的队列很长、以及 RPC 的高延迟。</p>
+<ul>
+<li>使用该配置的有：NN</li>
+</ul>
+<h3 id="dfs-datanode-failed-volumes-tolerated">dfs.datanode.failed.volumes.tolerated</h3>
+<p>默认情况下，DN上的一个硬盘坏掉了就会标记为该 DN 坏掉了。这就会触发 NN 开始进行不满足副本数的 block 复制。对于中型和大型规模的集群来说，硬盘坏掉是很经常的事情，没必要只要有一块硬盘坏了就宣布这个DN挂了。<code>dfs.datanode.failed.volumes.tolerated</code> 就是设置，有几个硬盘坏掉后，则认为 DN 挂了。其默认值为 0，既无容忍，一块坏了就挂。</p>
+<ul>
+<li>使用该配置的有：DN</li>
+</ul>
+<h3 id="dfs-hosts">dfs.hosts</h3>
+<p>当 DN 第一次联系 NN 的时候，在获得其 Namespace ID 后，立即就可以接收数据块了。<strong>默认情况下，任意服务器都可以这样联系 NameNode 而加入集群。</strong>在更高安全性的需求下，可以将允许加入集群的主机明确写入以行分割形式写入一个文件，并通过 <code>dfs.hosts</code> 指定其文件路径。这样，凡是不在该列表中的主机，都会被拒绝加入集群。</p>
+<ul>
+<li>使用该配置的有：NN</li>
+</ul>
+<h3 id="dfs-host-exclude">dfs.host.exclude</h3>
+<p>和 <code>dfs.hosts</code> 正好相反，该配置是指定<strong>哪些节点需要排除在集群范围之外。</strong> 该文件常被用于在停止某 DN 前通知 NN 之用，这样 DN 可以平滑的退出集群。</p>
+<ul>
+<li>使用该配置的有：NN</li>
+</ul>
+<h3 id="fs-trash-interval_(core-site-xml)">fs.trash.interval (core-site.xml)</h3>
+<p>为了防止误删除，HDFS 可以启用回收站功能。同桌面系统一样，所删除的东西会先移入回收站一段时间，然后再被删除。<code>fs.trash.interval</code>所指定的就是这“一段时间”长短（以分钟为单位）。用户可以显式的通过命令 <code>hadoop fs -expunge</code> 清空回收站；用户也可以通过为 <code>hadoop fs -rm</code> 命令添加 <code>-skipTrash</code> 来直接删除。<strong> 回收站功能只支持命令行文件操作。</strong></p>
+<ul>
+<li>使用该配置的有：NN，客户端</li>
+</ul>
+<h2 id="格式化_NameNode">格式化 NameNode</h2>
+<ul>
+<li><strong>在第一次启动 HDFS 前，必须格式化 NameNode。</strong></li>
+<li><strong>格式化必须使用拥有 Hadoop 超级用户身份的用户格式化。</strong></li>
+</ul>
+<p>格式化 NameNode 会在 <code>dfs.name.dir</code> 目录中创建一个 <code>fsimage</code> 文件、edit log，以及生成一个随机的 Storage ID。DN 第一次连接到 NN 的时候会获得该 ID，并在以后拒绝连入其它 Storage ID 的NN。</p>
+<p><strong> 如果要格式化 NameNode，也一定要删除 DN 中的所有数据。</strong></p>
+<p><strong> 如果格式化 NameNode，所有的元数据将丢失，即使 DN 中依旧保留着那些文件对应的 block 内容，也将无法再使用这些 block了。</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> -u hdfs hadoop namenode -format
+</pre></td></tr></table></figure>
+
+<h2 id="创建_/tmp_目录">创建 /tmp 目录</h2>
+<p>很多应用要求 HDFS 中存在 <code>/tmp</code> 目录，用以存放临时文件。该目录应该是所有人都可写的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>hadoop fs -ls /
+<span class="built_in">sudo</span> -u hdfs hadoop fs -mkdir /tmp
+<span class="built_in">sudo</span> -u hdfs hadoop fs -chmod <span class="number">1777</span> /tmp
+hadoop fs -ls /
+</pre></td></tr></table></figure>
+
+<h1 id="NameNode_High_Availability">NameNode High Availability</h1>
+<p>Hadoop 1.x 以来，最引起关注的就是 NameNode 的可用性问题。如其构架所述，NameNode 一旦挂掉，HDFS 就等于挂掉。在基础构架上经常采用一些高可用性的措施，如 RAID、双电源热备、双网卡热备等，来保证 NameNode 不会轻易挂掉。不过这只是一种折衷的办法。最好从机制上 NameNode 就具有高可用性。</p>
+<p>从 Hadoop 0.23 以来，NameNode High Availability 就成为一个很受关注的特性。CDH 4 第一次引入了 Hadoop 2.0，以尝试支持该特性，并且在 CDH 5 中，开始将 Hadoop 2.3 作为默认的版本。</p>
+<blockquote>
+<p>由于 NN HA 是 2.0 的特性，因此本节将使用 2.x 的新配置名称。</p>
+</blockquote>
+<h2 id="使用_NFS_建立_NameNode_High_Availability">使用 NFS 建立 NameNode High Availability</h2>
+<p>和之前一样，需要配置一个高可用的 NFS 服务器，并且挂载到两个 NN 上。假定其挂载点为 <code>/mnt/filer/namenode-shared</code>，称其为<strong>共享编辑目录</strong>。通常情况，挂载时需要加入参数 <code>tcp,hard,intr</code>，以及至少版本为 <code>nfsvers=3</code>。此外需要配置合适的 <code>timeo</code> 和 <code>retrans</code> 值。可以通过 <code>man 5 nfs</code> 来查看文档。</p>
+<p>如果共享编辑目录不可写入或者不可用，则 NN 会退出。这与 <code>dfs.name.dir</code> 不同，对于 <code>dfs.name.dir</code>来说，如果提供的某目录不可用，那么只会忽略，而不会导致 NN 退出。由于需要确保两个 NN 都可以读写共享编辑目录，很重要的一件事是，<strong>需要保证同样用户在不同服务器中的 <code>uid</code> 要一致</strong>。</p>
+<p>接下来的配置将集中于 <code>core-site.xml</code> 与 <code>hdfs-site.xml</code> 中。</p>
+<p>由于存在多个 NN 来表示一个 NameService，因此需要一个逻辑的名称来代替之前的 NameNode Id，这个名称被称为 <code>nameservice-id</code>。</p>
+<h2 id="隔离(Fencing)方法">隔离(Fencing)方法</h2>
+<p>当活跃的 NN 变得不再响应时，需要有些机制可以确保不健康的 NN 放弃其操作，并有等候的 NN 变为活跃。因为在某些情况下，虽然 NN 停止响应了，但是其进程并没有意识到自己已出故障，而继续向共享编辑目录写入信息，这会导致多个 NN 写入一个数据，而导致数据损坏。<strong>这种设法让不健康 NN 终止其行为的办法称为隔离(Fencing)。</strong></p>
+<p>Fencing的办法有很多种。比如，通过 RPC 或者 <code>kill -15</code> 来平和的请求 NN 进程退出；或者通过 <code>kill -9</code> 强制进程退出；或者通过电源管理的组件直接切断该 NN 主机的电源（通常称为一枪爆头 STONITH）；或者告之共享存储的媒介(如NFS)禁止该失效的 NN 写入。</p>
+<p>在实际中，应该使用多种办法，以防止一种办法失效的情况。<strong>Fencing 的办法应该按照顺序执行，其中最平和的办法放到最前面，最严厉的办法放到后面。</strong></p>
+<p>Hadoop 内置了一个标准的 <strong>RPC</strong> fencing和两个用户可配置的 <strong>sshfence</strong> 与 <strong>shell</strong> fencing 机制。Hadoop 会先尝试其内置的 RPC 机制来请求 NN 退出，如果不成功，才会执行用户定义在 <code>dfs.ha.fencing.methods</code> 配置下的方法。</p>
+<ul>
+<li><p><code>sshfence</code>： 利用 ssh 连入要终止的 NN 主机，利用 <code>fuser</code> 来确定所听端口的进程，并终止该进程。其格式为 <code>sshfence(username:port)</code>。需要注意的是，应该配置好 SSH 的密钥，这样可以无密码登录。由于无法判断目标主机是真的已经关闭了，还是 ssh 无响应，因此如果当对方主机已关闭的时候，<code>sshfence</code>不会返回成功，而会返回失败。因此必须准备一个非 ssh 的fencing方式，来在其失败时进一步的操作。</p>
+</li>
+<li><p><code>shell</code>： 顾名思义，允许指定一个 shell 脚本或命令，因此这个选项非常灵活。其中需要注意的是 Hadoop 的配置属性会位于环境变量，只不过 <code>.</code> 变成了 <code>_</code>， 如：</p>
+<ul>
+<li><code>$target_host</code>: 目标主机；</li>
+<li><code>$target_port</code>: 目标主机的 RPC 端口；</li>
+<li><code>$target_address</code>: <code>$target_host:$target_port</code>；</li>
+<li><code>$target_nameserviceid</code>: NameService ID；</li>
+<li><code>$target_namenodeid</code>: NameNode ID；</li>
+</ul>
+</li>
+</ul>
+<p><code>shell</code> 的形式为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>shell(/path/to/script.py --namenode=<span class="variable">$target_host</span> --nameservice=<span class="variable">$target_nameserviceid</span>)
+</pre></td></tr></table></figure>
+
+<p>脚本如果成功，应返回0；如果失败返回非0的值。</p>
+<p><strong>如果所有的 fencing 方法都失败的话，那么故障切换(failover)的行为就会中止，需要人为的介入来解决问题，以防止盲目的切换导致数据损毁。</strong></p>
+<p>需要注意的是，<strong>脚本没有超时机制</strong>，因此如果所写脚本未能退出，则切换控制行为将永远不会发生。</p>
+<h2 id="基本配置">基本配置</h2>
+<p>如未说明，下面的配置都是在 <code>hdfs-site.xml</code> 中的：</p>
+<h3 id="dfs-nameservices">dfs.nameservices</h3>
+<p>指定 NameService ID，既一对 NN 所表示的逻辑名。HA 和 Federation 都将使用该配置。</p>
+<ul>
+<li>使用该配置的有：NN、客户端</li>
+</ul>
+<h3 id="dfs-ha-namenodes-[nameservice-id]">dfs.ha.namenodes.[nameservice-id]</h3>
+<p>指定 NameService ID 所代表的 NN 列表，以逗号分割，如：<code>nn1,nn2</code>。其中 <code>&lt;nameservice-id&gt;</code> 表示的是 <code>dfs.nameservices</code> 中指定的 id。</p>
+<ul>
+<li>使用该配置的有：NN、客户端</li>
+</ul>
+<h3 id="dfs-namenode-rpc-address-[nameservice-id]-[namenode-id]">dfs.namenode.rpc-address.[nameservice-id].[namenode-id]</h3>
+<p>指定对应 <code>&lt;nameservice-id&gt;</code> 中的 <code>&lt;namenode-id&gt;</code> 的 RPC 主机名和端口号，由冒号分割。如 <code>hadoop01.mycompany.com:8020</code>。</p>
+<ul>
+<li>使用该配置的有：NN、客户端</li>
+</ul>
+<h3 id="dfs-namenode-http-address-[nameservice-id]-[namenode-id]">dfs.namenode.http-address.[nameservice-id].[namenode-id]</h3>
+<p>指定对应 <code>&lt;nameservice-id&gt;</code> 中的 <code>&lt;namenode-id&gt;</code> 的 HTTP的 主机名和端口号，由冒号分割。如 <code>hadoop01.mycompany.com:50070</code>。</p>
+<ul>
+<li>使用该配置的有：NN</li>
+</ul>
+<h3 id="dfs-namenode-shared-edits-dir">dfs.namenode.shared.edits.dir</h3>
+<p>NameNode HA 均可以访问到的共享文件系统。形式应为 <code>file://</code> 的URL，如：<code>file:///mnt/namenode/prod-analytics-edits</code>。</p>
+<ul>
+<li>使用该配置的有：NN</li>
+</ul>
+<h3 id="dfs-client-failover-proxy-provider-[nameservice-id]">dfs.client.failover.proxy.provider.[nameservice-id]</h3>
+<p>当使用 HA 的时候，客户端需要知道如何判断那个 NN 是活动状态。这个选项指定了一个类，该类将会被用于定位活动状态的 NN。当前 Hadoop 只提供了一个类，既：<code>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</code>。</p>
+<ul>
+<li>使用该配置的有：客户端</li>
+</ul>
+<h3 id="dfs-ha-fencing-methods">dfs.ha.fencing.methods</h3>
+<p>行分割的隔离(fencing)方式列表，内容如前所述。如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>sshfence(hdfs:<span class="number">22</span>)
+shell(/path/<span class="keyword">to</span>/fence<span class="attribute">-nfs</span><span class="attribute">-filer</span><span class="built_in">.</span>sh <span class="subst">--</span>host<span class="subst">=</span><span class="variable">$target_host</span>)
+shell(/path/<span class="keyword">to</span>/pdu<span class="attribute">-controller</span><span class="built_in">.</span>sh <span class="subst">--</span>disable<span class="attribute">-power</span> <span class="subst">--</span>host<span class="subst">=</span><span class="variable">$target_host</span>)
+</pre></td></tr></table></figure>
+
+<ul>
+<li>使用该配置的有：NN、ZKFC</li>
+</ul>
+<h2 id="自动故障切换配置">自动故障切换配置</h2>
+<p>现在默认配置下，NN HA 是需要手动故障切换。如果需要可以设置自动切换，自动切换需要额外的添加两个组件：</p>
+<ul>
+<li><p>Apache ZooKeeper： 分布式锁定、协作、配置服务。需要额外安装。</p>
+</li>
+<li><p>The ZooKeeper Failover Controller (ZKFC)： 这个服务将随 NN 运行，用于监控 NN 的健康状态、维护 ZooKeeper 的会话信息、在必要的时候发起状态转换和隔离。这部分包含在 Hadoop 中，不需要额外安装，但需额外配置。</p>
+</li>
+</ul>
+<h3 id="配置">配置</h3>
+<p>需要进行下列设置，才可以实现自动故障切换：</p>
+<h4 id="dfs-ha-automatic-failover-enabled_(hdfs-site-xml)">dfs.ha.automatic-failover.enabled (hdfs-site.xml)</h4>
+<p>当该项为 <code>true</code> 时，会额外启动 ZKFC 来监控 NN 状态，以实施自动故障切换。并且，如果启用该选项，则必须合理配置 <code>ha.zookeeper.quorum</code> 指向用于控制故障切换的 ZooKeeper quorum。</p>
+<ul>
+<li>默认值：<code>false</code></li>
+<li>示例：<code>true</code></li>
+<li>使用该配置的有：NN、ZKFC、客户端</li>
+</ul>
+<h4 id="ha-zookeeper-quorum_(core-site-xml)">ha.zookeeper.quorum (core-site.xml)</h4>
+<p>要使用自动故障切换功能，这里必须指定 ZooKeeper 的成员。格式为逗号分割的成员信息，成员则有主机名和端口号组成。至少要有三个 ZooKeeper。</p>
+<ul>
+<li>示例：zk-node1:2181,zk-node2:2181,zk-node3:2181</li>
+<li>使用该配置的有：ZKFC</li>
+</ul>
+<h3 id="初始化_ZooKeeper_状态">初始化 ZooKeeper 状态</h3>
+<p>在自动故障切换可以使用之前，需要先对 ZooKeeper 进行必要的初始化。命令为 <code>hdfs zkfc -formatZK</code>，该命令需要使用 HDFS 的 super user (既格式化 HDFS 的用户) 的用户来执行。当然，执行该命令前，需要都已经配置好，并且 ZooKeeper 已然在运行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>hdfs zkfc -formatZK
+</pre></td></tr></table></figure>
+
+<h2 id="格式化并启动(bootstrap)_NameNode">格式化并启动(bootstrap) NameNode</h2>
+<p>随便选择一个 NN 作为主(primary) NN，这只是初始状态，所以选择任何一个都可以。选择后，另一个称为后备(standby) NN。</p>
+<p>使用 <code>hdfs namenode -format</code> 在主NN上格式化 NameNode。这将会格式化本地目录以及共享编辑目录。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> -u hdfs hdfs namenode -format
+</pre></td></tr></table></figure>
+
+<p>在standby NN 上，需要从 primary NN 上取回一份元数据信息并准备，可以使用命令 <code>hdfs namenode -bootstrapStandby</code>。</p>
+<p>不过在此之前，需要先让 primary NN 启动并成为 active 状态。</p>
+<p>启动 primary NN 很简单，只需要在 primary NN 上执行正常的启动指令即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> service hadoop-hdfs-namenode start
+<span class="built_in">sudo</span> service hadoop-hdfs-zkfc start
+</pre></td></tr></table></figure>
+
+<p>如果<strong>没有配置自动故障切换，则需要手动激活。</strong> 通过 <code>-failover</code> 参数加两个 NN 的主机名，其顺序为，A ⇨ B，A 为 StandBy，B 为 Active。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>hdfs haadmin -failover hadoop-ha02 hadoop-ha01
+</pre></td></tr></table></figure>
+
+<p>准备好后，就可以在 Standby NN 上执行 <code>-bootstrapStandby</code> 了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> -u hdfs hdfs namenode -bootstrapStandby
+</pre></td></tr></table></figure>
+
+<p>启动 standby NN 时需注意，如果配置了自动故障切换，同 primary NN 上一样，也需要启动 ZKFC。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> service hadoop-hdfs-namenode start
+<span class="built_in">sudo</span> service hadoop-hdfs-zkfc start
+</pre></td></tr></table></figure>
+
+<p>测试自动故障切换是否成功，可以直接将 primary NN 上的 NN 进程杀掉，然后观察 FC 的日志，正常情况会看到健康状况的状态切换，以及 ZooKeeper 锁的状态切换。</p>
+<h1 id="Namenode_Federation">Namenode Federation</h1>
+<p>不同于为了保持高可用性的 NN HA，NN Federation 的目的是为了克服 NN 的内存限制性问题。NN 需要把其管辖的所有的HDFS元数据都加载于内存之中，如果集群非常巨大，比如空间非常庞大、或文件数目非常多，有可能出现 NN 的内存被消耗尽了，而 HDFS 的空间还尚未充分利用的问题。</p>
+<p>NN Federation 的出现则解决了这个问题，它的概念和 Linux 中挂载文件系统非常相似。NN Federation 将允许存在多组(如果没有HA的话就是多个) NN，每组 NN 负责一个<strong>命名空间</strong>，我们可以将其理解为挂载点。比如，一组 NN 负责 <code>/hbase</code>，另一组 NN 负责 <code>/user</code> 等。与没有 NN Federation 不同，DN 可以同时向多组 NN 报告，因此，每组 NN 都可以使用该 DN 的存储空间来保存本命名空间中的文件 block。</p>
+<p>这样的设计带来了一系列的好处：</p>
+<ul>
+<li>首先，是由于 HDFS 被切分成了多个命名空间，因此整个集群的 HDFS 元数据不在全部保存于一台 NN 了，因此<strong>DN 的空间可以被更充分的利用</strong>；</li>
+<li>其次，我们<strong>可以针对不同的命名空间采取不同的策略</strong>。比如，对于 <code>/hbase</code> 命名空间的使用 NN HA 并且特意的针对 HBase 的特征，对 JVM 进行一些优化配置，而对于 <code>/user</code> 则不启用 NN HA等；</li>
+<li>在没有 NN Federation 的时候，我们可以把集群划分为多个 Hadoop 集群来解决问题。但局限性是，当某个集群过载的时候，另外一个集群可能会闲的很。而 NN Federation 的设计则使得<strong>DN 的负载则更加均衡</strong>。</li>
+<li>由于存在多组命名空间的 NN，因此客户端访问的时候，将通过一个插件 <code>ViewFS</code> 来访问这个逻辑的、统一的、全局的命名空间。因此，客户端将不会意识到自己到底具体在访问哪组 NN，<strong>多组 NN 的细节被隐藏了，客户端可以很平滑的使用各个命名空间</strong>。</li>
+</ul>
+<p>配置 NN Federation 很简单。</p>
+<ul>
+<li>首先，需要为每组 NN 指定一个逻辑名（当然，如果没有配置 HA的话，这个逻辑名应该为 NN 的名称)，该配置和 NN HA 一样，为 <code>dfs.nameservices</code>，所不同的是，此时存在多个 <code>[nameservice-id]</code>，它们以逗号分隔；</li>
+<li>然后，为每组 NN 配置 RPC。如果配置了 NN 的话，配置为 <code>dfs.namenode.rpc-address.[nameservice-id].[namenode-id]</code>，否则，则配置 `dfs.namenode.rpc-address.[namenode-id]；</li>
+</ul>
+<p>以下面的配置为例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre></td><td class="code"><pre><span class="pi">&lt;?xml version="1.0"?&gt;</span>
+<span class="pi">&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;</span>
+<span class="tag">&lt;<span class="title">configuration</span>&gt;</span>
+<span class="comment">&lt;!--
+定义了两个命名空间：nn1和nn2，所有数据节点都将为这两个空间服务。
+--&gt;</span>
+	<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">name</span>&gt;</span>dfs.nameservices<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">value</span>&gt;</span>nn01,nn02<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+	<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="comment">&lt;!-- 绑定 nn01 的 RPC 到 hadoop-fed01.mycompany.com，端口 8020. --&gt;</span>
+	<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">name</span>&gt;</span>dfs.namenode.rpc-address.nn01<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">value</span>&gt;</span>hadoop-fed01.mycompany.com:8020<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+	<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="comment">&lt;!-- 绑定 nn02 到 hadoop-fed02.mycompany.com, 端口 8020. --&gt;</span>
+	<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">name</span>&gt;</span>dfs.namenode.rpc-address.nn02<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">value</span>&gt;</span>hadoop-fed02.mycompany.com:8020<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+	<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="comment">&lt;!--
+NN 保存元数据的目录列表。
+--&gt;</span>
+	<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">name</span>&gt;</span>dfs.name.dir<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">value</span>&gt;</span>/data/1/hadoop/dfs/nn,/data/2/hadoop/dfs/nn<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+	<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">configuration</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+<p>当配置好后，集群中的每一组 NN 都需要格式化。不过与之前不同的是，所有的 NN 需要使用相同的 <code>cluster-id</code>。有两种做法：</p>
+<ul>
+<li>一种是我们自己指定一个 <code>cluster-id</code> 然后对所有 NN 格式化的时候，使用该 id；</li>
+<li>另一种则是不自己指定 <code>cluster-id</code> 的情况下，先格式化第一个 NN，这样会自动生成一个 id，然后，用该 id 格式化剩余 NN；</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> -u hdfs hdfs namenode -format -clusterID prod-analytics
+</pre></td></tr></table></figure>
+
+<p>当所有 NN 都格式化后，则可以启动所有的 NN 和 DN 了。需要确认所有 DN 都访问到了所有的 NN。可以通过 NN 的 HTTP 服务来查看。对于每个 NN 有两个链接需要检查。</p>
+<ul>
+<li><code>http://[namenode]:50070/dfshealth.jsp</code>: 查看该 NN 负责的命名空间的信息；</li>
+<li><code>http://[namenode]:50070/dfsclusterhealth.jsp</code>: 查看整个集群（包括所有 federation 命名空间）的信息。</li>
+</ul>
+<p>此时我们可以通过 <code>hdfs dfs</code> 命令来直接访问不同 NN，比如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="built_in">sudo</span> -u hdfs hdfs dfs -ls hdfs://hadoop-fed01:<span class="number">8020</span>/
+</pre></td></tr></table></figure>
+
+<p><strong>注意：此时尚未配置 <code>ViewFS</code>，因此我们只能通过直接访问各个 NN 的形式访问集群。</strong></p>
+<p>如同 <code>/etc/fstab</code> 一样，客户端需要一个挂载表，来指定每个 NN 是负责哪个命名空间。而与 Linux 不同的是，允许存在多个挂载表。一个 NN 可能在这个挂载表里是 <code>/data1</code>，而在另一个挂载表里是 <code>/data2</code>。使用时，只需要在配置 <code>fs.defaultFS</code> 中，以 <code>viewfs://[table-name]/</code> 的形式，指定要使用的挂载表的名字即可。若省略挂载表名字，如：<code>viewfs:///</code>，则使用默认挂载。默认的挂载表的名字为 <code>default</code>。挂载点的配置都要加上对应挂载表前缀，以表明是哪个挂载表的配置，前缀形式为：<code>fs.viewfs.mounttable.[table-name]</code>。下面以配置默认挂载表配置为例进行配置(<code>core-site.xml</code>)：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="code"><pre><span class="pi">&lt;?xml version="1.0"?&gt;</span>
+<span class="tag">&lt;<span class="title">configuration</span>&gt;</span>
+<span class="comment">&lt;!-- 客户端将使用默认的 ViewFS 挂载表 --&gt;</span>
+	<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">name</span>&gt;</span>fs.defaultFS<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">value</span>&gt;</span>viewfs:///<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+	<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="comment">&lt;!-- 将 hadoop-fed01.mycompany.com:8020/ 挂载为 ‘/a’ --&gt;</span>
+	<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">name</span>&gt;</span>fs.viewfs.mounttable.default.link./a<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">value</span>&gt;</span>hdfs://hadoop-fed01.mycompany.com:8020/<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+	<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+<span class="comment">&lt;!-- 将 hadoop-fed02.mycompany.com:8020/ 挂载为 ‘/b’ --&gt;</span>
+	<span class="tag">&lt;<span class="title">property</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">name</span>&gt;</span>fs.viewfs.mounttable.default.link./b<span class="tag">&lt;/<span class="title">name</span>&gt;</span>
+		<span class="tag">&lt;<span class="title">value</span>&gt;</span>hdfs://hadoop-fed02.mycompany.com:8020/<span class="tag">&lt;/<span class="title">value</span>&gt;</span>
+	<span class="tag">&lt;/<span class="title">property</span>&gt;</span>
+...
+<span class="tag">&lt;/<span class="title">configuration</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+<blockquote>
+<p>在 Linux 中允许嵌套绑定，既可以将一个文件系统挂载于 <code>/var</code>，而将另一个文件系统挂载于 <code>/var/log</code> 下。当前的 NN Federation 并不支持这个特性。</p>
+</blockquote>
+<p>此时，我们将可以通过直接访问 <code>/a</code> 和 <code>/b</code> 等来访问各个文件系统：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>hdfs dfs -ls /a
+hdfs dfs -ls /b
+</pre></td></tr></table></figure>
+
+<p>自此，客户端不再需要了解各个命名空间的 NN 和绑定路径之间的关系了。</p>
+<h1 id="MapReduce">MapReduce</h1>
+<p>如非特殊说明，下面的配置将位于 <code>mapred-site.xml</code>。</p>
+<h2 id="身份和位置">身份和位置</h2>
+<h3 id="mapred-job-tracker">mapred.job.tracker</h3>
+<p>如同 <code>fs.defaultFS</code> 是告知 DN 其 NN 的位置一样，<code>mapred.job.tracker</code> 是告知 TaskTracker 其 JobTracker 的位置，内容包括主机名及 RPC 端口号。</p>
+<p>当该项为 <code>true</code> 时，会额外启动 ZKFC 来监控 NN 状态，以实施自动故障切换。并且，如果启用该选项，则必须合理配置 <code>ha.zookeeper.quorum</code> 指向用于控制故障切换的 ZooKeeper quorum。</p>
+<ul>
+<li>默认值：<code>local</code>，既表明 MapReduce 将以<code>本地模式</code>运行。包括所有的Hadoop Framework以及客户端程序，都将运行在一个进程中，便于开发和调试。由于<code>local</code>的特殊性，其没有端口号。其它情况下，默认端口号是<code>8021</code>。</li>
+<li>示例：<code>hadoop01.sf.cloudera.com:8021</code></li>
+<li>使用该配置的有：JT、TT、客户端</li>
+</ul>
+<h3 id="mapred-local-dir">mapred.local.dir</h3>
+<p>MapReduce 运行时需要本地磁盘保存中间结果，<code>mapred.local.dir</code>就是指定该位置的配置选项。和 <code>dfs.data.dir</code> 一样，它允许逗号分隔的多个路径，并且以轮询形式依次访问各个路径，以均衡多个存储设备负载，减少IO瓶颈。</p>
+<p>关于 <code>mapred.local.dir</code> 和 <code>dfs.data.dir</code> 是否应当共享物理磁盘的问题，目前是有争议的。共享的好处是IO将会分散到更多的物理设备上，从而使得IO带宽更大；而缺陷是，共享将会破坏原本高速的可预测的IO读写，变为低速的随机读写。</p>
+<p>如果选择将单独的磁盘作为 MapReduce 使用的话，那么 <code>dfs.datanode.du.reserved</code>，将不需要配置。因为 <code>dfs.data.dir</code> 将只供 HDFS 使用。</p>
+<ul>
+<li>示例：<code>/data/1/mapred/local,/data/2/mapred/local</code></li>
+<li>使用该配置的有：JT、TT</li>
+</ul>
+<h2 id="优化调整-1">优化调整</h2>
+<h3 id="mapred-java-child-opts">mapred.java.child.opts</h3>
+<p>TT 会启动一个<strong>独立的 JVM 进程来运行新的任务</strong>，该选项用以指定该新的JVM的配置参数。这个选项主要是用于设置 JVM heap 大小、垃圾回收策略、库搜索路径等等。</p>
+<p>常用的选项：</p>
+<ul>
+<li>-Xmx<em>Nu</em>: 设置 JVM 最大 Heap size。其中 <code>N</code> 为数值，<code>u</code> 为单位（k⇨KB, m⇨MB, g⇨GB）。</li>
+<li>-Xms<em>Nu</em>: 设置 JVM 初始 Heap size。<code>Nu</code> 含义同上选项。当已知任务启动后会立即占用很大内存时，可以使用该选项来避免逐步分配内存的性能开销。</li>
+<li>-D<em>property</em>=<em>value</em>: 设置 Java 系统属性，比如垃圾回收参数。</li>
+</ul>
+<ul>
+<li>默认值： <code>-Xmx200m</code>。该默认值对大多数数据处理来说都太小了，一般是分配1-4GB的空间。</li>
+<li>示例： <code>-Xmx2g</code></li>
+<li>使用该配置的有：子任务</li>
+</ul>
+<h3 id="mapred-child-ulimit">mapred.child.ulimit</h3>
+<p>除了设置 JVM 的 Heap size 外，我们还可以直接通过配置 Linux 的标准的进程虚拟内存限制来进行内存控制（详情查阅： <code>man 2 getrlimit</code>）。虚拟内存，既虚拟地址空间，包括了物理内存、交换空间、资源映射等。其单位为 KB。通常设置为 JVM Heap size 的 1.5 倍。</p>
+<ul>
+<li>示例： <code>1572864</code></li>
+<li>使用该配置的有：子任务</li>
+</ul>
+<blockquote>
+<p><strong> 为什么同时需要 <code>mapred.java.child.opts</code> 和 <code>mapred.child.ulimit</code> </strong><br><code>mapred.java.child.opts</code> 只能够限制所启动的 JVM 的 Heap size。而对于该任务内部启动的子进程则无效。特别是 Hadoop Streaming，该API 将启动新的进程以运行非Java程序。而 <code>ulimit</code> 则可以对进程资源进行限定，并且该限定会被子进程所继承，从而对内存开销有所控制。</p>
+</blockquote>
+<h3 id="mapred-tasktracker-map-tasks-maximum_或_mapred-tasktracker-reduce-tasks-maximum">mapred.tasktracker.map.tasks.maximum 或 mapred.tasktracker.reduce.tasks.maximum</h3>
+<p>集群中的每个工作节点都会配置一个可以同时并行运行的map/reduce的最大数额。</p>
+<p>之所以会需要分别配置 map 和 reduce，是因为二者的特性不同。 map 会尽量使用本地数据，并尽可能少的使用网络；而 reduce 则相反，其输入数据基本上都要从网络获得。</p>
+<p>需要注意的是，每一个工作节点同时运行的任务数量是map, reduce二者的叠加。每一个任务的内存会由 <code>mapred.java.child.opts</code> 来控制。如果累加后的最大资源超过系统实际资源，可能会造成交换空间的使用，从而降低系统性能。</p>
+<p>初始配置可以从 CPU 物理核数的 1.5 倍，作为总任务数。比如 12核的 CPU，并行的总任务数可以设置为 18。至于 map 和 reduce 的任务比例可以以 map:reduce = 2:1 为一个初始设置。</p>
+<ul>
+<li>示例: <code>mapred.tasktracker.map.tasks.maximum</code>: <code>12</code>, <code>mapred.tasktracker.reduce.tasks.maximum</code>: <code>6</code>。</li>
+<li>使用该配置的有: TT</li>
+</ul>
+<h3 id="io-sort-mb">io.sort.mb</h3>
+<p>当 map 产生输出时，其输出结果会先存储于内存中的一个循环缓冲区，而非直接写入磁盘。该缓冲区的大小由 <code>io.sort.mb</code> 来配置。</p>
+<p>当缓冲区使用超过一定值时（默认是80%），将会有一个背景线程负责把其内容写入磁盘 <code>mapred.local.dir</code>，如果该配置有过个目录，则会轮询写入。写入磁盘前，数据会先被分区、排序。</p>
+<p>当 map 任务结束时，可能会产生很多个这种分批写入的已排序的小文件，TT 会负责将这些文件依照分区，排序合并为一个独立的大文件，将会由 reduce 使用。</p>
+<p><code>io.sort.mb</code> 的单位是 <code>MB</code>。其默认值为 <code>100</code>。增加其值会减少写入磁盘的次数，并减少所需合并的小文件的数量，从而降低对磁盘IO的需求。其缺陷是，这个缓冲区位于 JVM Heap size内，因此会占用用户任务的内存空间。初始设置可以设为 JVM heap size 的1/8，然后，观察 <code>map output records</code> 和 <code>spilled records</code>数值，如果后者远高于前者，则需要增加 <code>io.sort.mb</code> 空间。</p>
+<blockquote>
+<p>需要注意的是，<code>io.sort.mb</code>，可以在用户程序中被覆盖（因此该配置不应被标注为 <code>final</code>），因此如果只有少量任务需要调整该配置时，应该直接在程序中处理，而无需修改集群配置文件。</p>
+</blockquote>
+<ul>
+<li>示例: <code>128</code></li>
+<li>使用该配置的有: 子任务</li>
+</ul>
+<h3 id="io-sort-factor">io.sort.factor</h3>
+<p>该配置和上面的配置 <code>io.sort.mb</code> 相关，是指在将小文件合并时，同时合并的文件数量。</p>
+<p>所不同的是，这里有两种情况需要用到该配置进行合并：</p>
+<ul>
+<li>前面所提到的，map 结束时，需要将所有的小文件进行合并；</li>
+<li>reduce 从各个 map 取回结果时，需要先进行合并，然后才可以交于用户 reduce 程序。</li>
+</ul>
+<p>增大该数值会降低磁盘读写次数，并且减少磁盘IO，但是也意味着需要更多的内存。对于 heap size 为 1GB 左右时，<code>io.sort.factor</code> 可以初始设置为 <code>64</code>。其后观察 sort/shuffle 阶段的本地磁盘IO，如果太高，则需要增加该值。</p>
+<ul>
+<li>示例: <code>64</code></li>
+<li>使用该配置的有:子任务</li>
+</ul>
+<h3 id="mapred-compress-map-output">mapred.compress.map.output</h3>
+<p>默认情况下，map输出写入到磁盘时是未压缩的。启用压缩会大幅降低sort/shuffle阶段的磁盘IO以及网络带宽。</p>
+<ul>
+<li>示例: <code>true</code></li>
+<li>使用该配置的有: 子map任务</li>
+</ul>
+<h3 id="mapred-map-output-compression-codec">mapred.map.output.compression.codec</h3>
+<p>通过这个配置选择压缩算法。大多数情况下可以使用 <code>SnappyCodec</code>，如果发现网络IO或者磁盘IO非常繁忙，可以考虑使用 <code>org.apache.io.compress.GzipCodec</code>。</p>
+<ul>
+<li>默认: <code>org.apache.hadoop.io.compress.DefaultCodec</code></li>
+<li>示例: <code>org.apache.hadoop.io.compress.SnappyCodec</code></li>
+<li>使用该配置的有: 子map任务</li>
+</ul>
+<h3 id="mapred-output-compression-type">mapred.output.compression.type</h3>
+<p>当 MapReduce 任务输出格式为 <code>SequenceFile</code> 时，<code>mapred.output.compression.type</code> 指定了压缩的类型。</p>
+<p>压缩类型有三种：</p>
+<ul>
+<li><code>RECORD</code>: 每一个值将被单独压缩；</li>
+<li><code>BLOCK</code>: 将依据给定大小对记录分组，每组进行压缩；</li>
+<li><code>NONE</code>: 不被压缩。</li>
+</ul>
+<p>为了能够充分利用压缩去重复的特性，一般来说会选用 <code>BLOCK</code> 作为压缩类型。而对于记录中包含了图像或其它二进制内容的时候，分记录压缩与合并组压缩区别不大，此时则可以考虑使用 <code>RECORD</code> 的压缩方式。</p>
+<p><strong>注意，该<code>BLOCK</code>只是分组，而不是 <code>HDFS block</code></strong>，目前为止 HDFS 没有压缩机制，均由写入方负责压缩，读出方负责解压缩。</p>
+<ul>
+<li>示例: <code>BLOCK</code></li>
+<li>使用该配置的有: 子任务</li>
+</ul>
+<h3 id="mapred-jobtracker-handler-count">mapred.jobtracker.handler.count</h3>
+<p>JT 维护一个线程池，其中每个线程负责响应 TT 的请求。该参数配置了线程池的大小。</p>
+<p>默认该值为 <code>10</code>。同 <code>dfs.namenode.handler.count</code> 一样，<code>mapred.jobtracker.handler.count</code> 应当是 <code>log (TT的数量) * 20</code>。</p>
+<ul>
+<li>默认: <code>10</code></li>
+<li>示例: <code>105</code></li>
+<li>使用该配置的有: JT</li>
+</ul>
+<h3 id="mapred-jobtracker-taskScheduler">mapred.jobtracker.taskScheduler</h3>
+<p>当 MR job 被切分为 task 时，JT 的调度器插件负责调度<em>哪一个 task</em> 以<em>什么样的顺序</em>运行在<em>哪一个 TT</em> 上。 <code>mapred.jobtracker.taskScheduler</code> 指定了该调度插件的类名。</p>
+<p>默认调度器是 <code>FIFO</code> 的，而在生产环境中，应该调整为 <code>FairScheduler</code> 或者 <code>CapacityScheduler</code>。</p>
+<ul>
+<li>默认: <code>org.apache.hadoop.mapred.JobQueueTaskScheduler</code></li>
+<li>示例: <code>org.apache.hadoop.mapred.FairScheduler</code></li>
+<li>使用该配置的有: JT</li>
+</ul>
+<h3 id="mapred-reduce-parallel-copies">mapred.reduce.parallel.copies</h3>
+<p>在 shuffle 阶段，reducer 需要从所有的 map 中取得自己所负责的数据。<code>mapred.reduce.parallel.copies</code> 配置了可以同时从多少个 mapper 中并行获取数据。</p>
+<p><strong>配置时需要注意不要拥塞整个网络。</strong></p>
+<ul>
+<li>默认: <code>5</code></li>
+<li>示例: <code>10</code>。建议 <code>log(TT数量) * 4</code></li>
+<li>使用该配置的有: 子任务</li>
+</ul>
+<h3 id="mapred-reduce-tasks">mapred.reduce.tasks</h3>
+<p>MR 任务执行时，用户不需指定 map 的数量，这是因为 map 的数量是由 <code>InputFormat</code> 决定的。但用户需要指定 reducer 的数量，因为系统无法对尚未产生的数据进行分析。</p>
+<p><code>mapred.reduce.tasks</code> 是配置 reducer 的数量的，其默认值为 <code>1</code>，不过，一般会在 job 级别被用户覆盖该值。</p>
+<p>配置时，可以以集群中 slot 数量的半数为初始设置。比如，一个<em>20</em>节点的集群，每个节点配置了<em>6个并发reducer</em>，因此总容量是<em>120个并发 reducer</em>。如果没有额外的信息的话，可以将 <code>mapred.reduce.tasks</code> 配置为 <code>60</code> 作为起始。</p>
+<ul>
+<li>默认: <code>1</code></li>
+<li>示例: <code>64</code></li>
+<li>使用该配置的有: JT</li>
+</ul>
+<h3 id="tasktracker-http-threads">tasktracker.http.threads</h3>
+<p>之前我们知道了 <code>mapred.reduce.parallel.copies</code> 是 reducer 控制自己可以同时并发多少个请求从 mapper 中获取数据。而 <code>tasktracker.http.threads</code> 则是 TT 决定自身可以同时有多少个并发线程来处理 reducer 的这种请求。<strong>前者可以理解为客户端的并发数量，后者可以理解为服务端的线程池大小。</strong></p>
+<ul>
+<li>示例: <code>64</code></li>
+<li>使用该配置的有: TT</li>
+</ul>
+<h3 id="mapred-reduce-slowstart-completed-maps">mapred.reduce.slowstart.completed.maps</h3>
+<p>我们知道，在 map 执行完毕前，reduce 的任务是无法开始执行的。但是，我们可以提前进行 sort/shuffle 的部分，从而避免 map 执行完毕时，突然间的网络带宽的拥塞，从而在时间上均衡一部分网络流量。而这个<em>提前</em>的时间量，是需要好好把握的。过早的开始 reduce，会导致 reduce slot 的占用，而浪费了资源。该配置是用以配置在 map 执行完毕百分之多少之后，开始 reduce 的任务。</p>
+<p>默认该配置为 0.05，即 5%。这种设计是针对缓慢或者比较拥塞的网络考虑的。对于现在更好地网络条件，可以适当的增加该值。对于1Gbps非阻塞网络而言，可以将该值初始设为 <code>0.8</code>，也就是 80%，之后如果发现 shuffle 时间网络并无拥塞，速度很快，可以将其调整为接近 <code>1</code> 的值。</p>
+<ul>
+<li>默认: <code>0.05</code></li>
+<li>示例: <code>0.8</code></li>
+<li>使用该配置的有: JT</li>
+</ul>
+<h1 id="机架拓扑">机架拓扑</h1>
+<p>Hadoop 一个很重要的优化就是在执行 map 任务时，会优选距离数据最近的 TT 来执行任务。理想情况是本地，稍差一些就是同机架。要使得 Hadoop 拥有这种能力，特别是机架识别能力，就需要使用<em>机架拓扑</em>的配置。</p>
+<p>在写入 HDFS block 时，该 block 会被复写三份。第1份将<em>随机</em>选择一个 DN 来写入，而第2份、第3份则将写入<strong>其它的同一个机架中</strong>。这里并非是将后两份写入不同的机架，原因在于避免顶级交换机的负载过重。写入同一个机架内的不同 DN 的话，其后数据的流量是机架内的。</p>
+<p>机架拓扑的实现是通过脚本的执行。用户给 Hadoop 提供一个脚本，该脚本接受 IP 或者 主机名 作为参数，输出则是机架的拓扑位置。Hadoop 会在需要时调用该脚本，以取得拓扑结构。</p>
+<p>脚本实现可以很简单，比如在脚本内部写入主机名和拓扑对应关系；或者灵活一些，读取一个 CSV 文件，其中包含了 IP 和<em>拓扑</em>的对应关系。</p>
+<p>拓扑以Linux路径形式存在，既各个拓扑层级间以<code>/</code>分割（如 <code>/rack1</code>）。当前 Hadoop 只支持是否在同一机架的检测，不过将来可能会有所扩充。</p>
+<p>写好脚本后，将其放置到固定的目录（比如 <code>/etc/hadoop/conf/topology.py</code>），然后配置 <code>core-site.xml</code> 中的 <code>topology.script.file.name</code> 项，写入该脚本全路径名。检查是否调用了该脚本，可以执行 <code>hadoop dfsadmin -report</code>，其中各个 DN 的 <code>Rack</code> 项会给出脚本执行的结果。</p>
+  
+		<p>【该文档最新版本请查看： <a href="http://twang2218.github.io/readings/hadoop-operations/hadoop-operations-notes-ch05.html">http://twang2218.github.io/readings/hadoop-operations/hadoop-operations-notes-ch05.html</a> 】</p>
+
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/hadoop/">hadoop</a><a href="/tags/Hadoop Operations/">Hadoop Operations</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/readings/">readings</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://twang2218.github.io/readings/hadoop-operations/hadoop-operations-notes-ch05.html" data-title="《Hadoop Operations》读书笔记 - 4 - 第五章 安装与配置 | Tao Wang&#39;s Blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/readings/hadoop-operations/hadoop-operations-notes-ch04.html"  title="《Hadoop Operations》读书笔记 - 3 - 第四章 规划集群">
+ <strong>NEXT:</strong><br/> 
+ <span>《Hadoop Operations》读书笔记 - 3 - 第四章 规划集群
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+	<div id="disqus_thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/readings/" title="readings">readings<sup>5</sup></a></li>
+		
+			<li><a href="/categories/tutorial/" title="tutorial">tutorial<sup>7</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Hadoop Operations/" title="Hadoop Operations">Hadoop Operations<sup>4</sup></a></li>
+		
+			<li><a href="/tags/big data/" title="big data">big data<sup>1</sup></a></li>
+		
+			<li><a href="/tags/hadoop/" title="hadoop">hadoop<sup>10</sup></a></li>
+		
+			<li><a href="/tags/hadoop install/" title="hadoop install">hadoop install<sup>6</sup></a></li>
+		
+			<li><a href="/tags/vagrant/" title="vagrant">vagrant<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a href="https://github.com/twang2218" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2014 
+		
+		<a href="http://twang2218.github.io" target="_blank" title="Tao Wang">Tao Wang</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"twang2218-github"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<script type="text/javascript">
+  var disqus_shortname = 'twang2218-github';
+  
+  var disqus_url = 'http://twang2218.github.io/readings/hadoop-operations/hadoop-operations-notes-ch05.html';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-3066512-10', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

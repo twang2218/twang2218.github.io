@@ -1,0 +1,421 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>生与熟：大数据的神话 - Kate Crawford在伯克利的讲座的笔记与思考 | Tao Wang&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Tao Wang">
+    
+    <meta name="description" content="Kate Crawford 是微软美国新英格兰研究中心的主要研究人员，同时也是MIT的客座教授和UNSW的副教授。她分别在英国、澳大利亚、美国甚至印度做过研究工作。这个讲座是 2013 年在伯克利大学举办的 DataEDGE 的研讨会上，Kate Crawford 进行的讲座。
+大数据开始变得热门，">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml" title="Tao Wang&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/bear.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/bear.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/bear.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/bear.svg" alt="Tao Wang&#39;s Blog" title="Tao Wang&#39;s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Tao Wang&#39;s Blog">Tao Wang&#39;s Blog</a></h1>
+				<h2 class="blog-motto">无善无恶心之体，有善有恶意之动，知善知恶是良知，为善去恶是格物。</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:twang2218.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/readings/random/raw-and-the-cooked-kate-crawford.html" title="生与熟：大数据的神话 - Kate Crawford在伯克利的讲座的笔记与思考" itemprop="url">生与熟：大数据的神话 - Kate Crawford在伯克利的讲座的笔记与思考</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://twang2218.github.io" title="Tao Wang">Tao Wang</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2014-03-07T13:00:00.000Z" itemprop="datePublished">2014年3月8日</time>
+    更新日期:<time datetime="2014-05-09T18:17:24.000Z" itemprop="dateModified">2014年5月10日</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#神话_1:_大数据是新的科技"><span class="toc-number">1.</span> <span class="toc-text">神话 1: 大数据是新的科技</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#神话_2：大数据是客观的"><span class="toc-number">2.</span> <span class="toc-text">神话 2：大数据是客观的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#神话3：大数据不会歧视"><span class="toc-number">3.</span> <span class="toc-text">神话3：大数据不会歧视</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#神话4：大数据让城市更智能"><span class="toc-number">4.</span> <span class="toc-text">神话4：大数据让城市更智能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#神话5：大数据是匿名的"><span class="toc-number">5.</span> <span class="toc-text">神话5：大数据是匿名的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#神话6：你可以选择退出"><span class="toc-number">6.</span> <span class="toc-text">神话6：你可以选择退出</span></a></li></ol>
+		</div>
+		
+		<div class="video-container"><iframe src="//www.youtube.com/embed/h_WScJu40mU" frameborder="0" allowfullscreen></iframe></div>
+
+
+<p>Kate Crawford 是微软美国新英格兰研究中心的主要研究人员，同时也是MIT的客座教授和UNSW的副教授。她分别在英国、澳大利亚、美国甚至印度做过研究工作。这个讲座是 2013 年在伯克利大学举办的 DataEDGE 的研讨会上，Kate Crawford 进行的讲座。</p>
+<p>大数据开始变得热门，名词越来越多的出现于各种媒体，某种程度上人们错误的混淆了一些概念，于是产生了一些奇怪的“神话”。就好象<strong>普通民众总是把“相关性(correlation)”和“因果关系(causation)”弄混淆</strong>。比如，国内新闻上经常出现某些报道，把明明是“国外研究机构发现A和B现象间有高相关性”的事情给解读为“国外专家发现A现象会导致B现象”，从而使民众更加误解。由于越来越多的这类错误的信息出现，使得很多人对大数据产生了最根本上的错误解读。</p>
+<p>讲座开篇于加州大学 Geoffrey Bowker 在2005的书中提到的一句话：“Raw data is both an oxymoron and a bad idea. On the contrary, data should be cooked with care.”，“原始数据是矛盾的并且(直接使用它们)不是一个好主意。相反，数据应该进行精心的调制。”。</p>
+<p>我们经常会把问题简化考虑，但是很多时候简化就意味着不准确，意味着误差。比如数据本身，在理想世界中，我们总觉得数据就存在于那里，已经准备好了，直接应用各种挖掘算法就从那些数据中可以得到分析的结果。可事实上并非如此，我们首先需要人去观察数据，对数据模型进行想象，通过创造性的思维去理解数据，通过这些思考，我们实际上是在对数据进行分析模型的构建。这需要大量的、细心的思考，以及前瞻性。只有细心的思考这些数据，才会从中提取出更有用的信息。</p>
+<p>提到生(Raw)和熟(Cooked)这两个词以及“神话”，可以追溯到 1965 年，著名的法国人类学家 Claude Levi-Strauss 的一本著作《The Raw and the Cooked》。他在著书期间，跑遍了全球各个部落，去那里收集神话故事，因为他认为神话非常重要，通过理解神话，可以进一步的理解这个群族的人与人的关系、社会结构以及人类社会更深层次法则。最后他研究发现神话中往往存在二元对立的情况，就像必然同时包含了生与死、或者矛盾与调和。最终他收集到了167个神话，并一一阐述了这些神话和背后产生的人类学的机理。</p>
+<p>数据分析把各行各业的人放到了一起，我们从某种程度上就像厨师一样，到外面去设法获取数据(Raw)，然后清洗、准备数据，最终通过精心调制后，将处理、分析后的数据(Cooked)送给客户去享用。</p>
+<p>在这个讲座里，Kate Crawford 提到了6个大数据现在流行的神话，并对其进行解析。</p>
+<p>首先说一下“大数据”的定义问题。</p>
+<ul>
+<li>在科学界关注的焦点为：<strong>“如何最大化计算资源和提高算法准确性”</strong>；</li>
+<li>而在分析界则更多考虑为：<strong>“如何通过使用一系列工具可以分析、比较那些大数据集”，比如MapReduce或者Hadoop在这种意义上属于工具</strong>；</li>
+<li>而神话(没有技术能力的大众)则认为：<strong>“相信大规模的数据集可以带来更好的客观性、正确性和准确性”</strong>。</li>
+</ul>
+<p>三者之间经常会发现一些矛盾的东西，而我们通过理解那些神话，可以让我们更清晰的理解其问题的根源。</p>
+<p>从数据分析的角度来说，大数据确实是一个非常强大的分析工具，特别是在理解社会关系、理解人类活动上。</p>
+<h2 id="神话_1:_大数据是新的科技">神话 1: 大数据是新的科技</h2>
+<p>大数据这个术语的出现已经很久了。据 Kate Crawford 说，她经过查询文献库后发现，第一次在科学界使用 Big Data 这个术语是在 1997 年的一篇论文中，那篇论文主要是在讨论大数据可视化上面的一些困难。然后就是1999年的一篇论文，提到了如何处理大数据中的那些困难，很多</p>
+<p>而实际上我们已经面对大数据问题很久了，比如金融行业，在处理大规模数据的构架、算法方面已经研究了几十年了；再比如能源行业，通过大规模的计算资源去分析理解地球结构；当然还有国家安全部门，他们收集了大量的数据，然后琢磨着怎么用他们；甚至于是气象学方面，在50年代就有人开始思考如何处理这么大量的监测数据问题。</p>
+<p>那么为什么会有这个神话呢？这是由于大数据经过这么多年的发展，开始达到了一个里程碑。在今天，大数据涌现出了大量的技术和工具，从而使像我们这样普通的人都可以更容易的接触、使用大数据进行分析工作了。</p>
+<p>NYU 的一个研究人员曾经提到过为什么会在上世纪80年代的时候，在剑桥大学出现了数学物理研究领域的爆发式的成果。她分析发现，是由于那个时间段里面，在这个领域的考试，开始引入了笔试。由于大家开始使用笔和纸这种工具去回答问题，导致学生们可以比面试时更 <strong>抽象的</strong> 思考问题、回答问题。</p>
+<p>正是由于工具的变化，导致了思维方式的升华，从而产生了大量的成果。就如同今天大数据如井喷一样大量涌现出各种成果一样，是由于大数据发展达到了一个阶段，有更方便的工具出现，导致更多的人可以更容易的介入到大数据的领域中，用他们创造性的思维去发展，结果涌现出了各种大量的主意、实践、想象关于如何使用大数据。这就是为什么我们觉得这东西是 <strong>新</strong> 的，只是因为它开始出现于大众视线中了。</p>
+<p>这种关于 <strong>“新”</strong> 的说法，让人回想起90年代手机刚出现一样，大家相当兴奋的去关注这个东西，认为它会改变一切，甚至恐慌于它的出现会造成的后果。可是今天，手机已经逐渐的变成了背景。每个人都拥有它，而根本不会有人去关注它。相信大数据也将会如此，真正好的科技、真正有用的科技，会渐渐消失于焦点之中，而会成为背景，成为每件事都会涉及的东西。科技就是如此，东西越来越容易使用，就越来越会脱离人们的视线焦点。</p>
+<h2 id="神话_2：大数据是客观的">神话 2：大数据是客观的</h2>
+<p>很多人认为如此庞大的数据规模，一定能够客观的反映事实情况。而实际上大数据可能是非常不客观。</p>
+<p>Crawford 提到 2012 年她在曼哈顿所经历的 Sandy 飓风时候的事情。在那四天里，大约发出了2千万条关于飓风的微博。虽然微博上非常让人信服的在讨论那些居民是如何被安置的，但实际上这主要是年轻人的观点，而且更多的是曼哈顿地区的居民的观点。</p>
+<p>如果仔细观察数据，就会发现这些数据大多来自曼哈顿地区，这可能由于曼哈顿地区拥有更高的人口密度、更高的智能手机普及率、以及更高的微博用户所致。这是所有遭受飓风影响人口的子集的子集。虽然数据量非常大，但是并不是均匀的分布，从而导致大数据不一定能够反映客观的事实。数据是按照比例代表了产生他们的人群，而并不一定是代表了全部的人群。</p>
+<p>另一方面，这些数据有时甚至根本就不代表人类行为。有研究表明，超过半数的Web流量是非人类访问，比如搜索引擎、抓取软件、病毒、恶意程序等；在 Twitter 上，超过3千万个账户是假的，有些是纯粹的假账户，有些是为了帮助残障人士使用的账户机器产生的账户。如果在分析数据的过程中，只是简单的假设所有账户都是人类行为的表现，那么得出的结论一定无法反映客观的情况。</p>
+<p>Twitter 的数据分析报告中提到，周四是一周中大家感觉最郁闷的一天。我们可以考虑这个数据的准确性、分析其原因、员工工作压力大什么的。但是，这里面的数据是不是也包含了老板们的郁闷呢？他们在这一天也贡献了大量的数据，是否也反映了出他们的情绪状态呢？分析工作不能仅仅花时间去理解数据，还应该去理解数据所表达的社会关系，去花时间和那些数据产生的人进行交流，特别是很重要的数据。</p>
+<p>有人问 Crawford，大数据分析如果不是客观的，那是主观的么？Crawford 回答说，她认为这既不是客观的、也不是主观的，只是陈述性的，只是陈述表现所发生的数据。</p>
+<h2 id="神话3：大数据不会歧视">神话3：大数据不会歧视</h2>
+<p>很多人认为，当你处理大规模的数据的时候，你不会因为采样选择问题而出现区别对待甚至歧视。<strong>相反，大数据既不是不区分肤色或者不区分性别，大数据恰恰是更精确的区别对待不同的类别。</strong></p>
+<p>最近剑桥的一个研究，分析了6万个人的点“赞”的数据，大约平均每人有150~200个“赞”。他们使用这些数据构建了一个数据模型，然后通过这个模型去预测个人的敏感信息，包括性取向、宗教看法，甚至可以预测用户是否曾经吸毒。他们用这个模型预测可以达到很高的准确度，特别是针对高加索人种和非洲裔人种的预测，能够达到95%以上的准确性；第二个预测最准确的是性别是否为男性。不过有趣的是，推测是否是女性则相对来说更难些。而这种Facebook类的点“赞”的信息很多时候，或者是免费可以获得的，或者是可以通过购买而获得的。由此所有的公司、政府、个人都可以利用这个模型去推断某个人的敏感信息。</p>
+<p>这类分析在很多地方都会用到，比如，金融机构会根据类似分析得到的模型去判断客户的信用度的情况，以决定申请是否会获准。而这种大数据分析的得到的模型，很可能会是种族相关的，比如模型会发现如果种族为黑人，则信用度比较低；又比如这个地区的犯罪率比较高，所以保险公司会认为其保险风险很大，而拒绝承保。而这些情况，恰好是歧视问题所希望避免的。大数据不会消除歧视，反而会更精确的对客户进行分类。</p>
+<p>这类分析还可能产生的一个问题是，很多公司根据这种分析主动的去选择最有可能的潜在客户群进行定向广告，而这会使很多真正需要某项业务的人，由于其人种或者所居住的区域问题而导致不在该类别内，所以无法真正收到这些广告。由于富人的信用度一般相对较好，利润较大，所以很多公司将会定向那些富人的潜在客户群。从而使得互联网出现一种情况，穷人和富人访问的将是两个不同的互联网。</p>
+<p>大数据不是无歧视的，相反，是具有强烈倾向性的。只不过，很多时候，我们可能并不会意识到这种问题。比如，HR可能通过模型海选应聘者，通过应聘者提供的信息，可能会通过模型判断，该人有可能是吸毒的（虽然实际情况你可能不是），于是根本不会给你发邀请，所以你根本不知道这些问题已经发生了。</p>
+<h2 id="神话4：大数据让城市更智能">神话4：大数据让城市更智能</h2>
+<p>诚然，大数据确实可以帮助我们在改善政府城市工作上起到很大的作用。但是，不是说我们完全的依赖于大数据的分析结果就可以认为会让城市运作变得更好了。<strong>大数据是一个工具，需要使用这个工具的人，比如政府，非常细心的理解分析结果，并且，要意识到分析的局限性，并小心的去处理这种局限性。</strong></p>
+<p>举个例子，波士顿这个城市有一个问题，他们道路经常会有突起的现象，导致开车经过那里会产生很大的颠簸，道路工程人员经常需要去各地维护这种路面问题。可是到底哪里出现了这个现象，以及哪里受影响的人群最多，应该优先处理哪里的问题，这很难知道。因此在制定工程计划的时候会很没有参考性。</p>
+<p>政府想出了一个挺不错的想法，他们推出了一个app叫做StreetBump，可以在智能手机上安装。这个软件会记录行车过程中，汽车的位置和加速度信息，然后把这个信息发送给服务器。服务器会收到这些数据，然后进行分析。随着大量的人开始使用了这个app，政府可以通过大数据的分析，很快的发现哪里的路段有更多的人出现了这类路面问题，于是制定维修工程计划的时候就更有针对性。</p>
+<p>不过，并不是这么简单的就靠大数据分析解决了这个问题。因为如果我们纯粹依赖这个app的数据分析，我们仔细观察数据就会发现，得到的地图会更倾向于反应那些中等收入家庭人群的需求。甚至在年龄层上，更倾向于反映了年轻人的需求。因为这涉及到能够安装、愿意安装这个app的人群特征。他们更多是中产阶级以及年轻人。老年人或者低收入人群的手机很可能不能安装这个软件，而他们的行车需求就不会反映到这个大数据统计中来。</p>
+<p>如果我们只是依靠这个大数据分析来进行工程计划制定的话，会导致富裕一些、年轻一些的人群得到了更多的关注，而那些年长的、贫穷的人们则被很大程度上的忽视了。</p>
+<p>这种问题不要认为会随着智能手机的普及就会消失。有研究表明，人类在发展过程中，会有不断的新的科技出现，而这些新的科技会按照上述的这种特征扩散。而数据分析很可能会基于那些新的科技，以产生更详细的信息。所以永远不会出现所有的人都同时拥有某种新的科技可以安装那些app。</p>
+<h2 id="神话5：大数据是匿名的">神话5：大数据是匿名的</h2>
+<p>很多人认为大数据处理的数据会在处理前去掉客户个人识别信息，比如去掉了ID、手机号、IMEI号之类的信息，从而使大数据分析会保证匿名性，可以保护个人隐私不被泄露。实际情况恰恰相反。</p>
+<p>2013年《Nature》杂志中发表了一篇非常不寻常的研究论文。在论文中，研究者分析了欧洲中150万个移动手机用户在15个月内的位置和时间数据。基本上这就是一系列记录这个用户什么时间在什么位置的信息。研究者试图分析，看最少需要多少个点就可以唯一的确定一个用户。<strong>研究表明，如果随机选择4个点，就足以确定这是哪一个人，这对95%以上的用户都是有效的。</strong>要知道，上世纪30年代的时候，我们通过研究指纹发现，需要12个点才能够唯一的确定一个人。而现在大数据时代，我们只需要4个点就可以了。甚至于，我们随机选取两个点，我们就可以唯一的确定50%的人。</p>
+<p>此外，一个伯克利的研究小组对电网的用电数据进行了分析。经过分析后，可以很轻易的从数据中解读出，用户家里是不是有冰箱；什么时间烧的开水、什么时间烤的面包、什么时间用的洗衣机、点暖气。<strong>而进一步的分析，则可以分析出该用户的生活习惯，以及什么时候他们家来人聚会，什么时间有人在那里过夜、什么时候你去睡觉了等等。这些信息则已经是非常私密的了。</strong>而怎么去运用这种分析得到信息是一个需要考虑的问题。因为它包含了一些相当隐私的信息。</p>
+<p>还有个人健康信息，这是非常隐私的信息。上世纪90年代，由于人们意识到互联网时代的来临，使得个人健康信息更有可能被泄露，从而令个人隐私受到了很大的破坏。美国在1996年，建立了一个叫做健康保险便利和责任法案(HIPAA)。在HIPAA里详细的阐述了如何对个人健康信息的私密性进行法律上的保护。所以今天的所有相关表格中会有一个部分提示你不共享你的健康信息给别的个体或机构。而在大数据时代，这些都发生了变化。举一个简单的例子，我们在搜索引擎上所有搜索的关键字记录信息都可能会被卖掉，而对于这些信息的分析则可能很好的得出一个人当前健康状况。而在这个领域里现在没有任何法律对其限制。仅有的HIPAA根本无法组织通过大数据分析而的到客户信息分析。</p>
+<h2 id="神话6：你可以选择退出">神话6：你可以选择退出</h2>
+<p>有人认为如果不使用免费服务，而是使用那些收费服务，则服务商不会通过卖数据而盈利，从而自己的数据不会被大数据分析。而实际上，则很难保证。最近的例子是Instagram，虽然最开始的用户条款是不会卖用户数据的，但是，随着被 Facebook 收购，Instagram 则开始修改条款，允许 Facebook 销售这些数据。而很多用户由于各种各样的原因无法轻易的离开 Instagram，所以事情并不如当初所预期一样。而且，甚至都没有提供一个选择给自己允许可以付钱而不要卖自己的数据。</p>
+<p>而且，即使个人试图通过使用收费服务来避免大数据的分析，也会导致一种不好的结果，即隐私信息将会变成一个具有高价的商品，而不再公众正常情况下所本该拥有的东西。</p>
+<p>【视频： <a href="http://pan.baidu.com/s/12ASwe" target="_blank">http://pan.baidu.com/s/12ASwe</a> 】</p>
+  
+		<p>【该文档最新版本请查看： <a href="http://twang2218.github.io/readings/random/raw-and-the-cooked-kate-crawford.html">http://twang2218.github.io/readings/random/raw-and-the-cooked-kate-crawford.html</a> 】</p>
+
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/big data/">big data</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/readings/">readings</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://twang2218.github.io/readings/random/raw-and-the-cooked-kate-crawford.html" data-title="生与熟：大数据的神话 - Kate Crawford在伯克利的讲座的笔记与思考 | Tao Wang&#39;s Blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/readings/hadoop-operations/hadoop-operations-notes-ch02.html" title="《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  《Hadoop Operations》读书笔记 - 1 - 第二章 HDFS</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/tutorial/hadoop-install/hadoop1-multi-node-install-guide.html"  title="Hadoop 1.2.1 多节点全分布配置">
+ <strong>NEXT:</strong><br/> 
+ <span>Hadoop 1.2.1 多节点全分布配置
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+	<div id="disqus_thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/readings/" title="readings">readings<sup>5</sup></a></li>
+		
+			<li><a href="/categories/tutorial/" title="tutorial">tutorial<sup>7</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Hadoop Operations/" title="Hadoop Operations">Hadoop Operations<sup>4</sup></a></li>
+		
+			<li><a href="/tags/big data/" title="big data">big data<sup>1</sup></a></li>
+		
+			<li><a href="/tags/hadoop/" title="hadoop">hadoop<sup>10</sup></a></li>
+		
+			<li><a href="/tags/hadoop install/" title="hadoop install">hadoop install<sup>6</sup></a></li>
+		
+			<li><a href="/tags/vagrant/" title="vagrant">vagrant<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		<a href="https://github.com/twang2218" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2014 
+		
+		<a href="http://twang2218.github.io" target="_blank" title="Tao Wang">Tao Wang</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"twang2218-github"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+<script type="text/javascript">
+  var disqus_shortname = 'twang2218-github';
+  
+  var disqus_url = 'http://twang2218.github.io/readings/random/raw-and-the-cooked-kate-crawford.html';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-3066512-10', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>
